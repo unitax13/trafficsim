@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="800.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stuff.gui.MainWindow">
+   <children>
+      <TitledPane fx:id="mainTitledPane" prefHeight="644.0" prefWidth="800.0" text="File" textAlignment="CENTER">
+         <content>
+            <Canvas fx:id="mainCanvas" height="618.0" onMouseClicked="#onMouseClicked" onMouseDragged="#onMouseDragged" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" onMouseMoved="#onMouseMoved" onMousePressed="#onMousePressed" onMouseReleased="#onMouseReleased" width="800.0" />
+         </content>
+      </TitledPane>
+      <CheckBox fx:id="roadsViewButton" layoutX="39.0" layoutY="665.0" mnemonicParsing="false" onAction="#configUpdated" prefHeight="17.0" prefWidth="96.0" text="Roads" />
+      <CheckBox fx:id="urbanViewButton" layoutX="39.0" layoutY="690.0" mnemonicParsing="false" onAction="#configUpdated" prefHeight="17.0" prefWidth="110.0" text="Urban areas" />
+      <CheckBox fx:id="industryViewButton" layoutX="39.0" layoutY="716.0" mnemonicParsing="false" onAction="#configUpdated" text="Industry areas" />
+      <CheckBox fx:id="otherCheckBox" layoutX="39.0" layoutY="743.0" mnemonicParsing="false" onAction="#configUpdated" prefHeight="17.0" prefWidth="96.0" text="CheckBox" />
+      <ToggleButton fx:id="examineButton" layoutX="191.0" layoutY="661.0" mnemonicParsing="false" text="Examine" />
+   </children>
+</AnchorPane>
