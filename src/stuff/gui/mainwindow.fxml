@@ -2,6 +2,8 @@
 
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -18,5 +20,7 @@
       <CheckBox fx:id="industryViewButton" layoutX="39.0" layoutY="716.0" mnemonicParsing="false" onAction="#configUpdated" text="Industry areas" />
       <CheckBox fx:id="otherCheckBox" layoutX="39.0" layoutY="743.0" mnemonicParsing="false" onAction="#configUpdated" prefHeight="17.0" prefWidth="96.0" text="CheckBox" />
       <ToggleButton fx:id="examineButton" layoutX="191.0" layoutY="661.0" mnemonicParsing="false" text="Examine" />
+      <Slider fx:id="gridOpacitySlider" blockIncrement="1.0" layoutX="181.0" layoutY="709.0" onMousePressed="#gridOpacitySliderUpdated" onMouseReleased="#gridOpacitySliderUpdated" value="25.0" />
+      <Label layoutX="218.0" layoutY="725.0" text="Grid Opacity" />
    </children>
 </AnchorPane>

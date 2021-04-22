@@ -3,7 +3,9 @@ package stuff.gui;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 
 public class SimulationGrid {
@@ -24,6 +26,9 @@ public class SimulationGrid {
 
     public void draw(GraphicsContext gc) {
         drawGrid(gc);
+        drawSelection(gc);
+        drawCoords();
+        drawGridOverlay();
     }
     
     public Point2D getFieldWithMouseOn() {
@@ -43,9 +48,12 @@ public class SimulationGrid {
         Point2D selectedField = getFieldWithMouseOn();
         if (selectedField.getX() != -1 && selectedField.getY() != -1) {
             Color inverse = Color.LIGHTGRAY;
-            Color c = new Color(inverse.getRed(), inverse.getGreen(), inverse.getBlue(), 64);
-            gc.setStroke(c);
+
+            gc.setGlobalBlendMode(BlendMode.DARKEN);
+            gc.setFill(inverse);
             gc.fillRect((int) (fieldWidth * selectedField.getX()), (int) (fieldHeight * selectedField.getY()), fieldWidth, fieldHeight);
+
+            gc.setGlobalBlendMode(BlendMode.SRC_OVER);
         }
     }
 
@@ -71,6 +79,8 @@ public class SimulationGrid {
         }
     }
 
+
+
     private void drawGrid (GraphicsContext gc) {
         for (int x = 0; x<simulation.width; x++) {
             for (int y=0; y<simulation.height; y++) {
@@ -89,6 +99,23 @@ public class SimulationGrid {
                 gc.fillRect(fieldWidth*x, fieldHeight*y,fieldWidth, fieldHeight);
 
             }
+        }
+    }
+
+    private void drawCoords() {
+        String text = getFieldWithMouseOn().toString().substring(8) + "(" + mainWindow.getCurrentMousePos().toString().substring(8) + ")";
+        gc.setFill(Color.BLACK);
+        gc.fillText(text,10,20,200);
+    }
+
+    private void drawGridOverlay() {
+        for (int x = 0; x<=simulation.width; x++) {
+            if (x%10 == 0)
+                gc.setLineWidth(1*mainWindow.gridOpacity/100);
+            else
+                gc.setLineWidth(0.5*mainWindow.gridOpacity/100);
+            gc.strokeLine(x*fieldWidth,-1,x*fieldWidth,SimulationApplication.SCREEN_HEIGHT);
+            gc.strokeLine(-1, x*fieldWidth, SimulationApplication.SCREEN_WIDTH,x*fieldWidth);
         }
     }
 

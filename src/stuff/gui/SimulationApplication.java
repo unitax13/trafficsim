@@ -1,22 +1,26 @@
 package stuff.gui;
 
 import javafx.application.Application;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 public class SimulationApplication extends Application {
 
     private Stage stage;
     private Parent root;
-    public static Canvas mainCanvas;
+    public static MainWindow mainWindow;
+
+    public static int SCREEN_WIDTH = 800;
+    public static int SCREEN_HEIGHT = 800;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -27,12 +31,11 @@ public class SimulationApplication extends Application {
         this.stage = stage;
 
         stage.setTitle("COVID-33");
-        Scene scene = new Scene(root, 800, 800);
+        Scene scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
         stage.setScene(scene);
 
         stage.setResizable(false);
         stage.show();
-
 
 
     }

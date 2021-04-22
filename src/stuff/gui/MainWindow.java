@@ -6,6 +6,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -23,6 +24,7 @@ public class MainWindow implements Initializable {
     private static final int maxHeight = 960;
     private static final int maxWidth = 1600;
     private static final int preferredFieldSize = 100;
+    public double gridOpacity = 100;
 
     private Point2D previousMousePos = new Point2D(-1,-1);
     private Point2D previousField = new Point2D(0,0);
@@ -40,6 +42,8 @@ public class MainWindow implements Initializable {
     private CheckBox industryViewButton;
     @FXML
     private CheckBox otherCheckBox;
+    @FXML
+    private Slider gridOpacitySlider;
 
     public TitledPane mainTitledPane;
     public Canvas mainCanvas;
@@ -74,6 +78,10 @@ public class MainWindow implements Initializable {
         System.out.println("Config was updated");
     }
 
+    public void gridOpacitySliderUpdated() {
+        gridOpacity = gridOpacitySlider.getValue();
+    }
+
 
 
     @Override
@@ -82,19 +90,25 @@ public class MainWindow implements Initializable {
         gc = mainCanvas.getGraphicsContext2D();
         simulation = new Simulation();
 
+
         initCanvas();
         initCallbacks();
         calculateSize(simulation);
         simulationGrid = new SimulationGrid(this,simulation, fieldWidth,fieldHeight);
+        gridOpacitySliderUpdated();
+        redraw();
+        SimulationApplication.mainWindow = this;
+    }
+
+    public void redraw() {
         simulationGrid.draw(gc);
-        SimulationApplication.mainCanvas = mainCanvas;
     }
 
     private void initCanvas() {
 
         mainCanvas.setOnMouseMoved(mouseEvent -> {
-            System.out.println("Mouse is moved");
             currentMousePos = new Point2D(mouseEvent.getX(), mouseEvent.getY());
+            redraw();
         });
         
         mainCanvas.setOnMouseClicked(event -> {
@@ -116,7 +130,7 @@ public class MainWindow implements Initializable {
 
         mainCanvas.setOnMouseClicked( e -> {
             System.out.println("Mouse clicked");
-            simulationGrid.draw(gc);
+            redraw();
         });
 
         mainCanvas.setOnMousePressed(e -> {
@@ -136,7 +150,7 @@ public class MainWindow implements Initializable {
             }
             System.out.println("Prevoius field: " + previousField);
             //System.out.println("Previous mouse pos: " + previousMousePos);
-            simulationGrid.draw(gc);
+            redraw();
         });
 
         mainCanvas.setOnMouseReleased( e -> {
@@ -147,7 +161,7 @@ public class MainWindow implements Initializable {
                 simulationGrid.drawPerpendicularLineBetween(previousField, newField );
             }
             isDragging = false;
-            simulationGrid.draw(gc);
+            redraw();
         });
     }
 
@@ -166,12 +180,12 @@ public class MainWindow implements Initializable {
         //System.out.println("onMouseExited");
     }
     public void onMouseMoved() {
-        //simulationGrid.draw(gc);
+        //redraw();
         //System.out.println("onMouseMoved");
     }
     public void onMousePressed() {
         //System.out.println("onMousePressed");
-       // simulationGrid.draw(gc);
+       // redraw();
         //System.out.println(simulationGrid.getFieldWithMouseOn());
     }
     public void onMouseReleased() {
