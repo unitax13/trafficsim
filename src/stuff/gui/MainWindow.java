@@ -5,6 +5,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TitledPane;
@@ -12,6 +13,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 public class MainWindow implements Initializable {
@@ -44,6 +46,8 @@ public class MainWindow implements Initializable {
     private CheckBox otherCheckBox;
     @FXML
     private Slider gridOpacitySlider;
+    @FXML
+    private Button generateGraphButton;
 
     public TitledPane mainTitledPane;
     public Canvas mainCanvas;
@@ -80,6 +84,14 @@ public class MainWindow implements Initializable {
 
     public void gridOpacitySliderUpdated() {
         gridOpacity = gridOpacitySlider.getValue();
+    }
+
+    public void generateGraphButtonPressed() {
+        System.out.println("Printing graph");
+        for(GraphNode node: simulationGrid.generateGraph() ) {
+            System.out.println(node.position);
+            System.out.println(Arrays.toString(node.distances));
+        }
     }
 
 

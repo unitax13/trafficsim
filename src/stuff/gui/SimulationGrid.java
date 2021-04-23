@@ -7,6 +7,9 @@ import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 
 public class SimulationGrid {
     private Simulation simulation;
@@ -119,17 +122,23 @@ public class SimulationGrid {
         }
     }
 
-    private void generateGraph() {
-        Simulation.FieldType[][] im = simulation.grid;
+    public ArrayList<GraphNode> generateGraph() {
         int width = simulation.width;
         int height = simulation.height;
 
-        Simulation.FieldType[] data = im[0];
+        ArrayList<GraphNode> graphNodes = new ArrayList<>();
+
+        Simulation.FieldType[] data = new Simulation.FieldType[width*height];
+
+        for (int i=0; i< simulation.height; i++)
+            for (int j=0; j<simulation.width; j++)
+                data[i*width+j] = simulation.grid[i][j];
+
 
         GraphNode start = null;
         GraphNode end = null;
 
-        GraphNode topnodes[] = new GraphNode[width];
+        GraphNode topNodes[] = new GraphNode[width];
         int count = 0;
 
         int rowOffset;
@@ -150,14 +159,11 @@ public class SimulationGrid {
 
             GraphNode leftNode = null;
 
-            for (int x = 0; x<width; x++) {
+            for (int x = 0; x<width-1; x++) {
 
                 prv = cur;
                 cur = nxt;
-                if (data[rowOffset+x+1] == Simulation.FieldType.FIELD_ROAD1)
-                    nxt = Simulation.FieldType.FIELD_ROAD1;
-                else
-                    nxt = Simulation.FieldType.FIELD_EMPTY;
+                nxt = data[rowOffset+x+1];
 
                 GraphNode n = null;
 
@@ -194,44 +200,65 @@ public class SimulationGrid {
                         //WALL PATH WALL
                         //Create node only if in dead end
                         if ((data[rowAboveOffset+x] != Simulation.FieldType.FIELD_ROAD1) || (data[rowBelowOffset + x] != Simulation.FieldType.FIELD_ROAD1)) {
-                            System.out.println("Create node in dead end");
+                            //System.out.println("Create node in dead end");
                             n = new GraphNode(new Point2D(y,x));
                         }
                     }
-
                 }
 
                 if (n!=null) {
 
                     if(data[rowAboveOffset+x] == Simulation.FieldType.FIELD_ROAD1) {
-                        t = topnodes[x];
+                        t = topNodes[x];
                         t.neighbours[2] = n;
                         n.neighbours[0] = t;
                     }
 
                     if (data[rowBelowOffset + x] == Simulation.FieldType.FIELD_ROAD1) {
-                        topnodes[x] = n;
-
+                        topNodes[x] = n;
                     } else {
-                        topnodes[x] = null;
+                        topNodes[x] = null;
                     }
+
+                    graphNodes.add(n);
                     count++;
                 }
-
-
             }
         }
         rowOffset = (height-1)*width;
         for (int x=0; x<width; x++) {
             if (data[rowOffset + x] == Simulation.FieldType.FIELD_ROAD1) {
                 end = new GraphNode(new Point2D(height-1, x));
-                t = topnodes[x];
+                t = topNodes[x];
                 t.neighbours[2] = end;
                 end.neighbours[0] = t;
+
+                graphNodes.add(end);
                 count ++;
                 break;
             }
         }
+
+        for (GraphNode gn: graphNodes) {
+            for (int i=0; i<gn.neighbours.length; i++) {
+                GraphNode neighbour = gn.neighbours[i];
+                if (neighbour!=null) {
+                    double dist = Math.sqrt(
+                            (gn.position.getX() - neighbour.position.getX()) * (gn.position.getX() - neighbour.position.getX()) +
+                                    (gn.position.getY() - neighbour.position.getY()) * (gn.position.getY() - neighbour.position.getY()));
+                    gn.distances[i] = dist;
+
+                    for (int j = 0; j < neighbour.neighbours.length; j++) {
+                        GraphNode n = neighbour.neighbours[j];
+                        if (n!= null && n.equals(gn)) {
+                            neighbour.distances[j] = dist;
+                        }
+                    }
+                }
+            }
+        }
+
+        return graphNodes;
 
 
 
