@@ -24,5 +24,6 @@
       <Slider fx:id="gridOpacitySlider" blockIncrement="1.0" layoutX="181.0" layoutY="709.0" onMousePressed="#gridOpacitySliderUpdated" onMouseReleased="#gridOpacitySliderUpdated" value="25.0" />
       <Label layoutX="218.0" layoutY="725.0" text="Grid Opacity" />
       <Button fx:id="generateGraphButton" layoutX="285.0" layoutY="661.0" mnemonicParsing="false" onAction="#generateGraphButtonPressed" text="Generate graph" />
+      <Button fx:id="dijkstraButton" layoutX="416.0" layoutY="661.0" mnemonicParsing="false" onAction="#dijkstraButtonPressed" text="Apply Dijkstra" />
    </children>
 </AnchorPane>

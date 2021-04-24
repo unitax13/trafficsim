@@ -13,6 +13,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
@@ -35,6 +36,7 @@ public class MainWindow implements Initializable {
     Simulation simulation;
     SimulationGrid simulationGrid;
     public GraphicsContext gc;
+    ArrayList<GraphNode> graphNodes;
 
     @FXML
     private CheckBox roadsViewButton;
@@ -48,6 +50,8 @@ public class MainWindow implements Initializable {
     private Slider gridOpacitySlider;
     @FXML
     private Button generateGraphButton;
+    @FXML
+    private Button dijkstraButton;
 
     public TitledPane mainTitledPane;
     public Canvas mainCanvas;
@@ -88,11 +92,42 @@ public class MainWindow implements Initializable {
 
     public void generateGraphButtonPressed() {
         System.out.println("Printing graph");
-        for(GraphNode node: simulationGrid.generateGraph() ) {
+        graphNodes = simulationGrid.generateGraph();
+        for(GraphNode node: graphNodes ) {
             System.out.println(node.position);
             System.out.println(Arrays.toString(node.distances));
         }
     }
+
+    public void dijkstraButtonPressed() {
+        int start = 0;
+        int end = 10;
+
+        ShortestPath t= new ShortestPath();
+        PathAndDistances[] pad = t.dijkstra(graphNodes,start);
+        System.out.println("Distances");
+        for (int i=0; i<pad.length; i++) {
+            System.out.printf(String.valueOf(pad[i].dist));
+            System.out.printf("[");
+            if (pad[i].node != null)
+                System.out.printf(pad[i].node.position.toString());
+            System.out.printf("----->");
+
+            PathAndDistances pad2 = pad[i].predecessor;
+
+            while (pad2 !=null) {
+                if (pad2.node != null)
+                    System.out.printf(pad2.node.position.toString() + "-->");
+                pad2 = pad2.predecessor;
+            }
+
+            System.out.printf("\n");
+        }
+
+
+    }
+
+
 
 
 
