@@ -30,7 +30,7 @@ public class SimulationApplication extends Application {
 
         this.stage = stage;
 
-        stage.setTitle("COVID-33");
+        stage.setTitle("TrafficSIM");
         Scene scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
         stage.setScene(scene);
 

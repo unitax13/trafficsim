@@ -5,10 +5,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
@@ -29,6 +26,21 @@ public class MainWindow implements Initializable {
     private static final int preferredFieldSize = 100;
     public double gridOpacity = 100;
 
+    public static boolean roadsIsOn = true;
+    public static boolean urbanIsOn = true;
+    public static boolean industryIsOn = true;
+    public static boolean nodeNumbersAreOn = true;
+
+    public int forNodeId = 0;
+    public int toNodeId = 1;
+
+    private ArrayList<ArrayList<GraphNode>> nodePaths;
+
+    PathAndDistances[] pathAndDistances;
+
+
+
+
     private Point2D previousMousePos = new Point2D(-1,-1);
     private Point2D previousField = new Point2D(0,0);
     boolean isDragging = false;
@@ -45,13 +57,19 @@ public class MainWindow implements Initializable {
     @FXML
     private CheckBox industryViewButton;
     @FXML
-    private CheckBox otherCheckBox;
+    private CheckBox nodeNumbersCheckBox;
     @FXML
     private Slider gridOpacitySlider;
     @FXML
     private Button generateGraphButton;
     @FXML
     private Button dijkstraButton;
+    @FXML
+    private Button showPathToIdButton;
+    @FXML
+    private TextField forNodeIdTextField;
+    @FXML
+    private TextField toNodeIdTextField;
 
     public TitledPane mainTitledPane;
     public Canvas mainCanvas;
@@ -67,23 +85,45 @@ public class MainWindow implements Initializable {
 
     public void configUpdated () {
         if (roadsViewButton.isSelected())
-            MapCanvas.roadsIsOn = true;
+            roadsIsOn = true;
         else
-            MapCanvas.roadsIsOn = false;
+            roadsIsOn = false;
         if (urbanViewButton.isSelected())
-            MapCanvas.urbanIsOn = true;
+            urbanIsOn = true;
         else
-            MapCanvas.urbanIsOn = false;
+            urbanIsOn = false;
         if (industryViewButton.isSelected())
-            MapCanvas.industryIsOn = true;
+            industryIsOn = true;
         else
-            MapCanvas.industryIsOn = false;
-        if (otherCheckBox.isSelected())
-            MapCanvas.otherIsOn = true;
+            industryIsOn = false;
+        if (nodeNumbersCheckBox.isSelected())
+            nodeNumbersAreOn = true;
         else
-            MapCanvas.otherIsOn = false;
+            nodeNumbersAreOn = false;
+
+        if (forNodeIdTextField.getText()!=null) {
+            try {
+                forNodeId = Integer.parseInt(forNodeIdTextField.getText());
+            } catch (Exception e) {
+                System.out.println("Invalid number entered!");
+            }
+        }
+
+        if (toNodeIdTextField.getText()!=null) {
+            try {
+                System.out.println("Getting" + toNodeIdTextField.getText());
+                toNodeId = Integer.parseInt(toNodeIdTextField.getText());
+                System.out.println("Entered "+ toNodeId);
+            } catch (Exception e) {
+                System.out.println("Invalid number entered!");
+            }
+        }
+
+
+
 
         System.out.println("Config was updated");
+        redraw();
     }
 
     public void gridOpacitySliderUpdated() {
@@ -99,33 +139,7 @@ public class MainWindow implements Initializable {
         }
     }
 
-    public void dijkstraButtonPressed() {
-        int start = 0;
-        int end = 10;
 
-        ShortestPath t= new ShortestPath();
-        PathAndDistances[] pad = t.dijkstra(graphNodes,start);
-        System.out.println("Distances");
-        for (int i=0; i<pad.length; i++) {
-            System.out.printf(String.valueOf(pad[i].dist));
-            System.out.printf("[");
-            if (pad[i].node != null)
-                System.out.printf(pad[i].node.position.toString());
-            System.out.printf("----->");
-
-            PathAndDistances pad2 = pad[i].predecessor;
-
-            while (pad2 !=null) {
-                if (pad2.node != null)
-                    System.out.printf(pad2.node.position.toString() + "-->");
-                pad2 = pad2.predecessor;
-            }
-
-            System.out.printf("\n");
-        }
-
-
-    }
 
 
 
@@ -137,7 +151,7 @@ public class MainWindow implements Initializable {
         gc = mainCanvas.getGraphicsContext2D();
         simulation = new Simulation();
 
-
+        nodeNumbersCheckBox.setSelected(true);
         initCanvas();
         initCallbacks();
         calculateSize(simulation);
@@ -156,10 +170,6 @@ public class MainWindow implements Initializable {
         mainCanvas.setOnMouseMoved(mouseEvent -> {
             currentMousePos = new Point2D(mouseEvent.getX(), mouseEvent.getY());
             redraw();
-        });
-        
-        mainCanvas.setOnMouseClicked(event -> {
-
         });
         
 
@@ -195,7 +205,7 @@ public class MainWindow implements Initializable {
                 previousField = simulationGrid.getFieldWithMouseOn();
 
             }
-            System.out.println("Prevoius field: " + previousField);
+            //System.out.println("Prevoius field: " + previousField);
             //System.out.println("Previous mouse pos: " + previousMousePos);
             redraw();
         });
@@ -271,6 +281,57 @@ public class MainWindow implements Initializable {
             fieldHeight = fieldWidth;
         }
 
+
+    }
+
+    public void dijkstraButtonPressed() {
+        int start = forNodeId;
+
+        nodePaths = new ArrayList<>();
+
+
+        ShortestPath t= new ShortestPath();
+        pathAndDistances = t.dijkstra(graphNodes,start);
+        System.out.println("Distances");
+        for (int i=0; i<pathAndDistances.length; i++) {
+            System.out.printf(i+ "." + String.valueOf(pathAndDistances[i].dist));
+            System.out.printf("[");
+            if (pathAndDistances[i].node != null)
+                System.out.printf(pathAndDistances[i].node.position.toString());
+            System.out.printf("----->");
+
+            PathAndDistances pad2 = pathAndDistances[i].predecessor;
+
+            ArrayList<GraphNode> path = new ArrayList<>();
+            path.add(pathAndDistances[i].node);
+
+
+            while (pad2 !=null) {
+                if (pad2.node != null) {
+                    path.add(pad2.node);
+                    System.out.printf(pad2.node.position.toString() + "-->");
+                }
+                pad2 = pad2.predecessor;
+            }
+            System.out.printf(graphNodes.get(start).position.toString());
+            path.add(graphNodes.get(start));
+            nodePaths.add(path);
+
+            System.out.printf("\n");
+        }
+
+    }
+
+    public void showPathToIdButtonPressed() {
+        if (nodePaths!=null) {
+            System.out.println("Showing path from " + forNodeId + " to " + toNodeId);
+            ArrayList<GraphNode> paths = nodePaths.get(toNodeId);
+            for (int i=paths.size()-1; i>=0; i--) {
+                if (paths.get(i)!=null)
+                    System.out.println(paths.get(i).position);
+            }
+
+        }
 
     }
     

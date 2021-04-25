@@ -5,6 +5,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -19,11 +20,16 @@
       <CheckBox fx:id="roadsViewButton" layoutX="39.0" layoutY="665.0" mnemonicParsing="false" onAction="#configUpdated" prefHeight="17.0" prefWidth="96.0" text="Roads" />
       <CheckBox fx:id="urbanViewButton" layoutX="39.0" layoutY="690.0" mnemonicParsing="false" onAction="#configUpdated" prefHeight="17.0" prefWidth="110.0" text="Urban areas" />
       <CheckBox fx:id="industryViewButton" layoutX="39.0" layoutY="716.0" mnemonicParsing="false" onAction="#configUpdated" text="Industry areas" />
-      <CheckBox fx:id="otherCheckBox" layoutX="39.0" layoutY="743.0" mnemonicParsing="false" onAction="#configUpdated" prefHeight="17.0" prefWidth="96.0" text="CheckBox" />
+      <CheckBox fx:id="nodeNumbersCheckBox" layoutX="39.0" layoutY="743.0" mnemonicParsing="false" onAction="#configUpdated" prefHeight="17.0" prefWidth="110.0" text="Node numbers" />
       <ToggleButton fx:id="examineButton" layoutX="191.0" layoutY="661.0" mnemonicParsing="false" text="Examine" />
       <Slider fx:id="gridOpacitySlider" blockIncrement="1.0" layoutX="181.0" layoutY="709.0" onMousePressed="#gridOpacitySliderUpdated" onMouseReleased="#gridOpacitySliderUpdated" value="25.0" />
       <Label layoutX="218.0" layoutY="725.0" text="Grid Opacity" />
       <Button fx:id="generateGraphButton" layoutX="285.0" layoutY="661.0" mnemonicParsing="false" onAction="#generateGraphButtonPressed" text="Generate graph" />
       <Button fx:id="dijkstraButton" layoutX="416.0" layoutY="661.0" mnemonicParsing="false" onAction="#dijkstraButtonPressed" text="Apply Dijkstra" />
+      <Label layoutX="515.0" layoutY="665.0" text="For node:" />
+      <TextField fx:id="forNodeIdTextField" layoutX="566.0" layoutY="661.0" onAction="#configUpdated" onKeyPressed="#configUpdated" prefHeight="25.0" prefWidth="67.0" promptText="Node ID..." />
+      <Button fx:id="showPathToIdButton" layoutX="425.0" layoutY="695.0" mnemonicParsing="false" onAction="#showPathToIdButtonPressed" text="Show path" />
+      <Label layoutX="515.0" layoutY="699.0" text="To node:" />
+      <TextField fx:id="toNodeIdTextField" layoutX="566.0" layoutY="695.0" onAction="#configUpdated" onKeyPressed="#configUpdated" prefHeight="25.0" prefWidth="67.0" promptText="Node ID..." />
    </children>
 </AnchorPane>

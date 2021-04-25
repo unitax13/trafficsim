@@ -19,10 +19,7 @@ public class MapCanvas extends Canvas {
     private int renderOffsetY;
     private double scale;
 
-    public static boolean roadsIsOn = true;
-    public static boolean urbanIsOn = true;
-    public static boolean industryIsOn = true;
-    public static boolean otherIsOn = true;
+
 
 
 

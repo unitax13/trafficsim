@@ -32,6 +32,8 @@ public class SimulationGrid {
         drawSelection(gc);
         drawCoords();
         drawGridOverlay();
+        if (mainWindow.nodeNumbersAreOn)
+            drawNodeNumbers();
     }
     
     public Point2D getFieldWithMouseOn() {
@@ -259,6 +261,29 @@ public class SimulationGrid {
         }
 
         return graphNodes;
+
+
+
+    }
+
+    public void drawNodeNumbers() {
+        if (mainWindow.graphNodes!=null) {
+            for (int i = 0; i < mainWindow.graphNodes.size(); i++) {
+                GraphNode node = mainWindow.graphNodes.get(i);
+                gc.setFill(Color.BLACK);
+                gc.fillText(String.valueOf(i), node.position.getX() * fieldWidth + fieldWidth, node.position.getY() * fieldWidth, fieldWidth);
+
+            }
+        }
+    }
+
+    public void drawPath(ArrayList<GraphNode> path, double distance) {
+
+        Color startColor = Color.color(163,52,235);
+        Color endColor = Color.color(89,29,247);
+        double stepRed = (startColor.getRed() - endColor.getRed())/distance;
+        double stepGreen = (startColor.getGreen() - endColor.getGreen())/distance;
+        double stepBlue = (startColor.getBlue() - endColor.getBlue())/distance;
 
 
 
