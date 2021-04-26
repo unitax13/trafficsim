@@ -34,6 +34,9 @@ public class SimulationGrid {
         drawGridOverlay();
         if (mainWindow.nodeNumbersAreOn)
             drawNodeNumbers();
+        if (mainWindow.pathIsDrawn)
+            drawPath();
+
     }
     
     public Point2D getFieldWithMouseOn() {
@@ -277,18 +280,66 @@ public class SimulationGrid {
         }
     }
 
-    public void drawPath(ArrayList<GraphNode> path, double distance) {
+    public void drawPath() {
 
-        Color startColor = Color.color(163,52,235);
-        Color endColor = Color.color(89,29,247);
-        double stepRed = (startColor.getRed() - endColor.getRed())/distance;
-        double stepGreen = (startColor.getGreen() - endColor.getGreen())/distance;
-        double stepBlue = (startColor.getBlue() - endColor.getBlue())/distance;
+        ArrayList<GraphNode> path = mainWindow.paths;
+        double distance = mainWindow.distance;
+
+        Color startColor = Color.rgb(163,52,235);
+        Color endColor = Color.rgb(89,29,247);
+        double scRed = startColor.getRed()*255;
+        double scGreen = startColor.getGreen()*255;
+        double scBlue = startColor.getBlue()*255;
+
+        System.out.printf("co,ors" + scRed + scGreen + scBlue);
+
+
+        double stepRed = (scRed - endColor.getRed()*255)/distance;
+        double stepGreen = (scGreen - endColor.getGreen()*255)/distance;
+        double stepBlue = (scBlue - endColor.getBlue()*255)/distance;
+        GraphNode one;
+        GraphNode two;
+        for (int i=0; i<path.size()-1; i++) {
+            one = path.get(i);
+            two = path.get(i + 1);
+            if (one != null && two != null) {
+                int x = (int) one.position.getX();
+                int y = (int) one.position.getY();
+                System.out.println("From" + x + " to " +y);
+
+                if (one.position.getX() == two.position.getX()) {
+                    double delta = two.position.getY() - one.position.getY();
+                    for (int j = 0; j < Math.abs(delta); j++) {
+                        scRed += stepRed;
+                        scGreen += stepGreen;
+                        scBlue += stepBlue;
+
+                        System.out.println("Drawing horizontal segment" + x + ";" + y + "with color " + (int) scRed + " " + (int) scGreen + " " + (int) scBlue);
+
+                        gc.setFill(Color.rgb((int) scRed, (int) scGreen, (int) scBlue));
+                        gc.fillRect(fieldWidth * x, fieldHeight * y, fieldWidth, fieldHeight);
+                        y += Math.signum(delta);
+                    }
+                } else if (one.position.getY() == two.position.getY()) {
+                    double delta = two.position.getX() - one.position.getX();
+                    for (int j = 0; j < Math.abs(delta); j++) {
+
+                        scRed += stepRed;
+                        scGreen += stepGreen;
+                        scBlue += stepBlue;
+
+                        System.out.println("Drawing vertical segmetn" + x + ";" + y + "with color " + (int) scRed + " " + (int) scGreen + " " + (int) scBlue);
+
+                        gc.setFill(Color.rgb((int) scRed, (int) scGreen, (int) scBlue));
+                        gc.fillRect(fieldWidth * x, fieldHeight * y, fieldWidth, fieldHeight);
+                        x += Math.signum(delta);
+                    }
+                }
+            }
+        }
 
 
 
     }
-
-
 
 }

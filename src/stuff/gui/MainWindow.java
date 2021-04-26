@@ -33,10 +33,13 @@ public class MainWindow implements Initializable {
 
     public int forNodeId = 0;
     public int toNodeId = 1;
+    public boolean pathIsDrawn = false;
 
     private ArrayList<ArrayList<GraphNode>> nodePaths;
 
     PathAndDistances[] pathAndDistances;
+    ArrayList<GraphNode> paths;
+    double distance;
 
 
 
@@ -324,12 +327,18 @@ public class MainWindow implements Initializable {
 
     public void showPathToIdButtonPressed() {
         if (nodePaths!=null) {
+            redraw();
             System.out.println("Showing path from " + forNodeId + " to " + toNodeId);
-            ArrayList<GraphNode> paths = nodePaths.get(toNodeId);
+            paths = nodePaths.get(toNodeId);
             for (int i=paths.size()-1; i>=0; i--) {
                 if (paths.get(i)!=null)
                     System.out.println(paths.get(i).position);
             }
+            distance = pathAndDistances[toNodeId].dist;
+            System.out.println(distance);
+            pathIsDrawn = true;
+            simulationGrid.drawPath();
+            redraw();
 
         }
 
