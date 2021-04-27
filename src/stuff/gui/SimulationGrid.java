@@ -136,14 +136,13 @@ public class SimulationGrid {
         Simulation.FieldType[] data = new Simulation.FieldType[width*height];
 
         for (int i=0; i< simulation.height; i++)
-            for (int j=0; j<simulation.width; j++)
-                data[i*width+j] = simulation.grid[i][j];
+            if (simulation.width >= 0) System.arraycopy(simulation.grid[i], 0, data, i * width + 0, simulation.width);
 
 
         GraphNode start = null;
         GraphNode end = null;
 
-        GraphNode topNodes[] = new GraphNode[width];
+        GraphNode[] topNodes = new GraphNode[width];
         int count = 0;
 
         int rowOffset;
@@ -291,7 +290,6 @@ public class SimulationGrid {
         double scGreen = startColor.getGreen()*255;
         double scBlue = startColor.getBlue()*255;
 
-        System.out.printf("co,ors" + scRed + scGreen + scBlue);
 
 
         double stepRed = (scRed - endColor.getRed()*255)/distance;
@@ -305,7 +303,6 @@ public class SimulationGrid {
             if (one != null && two != null) {
                 int x = (int) one.position.getX();
                 int y = (int) one.position.getY();
-                System.out.println("From" + x + " to " +y);
 
                 if (one.position.getX() == two.position.getX()) {
                     double delta = two.position.getY() - one.position.getY();
@@ -314,7 +311,7 @@ public class SimulationGrid {
                         scGreen += stepGreen;
                         scBlue += stepBlue;
 
-                        System.out.println("Drawing horizontal segment" + x + ";" + y + "with color " + (int) scRed + " " + (int) scGreen + " " + (int) scBlue);
+
 
                         gc.setFill(Color.rgb((int) scRed, (int) scGreen, (int) scBlue));
                         gc.fillRect(fieldWidth * x, fieldHeight * y, fieldWidth, fieldHeight);
@@ -328,7 +325,7 @@ public class SimulationGrid {
                         scGreen += stepGreen;
                         scBlue += stepBlue;
 
-                        System.out.println("Drawing vertical segmetn" + x + ";" + y + "with color " + (int) scRed + " " + (int) scGreen + " " + (int) scBlue);
+
 
                         gc.setFill(Color.rgb((int) scRed, (int) scGreen, (int) scBlue));
                         gc.fillRect(fieldWidth * x, fieldHeight * y, fieldWidth, fieldHeight);

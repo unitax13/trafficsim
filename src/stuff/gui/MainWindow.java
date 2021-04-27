@@ -288,6 +288,7 @@ public class MainWindow implements Initializable {
     }
 
     public void dijkstraButtonPressed() {
+        configUpdated();
         int start = forNodeId;
 
         nodePaths = new ArrayList<>();
@@ -297,7 +298,7 @@ public class MainWindow implements Initializable {
         pathAndDistances = t.dijkstra(graphNodes,start);
         System.out.println("Distances");
         for (int i=0; i<pathAndDistances.length; i++) {
-            System.out.printf(i+ "." + String.valueOf(pathAndDistances[i].dist));
+            System.out.printf(i+ "." + pathAndDistances[i].dist);
             System.out.printf("[");
             if (pathAndDistances[i].node != null)
                 System.out.printf(pathAndDistances[i].node.position.toString());
@@ -327,7 +328,11 @@ public class MainWindow implements Initializable {
 
     public void showPathToIdButtonPressed() {
         if (nodePaths!=null) {
+
+            configUpdated();
+            pathIsDrawn = false;
             redraw();
+
             System.out.println("Showing path from " + forNodeId + " to " + toNodeId);
             paths = nodePaths.get(toNodeId);
             for (int i=paths.size()-1; i>=0; i--) {
@@ -336,6 +341,7 @@ public class MainWindow implements Initializable {
             }
             distance = pathAndDistances[toNodeId].dist;
             System.out.println(distance);
+
             pathIsDrawn = true;
             simulationGrid.drawPath();
             redraw();

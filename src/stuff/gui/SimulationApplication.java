@@ -27,7 +27,6 @@ public class SimulationApplication extends Application {
 
         FXMLLoader loader = new FXMLLoader();
         root = loader.load(getClass().getResource("mainwindow.fxml"));
-
         this.stage = stage;
 
         stage.setTitle("TrafficSIM");
@@ -36,6 +35,7 @@ public class SimulationApplication extends Application {
 
         stage.setResizable(false);
         stage.show();
+
 
 
     }
