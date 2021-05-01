@@ -31,5 +31,12 @@
       <Button fx:id="showPathToIdButton" layoutX="425.0" layoutY="695.0" mnemonicParsing="false" onAction="#showPathToIdButtonPressed" text="Show path" />
       <Label layoutX="515.0" layoutY="699.0" text="To node:" />
       <TextField fx:id="toNodeIdTextField" layoutX="566.0" layoutY="695.0" onAction="#configUpdated" onKeyPressed="#configUpdated" prefHeight="25.0" prefWidth="67.0" promptText="Node ID..." />
+      <Button fx:id="distanceBetweenSetButton" layoutX="679.0" layoutY="730.0" mnemonicParsing="false" onAction="#distanceBetweenSetButtonPressed" text="Set" />
+      <TextField fx:id="distanceBetweenIdField1" layoutX="547.0" layoutY="731.0" onAction="#distancePanelUpdated" onKeyPressed="#distancePanelUpdated" prefHeight="25.0" prefWidth="30.0" />
+      <Label layoutX="580.0" layoutY="735.0" text="and" />
+      <TextField fx:id="distanceBetweenIdField2" layoutX="600.0" layoutY="731.0" onAction="#distancePanelUpdated" onKeyPressed="#distancePanelUpdated" prefHeight="25.0" prefWidth="30.0" />
+      <Label layoutX="445.0" layoutY="734.0" text="Distance between" />
+      <TextField fx:id="distanceBetweenDistanceField" layoutX="642.0" layoutY="730.0" prefHeight="25.0" prefWidth="39.0" />
+      <Label layoutX="633.0" layoutY="734.0" text="=" />
    </children>
 </AnchorPane>

@@ -1,11 +1,15 @@
 package stuff.gui;
 
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
@@ -35,6 +39,10 @@ public class MainWindow implements Initializable {
     public int toNodeId = 1;
     public boolean pathIsDrawn = false;
 
+    public int distanceBetweenId1;
+    public int distanceBetweenId2;
+
+
     private ArrayList<ArrayList<GraphNode>> nodePaths;
 
     PathAndDistances[] pathAndDistances;
@@ -47,6 +55,7 @@ public class MainWindow implements Initializable {
     private Point2D previousMousePos = new Point2D(-1,-1);
     private Point2D previousField = new Point2D(0,0);
     boolean isDragging = false;
+    boolean escWasPressed = false;
 
     Simulation simulation;
     SimulationGrid simulationGrid;
@@ -73,6 +82,14 @@ public class MainWindow implements Initializable {
     private TextField forNodeIdTextField;
     @FXML
     private TextField toNodeIdTextField;
+    @FXML
+    private TextField distanceBetweenIdField1;
+    @FXML
+    private TextField distanceBetweenIdField2;
+    @FXML
+    private TextField distanceBetweenDistanceField;
+    @FXML
+    private Button distanceBetweenSetButton;
 
     public TitledPane mainTitledPane;
     public Canvas mainCanvas;
@@ -181,21 +198,27 @@ public class MainWindow implements Initializable {
     }
 
     public void initCallbacks() {
-//        gc.setStroke(Color.BLACK);
-//        gc.setLineWidth(2);
-//        mainCanvas.setOnMouseDragged( e ->{
-//            gc.lineTo(e.getX(),e.getY() );
-//            gc.stroke();
+
+
+
+//        mainCanvas.setOnMouseClicked( e -> {
+//            System.out.println("Mouse clicked");
+//            redraw();
 //        });
 
-        mainCanvas.setOnMouseClicked( e -> {
-            System.out.println("Mouse clicked");
-            redraw();
-        });
-
         mainCanvas.setOnMousePressed(e -> {
-            Point2D coords = simulationGrid.getFieldWithMouseOn();
-            simulation.grid[(int) coords.getX()][(int) coords.getY()] = Simulation.FieldType.FIELD_ROAD1;
+            if (e.getButton() == MouseButton.PRIMARY) {
+                System.out.println("Left mouse was pressed");
+                escWasPressed = false;
+                Point2D coords = simulationGrid.getFieldWithMouseOn();
+                simulation.grid[(int) coords.getX()][(int) coords.getY()] = Simulation.FieldType.FIELD_ROAD1;
+            } else if (e.getButton() == MouseButton.SECONDARY) {
+                System.out.println("Right mouse was pressed");
+                escWasPressed = false;
+                Point2D coords = simulationGrid.getFieldWithMouseOn();
+                simulation.grid[(int) coords.getX()][(int) coords.getY()] = Simulation.FieldType.FIELD_EMPTY;
+            }
+
         });
 
         mainCanvas.setOnMouseDragged(e -> {
@@ -215,10 +238,18 @@ public class MainWindow implements Initializable {
 
         mainCanvas.setOnMouseReleased( e -> {
             currentMousePos = new Point2D(e.getX(), e.getY());
-            if (isDragging) {
-                isDragging = false;
-                Point2D newField = simulationGrid.getFieldWithMouseOn();
-                simulationGrid.drawPerpendicularLineBetween(previousField, newField );
+            if (e.getButton() == MouseButton.PRIMARY) {
+                if (isDragging && !escWasPressed) {
+                    isDragging = false;
+                    Point2D newField = simulationGrid.getFieldWithMouseOn();
+                    simulationGrid.drawPerpendicularLineBetween(previousField, newField, Simulation.FieldType.FIELD_ROAD1);
+                }
+            } else if (e.getButton() == MouseButton.SECONDARY) {
+                if (isDragging && !escWasPressed) {
+                    isDragging = false;
+                    Point2D newField = simulationGrid.getFieldWithMouseOn();
+                    simulationGrid.drawPerpendicularLineBetween(previousField, newField, Simulation.FieldType.FIELD_EMPTY);
+                }
             }
             isDragging = false;
             redraw();
@@ -348,6 +379,72 @@ public class MainWindow implements Initializable {
 
         }
 
+    }
+
+    public void distancePanelUpdated() {
+        if (distanceBetweenIdField1.getText()!=null) {
+            try {
+                distanceBetweenId1 = Integer.parseInt(distanceBetweenIdField1.getText());
+            } catch (Exception e) {
+                System.out.println("Invalid number entered!");
+                distanceBetweenId1 = -1;
+            }
+        }
+
+        if (distanceBetweenIdField2.getText()!=null) {
+            try {
+                distanceBetweenId2 = Integer.parseInt(distanceBetweenIdField2.getText());
+            } catch (Exception e) {
+                System.out.println("Invalid number entered!");
+                distanceBetweenId2 = -1;
+            }
+        }
+
+        if (distanceBetweenId1 != -1 && distanceBetweenId2 != -1) {
+            if (graphNodes != null) {
+                GraphNode node1 = graphNodes.get(distanceBetweenId1);
+                GraphNode node2 = graphNodes.get(distanceBetweenId2);
+                if (node1!= null && node2 != null) {
+                    for (int i = 0; i < 4; i++) {
+                        GraphNode n = node1.neighbours[i];
+                        if (n!=null && n.equals(node2)) {
+                            double distance = n.distances[i];
+                            if (distance > 0)
+                                distanceBetweenDistanceField.setText(String.valueOf((int) distance));
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
+    public void distanceBetweenSetButtonPressed() {
+        //distancePanelUpdated();
+        if (distanceBetweenId1>0 && distanceBetweenId2 >0 && distanceBetweenId1 != distanceBetweenId2) {
+            double distance = -1;
+            try {
+                distance= Integer.parseInt(distanceBetweenDistanceField.getText());
+            } catch (Exception e) {
+                System.out.println("Invalid number entered!");
+            }
+            if (distance>0) {
+                GraphNode node1 = graphNodes.get(distanceBetweenId1);
+                GraphNode node2 = graphNodes.get(distanceBetweenId2);
+                for (int i = 0; i < 4; i++) {
+                    GraphNode n = node1.neighbours[i];
+                    if (n!=null && n.equals(node2)) {
+                        node1.distances[i] = distance;
+                        System.out.println("Distance was changed");
+                    }
+                    GraphNode n2 = node2.neighbours[i];
+                    if (n2!=null && n2.equals(node1)) {
+                        node2.distances[i] = distance;
+                        System.out.println("Distance was changed");
+                    }
+                }
+            }
+        }
     }
     
     

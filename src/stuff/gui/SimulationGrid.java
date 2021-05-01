@@ -65,24 +65,24 @@ public class SimulationGrid {
         }
     }
 
-    public void drawPerpendicularLineBetween(Point2D a, Point2D b) {
+    public void drawPerpendicularLineBetween(Point2D a, Point2D b, Simulation.FieldType fieldType) {
         System.out.println("Drawing between " + a + " and "+ b);
 
         if ( ( Math.abs(b.getX() - a.getX()) > Math.abs(b.getY() - a.getY()) ) && (b.getX() - a.getX() ) >= 0 ) { //heading east
             for (int x = (int) a.getX(); x <= b.getX(); x++) {
-                simulation.grid[x][(int) a.getY()] = Simulation.FieldType.FIELD_ROAD1;
+                simulation.grid[x][(int) a.getY()] = fieldType;
             }
         }else if( (Math.abs(b.getX() - a.getX()) > Math.abs(b.getY() - a.getY()) ) && (b.getX() - a.getX() ) < 0 )  {//heading west
             for (int x = (int) a.getX(); x >= b.getX(); x--) {
-                simulation.grid[x][(int) a.getY()] = Simulation.FieldType.FIELD_ROAD1;
+                simulation.grid[x][(int) a.getY()] = fieldType;
             }
         } else if ( (Math.abs(b.getX() - a.getX()) < Math.abs(b.getY() - a.getY()) ) && (b.getY() - a.getY() ) < 0 ) {//heading south
             for (int y = (int) a.getY(); y >= b.getY(); y--) {
-                simulation.grid[(int)a.getX()][y] = Simulation.FieldType.FIELD_ROAD1;
+                simulation.grid[(int)a.getX()][y] = fieldType;
             }
         } else if ( (Math.abs(b.getX() - a.getX()) < Math.abs(b.getY() - a.getY()) ) && (b.getY() - a.getY() ) >= 0 ) {//heading north
             for (int y = (int) a.getY(); y <= b.getY(); y++) {
-                simulation.grid[(int) a.getX()][y] = Simulation.FieldType.FIELD_ROAD1;
+                simulation.grid[(int) a.getX()][y] = fieldType;
             }
         }
     }
@@ -324,6 +324,19 @@ public class SimulationGrid {
                         scRed += stepRed;
                         scGreen += stepGreen;
                         scBlue += stepBlue;
+
+                        if (scRed < 0)
+                            scRed = 0;
+                        else if (scRed>255)
+                            scRed = 255;
+                        if (scGreen < 0)
+                            scGreen = 0;
+                        else if (scGreen>255)
+                            scGreen = 255;
+                        if (scBlue < 0)
+                            scBlue = 0;
+                        else if (scBlue>255)
+                            scBlue = 255;
 
 
 

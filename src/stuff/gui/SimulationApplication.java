@@ -7,8 +7,11 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
+import java.awt.event.MouseListener;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -16,6 +19,7 @@ import java.util.TimerTask;
 public class SimulationApplication extends Application {
 
     private Stage stage;
+    public Scene scene;
     private Parent root;
     public static MainWindow mainWindow;
 
@@ -29,8 +33,32 @@ public class SimulationApplication extends Application {
         root = loader.load(getClass().getResource("mainwindow.fxml"));
         this.stage = stage;
 
+
         stage.setTitle("TrafficSIM");
-        Scene scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
+        scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+//        scene.setOnKeyPressed(keyEvent -> {
+//            System.out.println("Key event:" + keyEvent.toString());
+//            if (keyEvent.getCode() == KeyCode.ESCAPE) {
+//                System.out.println("Esc was clicked");
+//            }
+//        });
+
+        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                KeyListener.keyIsPressed(keyEvent.getCode().getCode());
+            }
+
+        });
+        scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                KeyListener.keyIsReleased(keyEvent.getCode().getCode());
+            }
+        });
+
+
         stage.setScene(scene);
 
         stage.setResizable(false);
