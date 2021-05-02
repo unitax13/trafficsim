@@ -1,6 +1,8 @@
 package stuff.gui;
 
-public class Simulation {
+import java.io.Serializable;
+
+public class Simulation implements Serializable {
 
     private final int defaultGenerationWidth = 100;
     private final int defaultGenerationHeight = 100;
@@ -14,8 +16,7 @@ public class Simulation {
         width = defaultGenerationWidth;
         height = defaultGenerationHeight;
         grid = new FieldType[width][height];
-        for (int i=49; i<55; i++)
-            grid[i][50] = FieldType.FIELD_ROAD1;
+
     }
 
     public Simulation(int width, int height) {

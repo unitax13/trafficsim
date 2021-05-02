@@ -70,22 +70,66 @@ public class SimulationGrid {
 
         if ( ( Math.abs(b.getX() - a.getX()) > Math.abs(b.getY() - a.getY()) ) && (b.getX() - a.getX() ) >= 0 ) { //heading east
             for (int x = (int) a.getX(); x <= b.getX(); x++) {
-                simulation.grid[x][(int) a.getY()] = fieldType;
+                if (simulation.grid[x][(int) a.getY()] != Simulation.FieldType.FIELD_ROAD1) {
+                    simulation.grid[x][(int) a.getY()] = fieldType;
+                }
             }
         }else if( (Math.abs(b.getX() - a.getX()) > Math.abs(b.getY() - a.getY()) ) && (b.getX() - a.getX() ) < 0 )  {//heading west
             for (int x = (int) a.getX(); x >= b.getX(); x--) {
-                simulation.grid[x][(int) a.getY()] = fieldType;
+                if (simulation.grid[x][(int) a.getY()] != Simulation.FieldType.FIELD_ROAD1){
+                    simulation.grid[x][(int) a.getY()] = fieldType;
+                }
             }
         } else if ( (Math.abs(b.getX() - a.getX()) < Math.abs(b.getY() - a.getY()) ) && (b.getY() - a.getY() ) < 0 ) {//heading south
             for (int y = (int) a.getY(); y >= b.getY(); y--) {
-                simulation.grid[(int)a.getX()][y] = fieldType;
+                if (simulation.grid[(int)a.getX()][y] != Simulation.FieldType.FIELD_ROAD1) {
+                    simulation.grid[(int) a.getX()][y] = fieldType;
+                }
             }
         } else if ( (Math.abs(b.getX() - a.getX()) < Math.abs(b.getY() - a.getY()) ) && (b.getY() - a.getY() ) >= 0 ) {//heading north
             for (int y = (int) a.getY(); y <= b.getY(); y++) {
-                simulation.grid[(int) a.getX()][y] = fieldType;
+                if (simulation.grid[(int) a.getX()][y] != Simulation.FieldType.FIELD_ROAD1) {
+                    simulation.grid[(int) a.getX()][y] = fieldType;
+                }
             }
         }
     }
+
+    public void drawRectangleBetween(Point2D a, Point2D b, Simulation.FieldType fieldType) {
+        double deltaX = b.getX() - a.getX();
+        double deltaY = b.getY() - a.getY();
+
+        if (deltaX!=0 && deltaY!=0) {
+
+            for (int y = (int) a.getY() - 1; y != b.getY() && y >= 0 && y <= simulation.height; y += Math.signum(deltaY)) {
+
+                for (int x = (int) a.getX() - 1; x != b.getX() && x >= 0 && x <= simulation.width; x += Math.signum(deltaX)) {
+                    if ((simulation.grid[x + 1][y + 1] != Simulation.FieldType.FIELD_ROAD1) || fieldType == Simulation.FieldType.FIELD_EMPTY) {
+                        simulation.grid[x + 1][y + 1] = fieldType;
+                    }
+                }
+            }
+        } else if (deltaY == 0) {
+
+            int y = (int) a.getY() - 1;
+            for (int x = (int) a.getX() - 1; x != b.getX() && x >= 0 && x <= simulation.width; x += Math.signum(deltaX)) {
+                if ((simulation.grid[x + 1][y + 1] != Simulation.FieldType.FIELD_ROAD1) || fieldType == Simulation.FieldType.FIELD_EMPTY) {
+                    simulation.grid[x + 1][y + 1] = fieldType;
+                }
+            }
+        } else if (deltaX == 0) {
+
+            int x = (int) a.getX() - 1;
+            for (int y = (int) a.getY() - 1; y != b.getY() && y >= 0 && y <= simulation.height; y += Math.signum(deltaY)) {
+
+                if ((simulation.grid[x + 1][y + 1] != Simulation.FieldType.FIELD_ROAD1) || fieldType == Simulation.FieldType.FIELD_EMPTY) {
+                    simulation.grid[x + 1][y + 1] = fieldType;
+                }
+            }
+        }
+
+    }
+
 
 
 
@@ -94,11 +138,11 @@ public class SimulationGrid {
             for (int y=0; y<simulation.height; y++) {
                 Color color;
                 Simulation.FieldType type = simulation.getCellFromGrid(simulation.grid, x,y);
-                 if ( type == Simulation.FieldType.FIELD_URBAN1) {
+                 if ( type == Simulation.FieldType.FIELD_URBAN1 && mainWindow.urbanIsOn) {
                     color = Color.CHARTREUSE;
-                } else if ( type == Simulation.FieldType.FIELD_INDUSTRY1) {
+                } else if ( type == Simulation.FieldType.FIELD_INDUSTRY1 && mainWindow.industryIsOn) {
                     color = Color.DARKKHAKI;
-                } else if ( type == Simulation.FieldType.FIELD_ROAD1) {
+                } else if ( type == Simulation.FieldType.FIELD_ROAD1 && mainWindow.roadsIsOn) {
                     color = Color.DARKSLATEGRAY;
                 } else { // EMPTY
                     color = Color.CORNSILK;

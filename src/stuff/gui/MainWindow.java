@@ -10,13 +10,20 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.stage.FileChooser;
 
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
+
+import static javafx.scene.paint.Color.*;
 
 public class MainWindow implements Initializable {
 
@@ -49,6 +56,8 @@ public class MainWindow implements Initializable {
     ArrayList<GraphNode> paths;
     double distance;
 
+    private Simulation.FieldType chosenFieldType = Simulation.FieldType.FIELD_ROAD1;
+
 
 
 
@@ -61,6 +70,23 @@ public class MainWindow implements Initializable {
     SimulationGrid simulationGrid;
     public GraphicsContext gc;
     ArrayList<GraphNode> graphNodes;
+    boolean rectangleDraw = false;
+
+    @FXML
+    private ToggleButton rectangleToggleButton;
+    @FXML
+    private ToggleButton lineToggleButton;
+    @FXML
+    private ToggleButton roadToggleButton;
+    @FXML
+    private ToggleButton urbanAreaToggleButton;
+    @FXML
+    private ToggleButton industryAreaToggleButton;
+
+    @FXML
+    private Button openFileButton;
+    @FXML
+    private Button saveFileButton;
 
     @FXML
     private CheckBox roadsViewButton;
@@ -177,12 +203,34 @@ public class MainWindow implements Initializable {
         calculateSize(simulation);
         simulationGrid = new SimulationGrid(this,simulation, fieldWidth,fieldHeight);
         gridOpacitySliderUpdated();
+
+        initGui();
+
+
+
         redraw();
         SimulationApplication.mainWindow = this;
     }
 
     public void redraw() {
         simulationGrid.draw(gc);
+    }
+
+    private void initGui() {
+        //dijkstraButton.setStyle("-fx-border-color: yellow; -fx-text-fill: blue; -fx-border-width: 3px; -fx-font-size: 30px;-fxbackground-color:rgb(255, 99, 71);");
+        //dijkstraButton.setStyle("-fx-background-color: rgb(0, 99, 71); -fx-border-width: 3px;");
+        ToggleGroup toggleGroup = new ToggleGroup();
+        roadToggleButton.setToggleGroup(toggleGroup);
+        urbanAreaToggleButton.setToggleGroup(toggleGroup);
+        industryAreaToggleButton.setToggleGroup(toggleGroup);
+        //roadToggleButton.setStyle("-fx-background-color: rgb(47, 79, 79);-fx-text-fill: white; -fx-background-insets: 0,1,2;.focused{-fx-background-color:rgb(87, 99, 99)}");
+
+
+        ToggleGroup toggleGroup2 = new ToggleGroup();
+        rectangleToggleButton.setToggleGroup(toggleGroup2);
+        lineToggleButton.setToggleGroup(toggleGroup2);
+
+        roadToggleButton.setSelected(true);
     }
 
     private void initCanvas() {
@@ -211,7 +259,7 @@ public class MainWindow implements Initializable {
                 System.out.println("Left mouse was pressed");
                 escWasPressed = false;
                 Point2D coords = simulationGrid.getFieldWithMouseOn();
-                simulation.grid[(int) coords.getX()][(int) coords.getY()] = Simulation.FieldType.FIELD_ROAD1;
+                simulation.grid[(int) coords.getX()][(int) coords.getY()] = chosenFieldType;
             } else if (e.getButton() == MouseButton.SECONDARY) {
                 System.out.println("Right mouse was pressed");
                 escWasPressed = false;
@@ -242,13 +290,21 @@ public class MainWindow implements Initializable {
                 if (isDragging && !escWasPressed) {
                     isDragging = false;
                     Point2D newField = simulationGrid.getFieldWithMouseOn();
-                    simulationGrid.drawPerpendicularLineBetween(previousField, newField, Simulation.FieldType.FIELD_ROAD1);
+                    if (rectangleDraw && chosenFieldType != Simulation.FieldType.FIELD_ROAD1) {
+                        simulationGrid.drawRectangleBetween(previousField, newField, chosenFieldType);
+                    } else {
+                        simulationGrid.drawPerpendicularLineBetween(previousField, newField, chosenFieldType);
+                    }
                 }
             } else if (e.getButton() == MouseButton.SECONDARY) {
                 if (isDragging && !escWasPressed) {
                     isDragging = false;
                     Point2D newField = simulationGrid.getFieldWithMouseOn();
-                    simulationGrid.drawPerpendicularLineBetween(previousField, newField, Simulation.FieldType.FIELD_EMPTY);
+                    if (rectangleDraw) {
+                        simulationGrid.drawRectangleBetween(previousField, newField, Simulation.FieldType.FIELD_EMPTY);
+                    } else {
+                        simulationGrid.drawPerpendicularLineBetween(previousField, newField, Simulation.FieldType.FIELD_EMPTY);
+                    }
                 }
             }
             isDragging = false;
@@ -443,6 +499,74 @@ public class MainWindow implements Initializable {
                         System.out.println("Distance was changed");
                     }
                 }
+            }
+        }
+    }
+
+    public void roadToggleButtonToggled() {
+        chosenFieldType = Simulation.FieldType.FIELD_ROAD1;
+    }
+    public void urbanAreaButtonToggled() {
+        chosenFieldType = Simulation.FieldType.FIELD_URBAN1;
+    }
+    public void industryAreaButtonToggled() {
+        chosenFieldType = Simulation.FieldType.FIELD_INDUSTRY1;
+    }
+
+    public void rectangleButtonToggled() {
+        rectangleDraw = true;
+    }
+    public void lineButtonToggled() {
+        rectangleDraw = false;
+    }
+
+    public void openFileButtonPressed() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open file...");
+        File selectedFile = fileChooser.showOpenDialog(SimulationApplication.stage);
+        if (selectedFile!=null) {
+            try {
+                FileInputStream fileInputStream = new FileInputStream(selectedFile);
+                ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+
+                Simulation simulation1 = null;
+                simulation1 = (Simulation) objectInputStream.readObject();
+                simulation = simulation1;
+                calculateSize(simulation);
+                simulationGrid = new SimulationGrid(this,simulation, fieldWidth,fieldHeight);
+
+                objectInputStream.close();
+                fileInputStream.close();
+
+                System.out.println("FileSuccessfully opedned");
+
+                redraw();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+    public void saveFileButtonPressed() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save file...");
+        File file = fileChooser.showSaveDialog(SimulationApplication.stage);
+        if (file!=null) {
+            try {
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                ObjectOutputStream out = new ObjectOutputStream(fileOutputStream);
+
+                out.writeObject(simulation);
+
+                out.close();
+                fileOutputStream.close();
+
+                System.out.println("File successfully saved");
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

@@ -18,12 +18,12 @@ import java.util.TimerTask;
 
 public class SimulationApplication extends Application {
 
-    private Stage stage;
+    public static Stage stage;
     public Scene scene;
     private Parent root;
     public static MainWindow mainWindow;
 
-    public static int SCREEN_WIDTH = 800;
+    public static int SCREEN_WIDTH = 892;
     public static int SCREEN_HEIGHT = 800;
 
     @Override
@@ -68,18 +68,8 @@ public class SimulationApplication extends Application {
 
     }
 
-    private void initPane() {
-
-        //initControls();
-        initMapCanvas();
-        //root.getChildrenUnmodifiable().add(mapCanvas);
-        //StackPane stackPane = new StackPane();
-        //stackPane.getChildren().add(mapCanvas);
-        //layout.getChildren().addAll(stackPane, pane);
+    public Stage getStage() {
+        return stage;
     }
 
-    private void initMapCanvas() {
-
-
-    }
 }
