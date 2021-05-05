@@ -21,7 +21,7 @@
       <CheckBox fx:id="urbanViewButton" layoutX="121.0" layoutY="711.0" mnemonicParsing="false" onAction="#configUpdated" prefHeight="17.0" prefWidth="110.0" selected="true" text="Urban areas" />
       <CheckBox fx:id="industryViewButton" layoutX="121.0" layoutY="737.0" mnemonicParsing="false" onAction="#configUpdated" selected="true" text="Industry areas" />
       <CheckBox fx:id="nodeNumbersCheckBox" layoutX="121.0" layoutY="764.0" mnemonicParsing="false" onAction="#configUpdated" prefHeight="17.0" prefWidth="110.0" selected="true" text="Node numbers" />
-      <ToggleButton fx:id="examineButton" layoutX="273.0" layoutY="682.0" mnemonicParsing="false" text="Examine" />
+      <ToggleButton fx:id="examineButton" layoutX="29.0" layoutY="477.0" mnemonicParsing="false" text="Examine" />
       <Slider fx:id="gridOpacitySlider" blockIncrement="1.0" layoutX="263.0" layoutY="730.0" onMousePressed="#gridOpacitySliderUpdated" onMouseReleased="#gridOpacitySliderUpdated" value="25.0" />
       <Label layoutX="300.0" layoutY="746.0" text="Grid Opacity" />
       <Button fx:id="generateGraphButton" layoutX="367.0" layoutY="682.0" mnemonicParsing="false" onAction="#generateGraphButtonPressed" text="Generate graph" />
@@ -47,5 +47,10 @@
       <ToggleButton fx:id="lineToggleButton" layoutX="59.0" layoutY="60.0" mnemonicParsing="false" onAction="#lineButtonToggled" prefHeight="25.0" prefWidth="44.0" text="|" />
       <Button fx:id="openFileButton" layoutX="26.0" layoutY="607.0" mnemonicParsing="false" onAction="#openFileButtonPressed" text="Open file" />
       <Button fx:id="saveFileButton" layoutX="26.0" layoutY="632.0" mnemonicParsing="false" onAction="#saveFileButtonPressed" prefHeight="25.0" prefWidth="65.0" text="Save file" />
+      <Button fx:id="newButton" layoutX="26.0" layoutY="582.0" mnemonicParsing="false" onAction="#newButtonPressed" prefHeight="25.0" prefWidth="65.0" text="New" />
+      <Label layoutX="28.0" layoutY="686.0" text="View mode:" />
+      <ToggleButton fx:id="normalViewButton" layoutX="32.0" layoutY="707.0" mnemonicParsing="false" onAction="#viewModeNormalButtonPressed" text="Normal" />
+      <ToggleButton fx:id="heatMapViewButton" layoutX="22.0" layoutY="733.0" mnemonicParsing="false" onAction="#viewModeTrafficHeatButtonPressed" text="Traffic heat" />
+      <ToggleButton disable="true" layoutX="15.0" layoutY="759.0" mnemonicParsing="false" text="ToggleButton" />
    </children>
 </AnchorPane>

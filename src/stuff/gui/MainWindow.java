@@ -42,6 +42,8 @@ public class MainWindow implements Initializable {
     public static boolean industryIsOn = true;
     public static boolean nodeNumbersAreOn = true;
 
+    public static int viewMode = 0; //0 - NORMAL, 2 - HEATMAP
+
     public int forNodeId = 0;
     public int toNodeId = 1;
     public boolean pathIsDrawn = false;
@@ -82,11 +84,20 @@ public class MainWindow implements Initializable {
     private ToggleButton urbanAreaToggleButton;
     @FXML
     private ToggleButton industryAreaToggleButton;
+    @FXML
+    private ToggleButton examineButton;
 
+
+    @FXML
+    private Button newButton;
     @FXML
     private Button openFileButton;
     @FXML
     private Button saveFileButton;
+    @FXML
+    private ToggleButton normalViewButton;
+    @FXML
+    private ToggleButton heatMapViewButton;
 
     @FXML
     private CheckBox roadsViewButton;
@@ -219,16 +230,17 @@ public class MainWindow implements Initializable {
     private void initGui() {
         //dijkstraButton.setStyle("-fx-border-color: yellow; -fx-text-fill: blue; -fx-border-width: 3px; -fx-font-size: 30px;-fxbackground-color:rgb(255, 99, 71);");
         //dijkstraButton.setStyle("-fx-background-color: rgb(0, 99, 71); -fx-border-width: 3px;");
-        ToggleGroup toggleGroup = new ToggleGroup();
-        roadToggleButton.setToggleGroup(toggleGroup);
-        urbanAreaToggleButton.setToggleGroup(toggleGroup);
-        industryAreaToggleButton.setToggleGroup(toggleGroup);
+        ToggleGroup brushToggleGroup = new ToggleGroup();
+        roadToggleButton.setToggleGroup(brushToggleGroup);
+        urbanAreaToggleButton.setToggleGroup(brushToggleGroup);
+        industryAreaToggleButton.setToggleGroup(brushToggleGroup);
+        examineButton.setToggleGroup(brushToggleGroup);
         //roadToggleButton.setStyle("-fx-background-color: rgb(47, 79, 79);-fx-text-fill: white; -fx-background-insets: 0,1,2;.focused{-fx-background-color:rgb(87, 99, 99)}");
 
 
-        ToggleGroup toggleGroup2 = new ToggleGroup();
-        rectangleToggleButton.setToggleGroup(toggleGroup2);
-        lineToggleButton.setToggleGroup(toggleGroup2);
+        ToggleGroup brushShapeToggleGroup = new ToggleGroup();
+        rectangleToggleButton.setToggleGroup(brushShapeToggleGroup);
+        lineToggleButton.setToggleGroup(brushShapeToggleGroup);
 
         roadToggleButton.setSelected(true);
     }
@@ -249,10 +261,6 @@ public class MainWindow implements Initializable {
 
 
 
-//        mainCanvas.setOnMouseClicked( e -> {
-//            System.out.println("Mouse clicked");
-//            redraw();
-//        });
 
         mainCanvas.setOnMousePressed(e -> {
             if (e.getButton() == MouseButton.PRIMARY) {
@@ -520,6 +528,13 @@ public class MainWindow implements Initializable {
         rectangleDraw = false;
     }
 
+    public void newButtonPressed() {
+        Simulation simulation1 = new Simulation();
+        simulation = simulation1;
+        calculateSize(simulation);
+        simulationGrid = new SimulationGrid(this,simulation, fieldWidth,fieldHeight);
+    }
+
     public void openFileButtonPressed() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open file...");
@@ -569,6 +584,14 @@ public class MainWindow implements Initializable {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void viewModeNormalButtonPressed() {
+        viewMode = 0;
+    }
+
+    public void viewModeTrafficHeatButtonPressed() {
+        viewMode = 2;
     }
     
     

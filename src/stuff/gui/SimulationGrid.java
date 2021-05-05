@@ -98,32 +98,34 @@ public class SimulationGrid {
     public void drawRectangleBetween(Point2D a, Point2D b, Simulation.FieldType fieldType) {
         double deltaX = b.getX() - a.getX();
         double deltaY = b.getY() - a.getY();
+        int signumDeltaX = (int) Math.signum(deltaX);
+        int signumDeltaY = (int) Math.signum(deltaY);
 
         if (deltaX!=0 && deltaY!=0) {
 
-            for (int y = (int) a.getY() - 1; y != b.getY() && y >= 0 && y <= simulation.height; y += Math.signum(deltaY)) {
+            for (int y = (int) (a.getY() - signumDeltaY); y != b.getY() && y >= 0 && y <= simulation.height; y += signumDeltaY) {
 
-                for (int x = (int) a.getX() - 1; x != b.getX() && x >= 0 && x <= simulation.width; x += Math.signum(deltaX)) {
-                    if ((simulation.grid[x + 1][y + 1] != Simulation.FieldType.FIELD_ROAD1) || fieldType == Simulation.FieldType.FIELD_EMPTY) {
-                        simulation.grid[x + 1][y + 1] = fieldType;
+                for (int x = (int) (a.getX() - signumDeltaX); x != b.getX() && x >= 0 && x <= simulation.width; x += signumDeltaX) {
+                    if ((simulation.grid[x + (int)signumDeltaX][y + (int)signumDeltaY] != Simulation.FieldType.FIELD_ROAD1) || fieldType == Simulation.FieldType.FIELD_EMPTY) {
+                        simulation.grid[x + (int)signumDeltaX][y + (int)signumDeltaY] = fieldType;
                     }
                 }
             }
         } else if (deltaY == 0) {
 
-            int y = (int) a.getY() - 1;
-            for (int x = (int) a.getX() - 1; x != b.getX() && x >= 0 && x <= simulation.width; x += Math.signum(deltaX)) {
-                if ((simulation.grid[x + 1][y + 1] != Simulation.FieldType.FIELD_ROAD1) || fieldType == Simulation.FieldType.FIELD_EMPTY) {
-                    simulation.grid[x + 1][y + 1] = fieldType;
+            int y = (int) (a.getY() - signumDeltaY);
+            for (int x = (int) (a.getX() - signumDeltaX); x != b.getX() && x >= 0 && x <= simulation.width; x += signumDeltaX) {
+                if ((simulation.grid[x + (int)signumDeltaX][y + (int)signumDeltaY] != Simulation.FieldType.FIELD_ROAD1) || fieldType == Simulation.FieldType.FIELD_EMPTY) {
+                    simulation.grid[x + (int)signumDeltaX][y + (int)signumDeltaY] = fieldType;
                 }
             }
         } else if (deltaX == 0) {
 
-            int x = (int) a.getX() - 1;
-            for (int y = (int) a.getY() - 1; y != b.getY() && y >= 0 && y <= simulation.height; y += Math.signum(deltaY)) {
+            int x = (int) (a.getX() - signumDeltaX);
+            for (int y = (int)(a.getY() - signumDeltaY); y != b.getY() && y >= 0 && y <= simulation.height; y += signumDeltaY) {
 
-                if ((simulation.grid[x + 1][y + 1] != Simulation.FieldType.FIELD_ROAD1) || fieldType == Simulation.FieldType.FIELD_EMPTY) {
-                    simulation.grid[x + 1][y + 1] = fieldType;
+                if ((simulation.grid[x + (int)signumDeltaX][y + (int)signumDeltaY] != Simulation.FieldType.FIELD_ROAD1) || fieldType == Simulation.FieldType.FIELD_EMPTY) {
+                    simulation.grid[x + (int)signumDeltaX][y + (int)signumDeltaY] = fieldType;
                 }
             }
         }
