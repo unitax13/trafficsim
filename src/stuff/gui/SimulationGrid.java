@@ -93,6 +93,7 @@ public class SimulationGrid {
                 }
             }
         }
+        simulation.updateSegmentsCount();
     }
 
     public void drawRectangleBetween(Point2D a, Point2D b, Simulation.FieldType fieldType) {
@@ -129,6 +130,7 @@ public class SimulationGrid {
                 }
             }
         }
+        simulation.updateSegmentsCount();
 
     }
 
@@ -316,8 +318,8 @@ public class SimulationGrid {
 
     public void drawNodeNumbers() {
         if (mainWindow.graphNodes!=null) {
-            for (int i = 0; i < mainWindow.graphNodes.size(); i++) {
-                GraphNode node = mainWindow.graphNodes.get(i);
+            for (int i = 0; i < mainWindow.graphNodes.getSize(); i++) {
+                GraphNode node = mainWindow.graphNodes.get().get(i);
                 gc.setFill(Color.BLACK);
                 gc.fillText(String.valueOf(i), node.position.getX() * fieldWidth + fieldWidth, node.position.getY() * fieldWidth, fieldWidth);
 
@@ -327,7 +329,7 @@ public class SimulationGrid {
 
     public void drawPath() {
 
-        ArrayList<GraphNode> path = mainWindow.paths;
+        GraphNodesContainer path = mainWindow.paths;
         double distance = mainWindow.distance;
 
         Color startColor = Color.rgb(163,52,235);
@@ -343,9 +345,9 @@ public class SimulationGrid {
         double stepBlue = (scBlue - endColor.getBlue()*255)/distance;
         GraphNode one;
         GraphNode two;
-        for (int i=0; i<path.size()-1; i++) {
-            one = path.get(i);
-            two = path.get(i + 1);
+        for (int i=0; i<path.getSize()-1; i++) {
+            one = path.get().get(i);
+            two = path.get().get(i + 1);
             if (one != null && two != null) {
                 int x = (int) one.position.getX();
                 int y = (int) one.position.getY();

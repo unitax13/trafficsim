@@ -28,6 +28,7 @@ import static javafx.scene.paint.Color.*;
 public class MainWindow implements Initializable {
 
 
+    public int SEARCH_RADIUS = 4;
     private static final int minWidth = 100;
     private static final int heightForButtons = 200;
     private int width, height;
@@ -55,7 +56,7 @@ public class MainWindow implements Initializable {
     private ArrayList<ArrayList<GraphNode>> nodePaths;
 
     PathAndDistances[] pathAndDistances;
-    ArrayList<GraphNode> paths;
+    GraphNodesContainer paths;
     double distance;
 
     private Simulation.FieldType chosenFieldType = Simulation.FieldType.FIELD_ROAD1;
@@ -71,8 +72,16 @@ public class MainWindow implements Initializable {
     Simulation simulation;
     SimulationGrid simulationGrid;
     public GraphicsContext gc;
-    ArrayList<GraphNode> graphNodes;
+
+    GraphNodesContainer graphNodes;
+    //ArrayList<GraphNode> graphNodes;
     boolean rectangleDraw = false;
+
+    SegmentsContainer segmentsContainer;
+
+    UrbanSegment urbanSegment;
+
+
 
     @FXML
     private ToggleButton rectangleToggleButton;
@@ -127,6 +136,12 @@ public class MainWindow implements Initializable {
     private TextField distanceBetweenDistanceField;
     @FXML
     private Button distanceBetweenSetButton;
+
+
+    @FXML
+    private Button statsButton;
+    @FXML
+    private Button useButton;
 
     public TitledPane mainTitledPane;
     public Canvas mainCanvas;
@@ -189,11 +204,12 @@ public class MainWindow implements Initializable {
 
     public void generateGraphButtonPressed() {
         System.out.println("Printing graph");
-        graphNodes = simulationGrid.generateGraph();
-        for(GraphNode node: graphNodes ) {
+        graphNodes = new GraphNodesContainer(simulationGrid.generateGraph());
+        for(GraphNode node: graphNodes.get() ) {
             System.out.println(node.position);
             System.out.println(Arrays.toString(node.distances));
         }
+        redraw();
     }
 
 
@@ -390,7 +406,7 @@ public class MainWindow implements Initializable {
 
 
         ShortestPath t= new ShortestPath();
-        pathAndDistances = t.dijkstra(graphNodes,start);
+        pathAndDistances = t.dijkstra(graphNodes.get(),start);
         System.out.println("Distances");
         for (int i=0; i<pathAndDistances.length; i++) {
             System.out.printf(i+ "." + pathAndDistances[i].dist);
@@ -412,8 +428,8 @@ public class MainWindow implements Initializable {
                 }
                 pad2 = pad2.predecessor;
             }
-            System.out.printf(graphNodes.get(start).position.toString());
-            path.add(graphNodes.get(start));
+            System.out.printf(graphNodes.get().get(start).position.toString());
+            path.add(graphNodes.get().get(start));
             nodePaths.add(path);
 
             System.out.printf("\n");
@@ -429,10 +445,10 @@ public class MainWindow implements Initializable {
             redraw();
 
             System.out.println("Showing path from " + forNodeId + " to " + toNodeId);
-            paths = nodePaths.get(toNodeId);
-            for (int i=paths.size()-1; i>=0; i--) {
-                if (paths.get(i)!=null)
-                    System.out.println(paths.get(i).position);
+            paths.graphNodes = nodePaths.get(toNodeId);
+            for (int i=paths.getSize()-1; i>=0; i--) {
+                if (paths.get().get(i)!=null)
+                    System.out.println(paths.get().get(i).position);
             }
             distance = pathAndDistances[toNodeId].dist;
             System.out.println(distance);
@@ -465,9 +481,9 @@ public class MainWindow implements Initializable {
         }
 
         if (distanceBetweenId1 != -1 && distanceBetweenId2 != -1) {
-            if (graphNodes != null) {
-                GraphNode node1 = graphNodes.get(distanceBetweenId1);
-                GraphNode node2 = graphNodes.get(distanceBetweenId2);
+            if (graphNodes.get() != null) {
+                GraphNode node1 = graphNodes.get().get(distanceBetweenId1);
+                GraphNode node2 = graphNodes.get().get(distanceBetweenId2);
                 if (node1!= null && node2 != null) {
                     for (int i = 0; i < 4; i++) {
                         GraphNode n = node1.neighbours[i];
@@ -493,8 +509,8 @@ public class MainWindow implements Initializable {
                 System.out.println("Invalid number entered!");
             }
             if (distance>0) {
-                GraphNode node1 = graphNodes.get(distanceBetweenId1);
-                GraphNode node2 = graphNodes.get(distanceBetweenId2);
+                GraphNode node1 = graphNodes.get().get(distanceBetweenId1);
+                GraphNode node2 = graphNodes.get().get(distanceBetweenId2);
                 for (int i = 0; i < 4; i++) {
                     GraphNode n = node1.neighbours[i];
                     if (n!=null && n.equals(node2)) {
@@ -592,6 +608,43 @@ public class MainWindow implements Initializable {
 
     public void viewModeTrafficHeatButtonPressed() {
         viewMode = 2;
+    }
+
+    public void useButton1Pressed() {
+        segmentsContainer = new SegmentsContainer(simulation);
+        for (UrbanSegment us: segmentsContainer.urbanSegments) {
+            us.calculateClosestRoadSegment(simulation, 5);
+            us.findClosestRoadNodes(simulation, graphNodes);
+        }
+
+        //urbanSegment = new UrbanSegment(40,40);
+        //urbanSegment.calculateClosestRoadSegment(simulation,SEARCH_RADIUS);
+    }
+
+    public void useButton2Pressed() {
+        for (IndustrySegment is: segmentsContainer.industrySegments) {
+            is.calculateClosestRoadSegment(simulation, 5);
+            is.findClosestRoadNodes(simulation, graphNodes);
+        }
+
+        //urbanSegment.findClosestRoadNodes(simulation, graphNodes);
+    }
+    public void useButton3Pressed() {
+        //urbanSegment.printSegmentStats();
+        for (UrbanSegment us: segmentsContainer.urbanSegments)
+            us.printSegmentStats();
+        for (IndustrySegment is: segmentsContainer.industrySegments)
+            is.printSegmentStats();
+    }
+    public void useButton4Pressed() {
+
+        segmentsContainer.bindRandomly();
+    }
+
+    public void printStats() {
+        System.out.println("Number of urban segments: " + simulation.numberOfUrbanSegments);
+        System.out.println("Number of industry segments: " + simulation.numberOfIndustrySegments);
+        System.out.println("Number of road1 segments: " + simulation.numberOfRoad1Segments);
     }
     
     

@@ -24,7 +24,7 @@ public class SimulationApplication extends Application {
     public static MainWindow mainWindow;
 
     public static int SCREEN_WIDTH = 892;
-    public static int SCREEN_HEIGHT = 800;
+    public static int SCREEN_HEIGHT = 840;
 
     @Override
     public void start(Stage stage) throws Exception {

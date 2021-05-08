@@ -12,10 +12,17 @@ public class Simulation implements Serializable {
     public int width, height;
     public FieldType [][] grid;
 
+    public int numberOfUrbanSegments = 0;
+    public int numberOfIndustrySegments = 0;
+    public int numberOfRoad1Segments = 0;
+
+
     public Simulation () {
         width = defaultGenerationWidth;
         height = defaultGenerationHeight;
         grid = new FieldType[width][height];
+
+        grid[40][40] = FieldType.FIELD_URBAN1;
 
     }
 
@@ -24,6 +31,29 @@ public class Simulation implements Serializable {
         this.height=height;
         grid = new FieldType[width][height];
 
+    }
+
+    public void updateSegmentsCount() {
+        numberOfUrbanSegments = 0;
+        numberOfIndustrySegments = 0;
+        numberOfRoad1Segments = 0;
+        for (int i=0; i<width; i++) {
+            for (int j=0; j<height; j++) {
+                if (grid[i][j] == FieldType.FIELD_URBAN1) {
+                    numberOfUrbanSegments++;
+                } else if (grid[i][j] == FieldType.FIELD_INDUSTRY1) {
+                    numberOfIndustrySegments++;
+                } else if (grid[i][j] == FieldType.FIELD_ROAD1) {
+                    numberOfRoad1Segments++;
+                }
+            }
+        }
+    }
+
+    public FieldType get(int x, int y) {
+        if (x>=0 && x<width && y>=0 && y<height) {
+            return grid[x][y];
+        } else return FieldType.FIELD_EMPTY;
     }
 
     public int getNeighboursOfStateFromGrid(FieldType[][] grid, FieldType state, int x, int y) {

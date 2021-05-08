@@ -10,7 +10,7 @@
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="840.0" prefWidth="892.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stuff.gui.MainWindow">
+<AnchorPane prefHeight="840.0" prefWidth="914.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stuff.gui.MainWindow">
    <children>
       <TitledPane fx:id="mainTitledPane" layoutX="106.0" prefHeight="666.0" prefWidth="808.0" text="File" textAlignment="CENTER">
          <content>
@@ -52,5 +52,10 @@
       <ToggleButton fx:id="normalViewButton" layoutX="32.0" layoutY="707.0" mnemonicParsing="false" onAction="#viewModeNormalButtonPressed" text="Normal" />
       <ToggleButton fx:id="heatMapViewButton" layoutX="22.0" layoutY="733.0" mnemonicParsing="false" onAction="#viewModeTrafficHeatButtonPressed" text="Traffic heat" />
       <ToggleButton disable="true" layoutX="15.0" layoutY="759.0" mnemonicParsing="false" text="ToggleButton" />
+      <Button fx:id="useButton" layoutX="255.0" layoutY="784.0" mnemonicParsing="false" onAction="#useButton1Pressed" text="B1" />
+      <Button fx:id="statsButton" layoutX="140.0" layoutY="784.0" mnemonicParsing="false" onAction="#printStats" prefHeight="25.0" prefWidth="73.0" text="Show stats" />
+      <Button layoutX="285.0" layoutY="784.0" mnemonicParsing="false" onAction="#useButton2Pressed" prefHeight="25.0" prefWidth="30.0" text="B2" />
+      <Button layoutX="315.0" layoutY="784.0" mnemonicParsing="false" onAction="#useButton3Pressed" prefHeight="25.0" prefWidth="33.0" text="B3" />
+      <Button layoutX="348.0" layoutY="784.0" mnemonicParsing="false" onAction="#useButton4Pressed" text="B4" />
    </children>
 </AnchorPane>
