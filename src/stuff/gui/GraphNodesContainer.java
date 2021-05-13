@@ -4,16 +4,15 @@ import java.util.ArrayList;
 
 public class GraphNodesContainer {
 
-    int n = 0;
+
     public ArrayList<GraphNode> graphNodes;
 
     public GraphNodesContainer(ArrayList<GraphNode> graphNodes) {
         this.graphNodes = graphNodes;
-        n = graphNodes.size();
     }
 
     public int getSize() {
-        return n;
+        return graphNodes.size();
     }
 
     public ArrayList<GraphNode> get() {
@@ -41,6 +40,15 @@ public class GraphNodesContainer {
         return -1;
     }
 
+    public GraphNode getGraphNodeAt (int x, int y) {
+        for (GraphNode gn : graphNodes) {
+            if (x == gn.position.getX() && y == gn.position.getY()) {
+                return gn;
+            }
+        }
+        return null;
+    }
+
     public double getDistanceBetweenNodes(GraphNode n1, GraphNode n2) {
         if (n1!= null && n2 != null) {
             for (GraphNode gn : graphNodes) {
@@ -61,6 +69,11 @@ public class GraphNodesContainer {
         }
         return -1;
     }
+
+    public double getDistanceBetweenNodesById ( int id1, int id2) {
+        return getDistanceBetweenNodes(graphNodes.get(id1), graphNodes.get(id2));
+    }
+
 
     public void setDistanceBetweenNodesById(int id1, int id2, double distance) {
         //if (distance>0) {
@@ -87,13 +100,13 @@ public class GraphNodesContainer {
             for (GraphNode gn : graphNodes) {
                 if (gn.equals(node1)) {
                     for (int i = 0; i < 4; i++) {
-                        if (gn.neighbours[i].equals(node2)) {
+                        if (gn.neighbours[i]!=null && gn.neighbours[i].equals(node2)) {
                             gn.distances[i] = distance;
                         }
                     }
                 } else if (gn.equals(node2)) {
                     for (int i = 0; i < 4; i++) {
-                        if (gn.neighbours[i].equals(node1)) {
+                        if (gn.neighbours[i]!=null && gn.neighbours[i].equals(node1)) {
                             gn.distances[i] = distance;
                         }
                     }

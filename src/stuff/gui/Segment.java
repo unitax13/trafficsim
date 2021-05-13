@@ -104,7 +104,7 @@ public class Segment {
         //LEFT
         int presentX = X - i;
         int presentY = Y;
-        if (simulation.grid[presentX][presentY] == Simulation.FieldType.FIELD_ROAD1) {
+        if (simulation.get(presentX,presentY) == Simulation.FieldType.FIELD_ROAD1) {
             //System.out.println("Found road segment at [" + presentX + "," + presentY + "].");
             closestRoadSegment = new Position(presentX, presentY);
             return closestRoadSegment;
@@ -112,7 +112,7 @@ public class Segment {
         presentX = X;
         presentY = Y + i;
         //UP
-        if (simulation.grid[presentX][presentY] == Simulation.FieldType.FIELD_ROAD1) {
+        if (simulation.get(presentX,presentY) == Simulation.FieldType.FIELD_ROAD1) {
             //System.out.println("Found road segment at [" + presentX + "," + presentY + "].");
             closestRoadSegment = new Position(presentX, presentY);
             return closestRoadSegment;
@@ -120,7 +120,7 @@ public class Segment {
         //RIGHT
         presentX = X + i;
         presentY = Y;
-        if (simulation.grid[presentX][presentY] == Simulation.FieldType.FIELD_ROAD1) {
+        if (simulation.get(presentX,presentY) == Simulation.FieldType.FIELD_ROAD1) {
             //System.out.println("Found road segment at [" + presentX + "," + presentY + "].");
             closestRoadSegment = new Position(presentX, presentY);
             return closestRoadSegment;
@@ -128,7 +128,7 @@ public class Segment {
         //RIGHT
         presentX = X;
         presentY = Y - i;
-        if (simulation.grid[presentX][presentY] == Simulation.FieldType.FIELD_ROAD1) {
+        if (simulation.get(presentX,presentY) == Simulation.FieldType.FIELD_ROAD1) {
             //System.out.println("Found road segment at [" + presentX + "," + presentY + "].");
             closestRoadSegment = new Position(presentX, presentY);
             return closestRoadSegment;
@@ -143,7 +143,6 @@ public class Segment {
         if (closestRoadSegment != null) {
             int x = closestRoadSegment.getX();
             int y = closestRoadSegment.getY();
-            boolean directionIsHorizontal;
 
 
             if (graphNodes.isNode(x, y)) {
@@ -158,7 +157,6 @@ public class Segment {
             //CHECK FOR THE SECOND ONE ONLY IF THE ARE ROAD SEGMENTS AROUND THE CLOSEST SEGMENT
 
             if (simulation.grid[x - 1][y] == Simulation.FieldType.FIELD_ROAD1 && simulation.grid[x + 1][y] == Simulation.FieldType.FIELD_ROAD1) {
-                directionIsHorizontal = true;
 
                 //W PRAWO
                 for (int i = x; simulation.grid[i][y] == Simulation.FieldType.FIELD_ROAD1; i++) {
@@ -179,7 +177,6 @@ public class Segment {
 
             }
             if (simulation.grid[x][y - 1] == Simulation.FieldType.FIELD_ROAD1 && simulation.grid[x][y + 1] == Simulation.FieldType.FIELD_ROAD1) {
-                directionIsHorizontal = false;
 
                 // W GÓRĘ
                 for (int i = y; simulation.grid[x][i] == Simulation.FieldType.FIELD_ROAD1; i++) {

@@ -254,6 +254,10 @@ public class MainWindow implements Initializable {
         rectangleToggleButton.setToggleGroup(brushShapeToggleGroup);
         lineToggleButton.setToggleGroup(brushShapeToggleGroup);
 
+        ToggleGroup viewModeToggleGroup = new ToggleGroup();
+        normalViewButton.setToggleGroup(viewModeToggleGroup);
+        heatMapViewButton.setToggleGroup(viewModeToggleGroup);
+
         roadToggleButton.setSelected(true);
 
 
@@ -296,18 +300,20 @@ public class MainWindow implements Initializable {
         });
 
         mainCanvas.setOnMouseDragged(e -> {
-            currentMousePos = new Point2D(e.getX(), e.getY());
-           // System.out.println("Is dragging");
-            if (isDragging == false) {
-                isDragging = true;
-                previousMousePos = getCurrentMousePos();
+            if (!isExamining) {
+                currentMousePos = new Point2D(e.getX(), e.getY());
+                // System.out.println("Is dragging");
+                if (isDragging == false) {
+                    isDragging = true;
+                    previousMousePos = getCurrentMousePos();
 
-                previousField = simulationGrid.getFieldWithMouseOn();
+                    previousField = simulationGrid.getFieldWithMouseOn();
 
+                }
+                //System.out.println("Prevoius field: " + previousField);
+                //System.out.println("Previous mouse pos: " + previousMousePos);
+                redraw();
             }
-            //System.out.println("Prevoius field: " + previousField);
-            //System.out.println("Previous mouse pos: " + previousMousePos);
-            redraw();
         });
 
         mainCanvas.setOnMouseReleased( e -> {
@@ -566,6 +572,7 @@ public class MainWindow implements Initializable {
     public void openFileButtonPressed() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open file...");
+        fileChooser.setInitialDirectory(new File("C:\\Users\\Jacek\\Desktop\\stufff\\"));
         File selectedFile = fileChooser.showOpenDialog(SimulationApplication.stage);
         openFile(selectedFile);
     }
@@ -579,8 +586,11 @@ public class MainWindow implements Initializable {
                 Simulation simulation1 = null;
                 simulation1 = (Simulation) objectInputStream.readObject();
                 simulation = simulation1;
+                simulation.simulationStats = new SimulationStats(simulation);
                 calculateSize(simulation);
+
                 simulationGrid = new SimulationGrid(this,simulation, fieldWidth,fieldHeight);
+                simulation.simulationStats.updateSegmentsCount();
 
                 objectInputStream.close();
                 fileInputStream.close();
@@ -628,6 +638,7 @@ public class MainWindow implements Initializable {
 
     public void viewModeTrafficHeatButtonPressed() {
         viewMode = 2;
+
     }
 
     public void useButton1Pressed() {
@@ -691,9 +702,8 @@ public class MainWindow implements Initializable {
     }
 
     public void printStats() {
-        System.out.println("Number of urban segments: " + simulation.numberOfUrbanSegments);
-        System.out.println("Number of industry segments: " + simulation.numberOfIndustrySegments);
-        System.out.println("Number of road1 segments: " + simulation.numberOfRoad1Segments);
+        simulation.simulationStats.updateSegmentsCount();
+        simulation.simulationStats.printStats();
     }
     
     

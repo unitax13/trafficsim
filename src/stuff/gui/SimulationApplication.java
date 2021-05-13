@@ -45,7 +45,7 @@ public class SimulationApplication extends Application {
 //            }
 //        });
 
-        File file = new File("C:\\Users\\Jacek\\Desktop\\stufff\\hello3");
+        File file = new File("C:\\Users\\Jacek\\Desktop\\stufff\\symetry1");
         mainWindow.openFile(file);
 
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {

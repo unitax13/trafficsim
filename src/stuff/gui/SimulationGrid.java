@@ -98,7 +98,7 @@ public class SimulationGrid {
                 }
             }
         }
-        simulation.updateSegmentsCount();
+        simulation.simulationStats.updateSegmentsCount();
     }
 
     public void drawRectangleBetween(Position a, Position b, Simulation.FieldType fieldType) {
@@ -135,7 +135,7 @@ public class SimulationGrid {
                 }
             }
         }
-        simulation.updateSegmentsCount();
+        simulation.simulationStats.updateSegmentsCount();
 
     }
 

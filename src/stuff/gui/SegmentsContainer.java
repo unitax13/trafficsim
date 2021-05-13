@@ -10,7 +10,7 @@ public class SegmentsContainer {
     GraphNodesContainer graphNodesContainer;
     ArrayList<UrbanSegment> urbanSegments;
     ArrayList<IndustrySegment> industrySegments;
-    int boundSegments = 0;
+
 
     public SegmentsContainer() {
         urbanSegments = new ArrayList<>();
@@ -88,11 +88,11 @@ public class SegmentsContainer {
                     us.boundIndustrySegment = is;
                     is.boundUrbanSegment = us;
                     System.out.println("Urban segment " + i +" at [" + us.position.getX() + ";" + us.position.getY() + "] bound to industry at [" + is.position.getX() + ";" + is.position.getY() + "]");
-                    boundSegments++;
+                    simulation.simulationStats.boundSegments++;
                 }
             }
         } else {
-            boundSegments = 0;
+            simulation.simulationStats.boundSegments = 0;
             for (int i = 0; i < urbanSegments.size() && i < industrySegments.size(); i++ ) {
                 Random r = new Random();
                 ArrayList<IndustrySegment> ises = getUnboundIndustrySegments();
@@ -104,7 +104,7 @@ public class SegmentsContainer {
                 us.boundIndustrySegment = is;
                 is.boundUrbanSegment = us;
                 System.out.println("Urban segment " + i +" at [" + us.position.getX() + ";" + us.position.getY() + "] bound to industry at [" + is.position.getX() + ";" + is.position.getY() + "]");
-                boundSegments++;
+                simulation.simulationStats.boundSegments++;
             }
 
         }
@@ -115,6 +115,7 @@ public class SegmentsContainer {
         ArrayList<Integer> destinationIds = new ArrayList<>();
         ArrayList<Double> distances = new ArrayList<>();
         ArrayList<ArrayList<Position>> subPathToIndustry = new ArrayList<>();
+        ArrayList<ArrayList<GraphNode>> pathList = new ArrayList<>();
 
 
         if (urbanSegment.closestRoadNodes!=null && urbanSegment.boundIndustrySegment != null) {
@@ -145,8 +146,7 @@ public class SegmentsContainer {
             for (int a=0; a<startIds.size(); a++) {
 
                 ShortestPath path1 = new ShortestPath();
-                PathAndDistances pathAndDistances1[] = path1.dijkstra(graphNodesContainer.get(), startIds.get(a));
-                int destinationNodeI = -1;
+                PathAndDistances[] pathAndDistances1 = path1.dijkstra(graphNodesContainer.get(), startIds.get(a));
                 for (int i = 0; i < pathAndDistances1.length; i++) {
 
                     if ( ( destinationIds.size()>=1 && i == destinationIds.get(0) ) || ( destinationIds.size()>=2 && i == destinationIds.get(1) ) ) {
@@ -188,13 +188,16 @@ public class SegmentsContainer {
 
 
                         System.out.printf(graphNodesContainer.get().get(startIds.get(a)).position.toString() + "\n"); //print the last one
-                        path.add(graphNodesContainer.get().get(startIds.get(a)));
+                        path.add(graphNodesContainer.get().get(startIds.get(a))); //finish the node path and add that path to urban segment
+                        pathList.add(path);
+
 
                         singleSubPathToIndustry.add(graphNodesContainer.get().get(startIds.get(a)).position);
                         singleSubPathToIndustry.add(urbanSegment.closestRoadSegment);
                         subPathToIndustry.add(singleSubPathToIndustry);
 
-                        //nodePaths.add(path);
+
+
                     }
                 }
             }
@@ -209,15 +212,19 @@ public class SegmentsContainer {
             }
 
             urbanSegment.pathToIndustry = subPathToIndustry.get(whichOne);
+            urbanSegment.nodeRouteToIndustry = pathList.get(whichOne);
             urbanSegment.distanceToIndustry = minDistance;
 
-
-
-
-
-
-
-
+            //PATH DISTANCE CHANGE
+            //ZATŁACZANIE
+            double CROWDING_INDICATOR = 1.05;
+            for (int i1 = 0; i1<pathList.get(whichOne).size()-1; i1++) {
+                GraphNode n1 = pathList.get(whichOne).get(i1);
+                GraphNode n2 = pathList.get(whichOne).get(i1+1);
+                graphNodesContainer.setDistanceBetweenNodes(n1,n2, graphNodesContainer.getDistanceBetweenNodes(n1,n2) + 5);
+            }
+            //PATH DISTANCE CHANGE
+            //ZATŁACZANIE
 
 
 

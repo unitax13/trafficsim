@@ -1,6 +1,7 @@
 package stuff.gui;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Simulation implements Serializable {
 
@@ -12,15 +13,14 @@ public class Simulation implements Serializable {
     public int width, height;
     public FieldType [][] grid;
 
-    public int numberOfUrbanSegments = 0;
-    public int numberOfIndustrySegments = 0;
-    public int numberOfRoad1Segments = 0;
+    public transient SimulationStats simulationStats;
 
 
     public Simulation () {
         width = defaultGenerationWidth;
         height = defaultGenerationHeight;
         grid = new FieldType[width][height];
+        simulationStats = new SimulationStats(this);
 
         grid[40][40] = FieldType.FIELD_URBAN1;
 
@@ -29,14 +29,16 @@ public class Simulation implements Serializable {
     public Simulation(int width, int height) {
         this.width =width;
         this.height=height;
+        simulationStats = new SimulationStats(this);
+
         grid = new FieldType[width][height];
 
     }
 
-    public void updateSegmentsCount() {
-        numberOfUrbanSegments = 0;
-        numberOfIndustrySegments = 0;
-        numberOfRoad1Segments = 0;
+    public ArrayList<Integer> getSegmentsCount() {
+        int numberOfUrbanSegments = 0;
+        int numberOfIndustrySegments = 0;
+        int numberOfRoad1Segments = 0;
         for (int i=0; i<width; i++) {
             for (int j=0; j<height; j++) {
                 if (grid[i][j] == FieldType.FIELD_URBAN1) {
@@ -48,6 +50,12 @@ public class Simulation implements Serializable {
                 }
             }
         }
+        ArrayList<Integer> stats = new ArrayList<>();
+        stats.add(numberOfUrbanSegments);
+        stats.add(numberOfIndustrySegments);
+        stats.add(numberOfRoad1Segments);
+
+        return stats;
     }
 
     public FieldType get(int x, int y) {
