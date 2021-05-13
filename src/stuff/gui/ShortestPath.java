@@ -55,7 +55,7 @@ public class ShortestPath {
 
                 if (!sptSet[v] && thereIsAnEdgeFromUToV>-1 && dist[u] != Double.MAX_VALUE && dist[u] + distance < dist[v]) {
                     dist[v] = dist[u] + distance;
-                    System.out.println("Distance " + v + " updated");
+                    //System.out.println("Distance " + v + " updated");
                     pad[v].dist = dist[v];
                     pad[v].node = graphNodes.get(v);
                     pad[v].predecessor=pad[u];

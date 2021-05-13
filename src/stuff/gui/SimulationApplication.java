@@ -12,6 +12,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -43,6 +44,9 @@ public class SimulationApplication extends Application {
 //                System.out.println("Esc was clicked");
 //            }
 //        });
+
+        File file = new File("C:\\Users\\Jacek\\Desktop\\stufff\\hello3");
+        mainWindow.openFile(file);
 
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override

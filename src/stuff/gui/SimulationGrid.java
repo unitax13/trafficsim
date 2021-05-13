@@ -18,6 +18,9 @@ public class SimulationGrid {
     private GraphicsContext gc;
     private Canvas mainCanvas;
 
+    public ArrayList<Position> positionPath;
+    public boolean positionPathToDrawIsOn = false;
+
     public SimulationGrid(MainWindow mainWindow, Simulation simulation, int fieldWidth, int fieldHeight) {
         this.mainWindow = mainWindow;
         this.simulation = simulation;
@@ -36,24 +39,26 @@ public class SimulationGrid {
             drawNodeNumbers();
         if (mainWindow.pathIsDrawn)
             drawPath();
+        if (positionPathToDrawIsOn)
+            drawPositionPath();
 
     }
     
-    public Point2D getFieldWithMouseOn() {
+    public Position getFieldWithMouseOn() {
         Point2D p = mainWindow.getCurrentMousePos();
         if (p!= null) {
             int chosenFieldX = (int)(p.getX() / fieldWidth);
             int chosenFieldY = (int)(p.getY() / fieldHeight);
             if (chosenFieldX >= 0 && chosenFieldX < simulation.width && chosenFieldY >= 0 && chosenFieldY < simulation.height)
-                return new Point2D(chosenFieldX, chosenFieldY);
+                return new Position(chosenFieldX, chosenFieldY);
             else
-                return new Point2D(-1, -1);
+                return new Position(-1, -1);
         }
-        return new Point2D(-1, -1);
+        return new Position(-1, -1);
         }
 
     private void drawSelection(GraphicsContext gc) {
-        Point2D selectedField = getFieldWithMouseOn();
+        Position selectedField = getFieldWithMouseOn();
         if (selectedField.getX() != -1 && selectedField.getY() != -1) {
             Color inverse = Color.LIGHTGRAY;
 
@@ -65,7 +70,7 @@ public class SimulationGrid {
         }
     }
 
-    public void drawPerpendicularLineBetween(Point2D a, Point2D b, Simulation.FieldType fieldType) {
+    public void drawPerpendicularLineBetween(Position a, Position b, Simulation.FieldType fieldType) {
         System.out.println("Drawing between " + a + " and "+ b);
 
         if ( ( Math.abs(b.getX() - a.getX()) > Math.abs(b.getY() - a.getY()) ) && (b.getX() - a.getX() ) >= 0 ) { //heading east
@@ -96,7 +101,7 @@ public class SimulationGrid {
         simulation.updateSegmentsCount();
     }
 
-    public void drawRectangleBetween(Point2D a, Point2D b, Simulation.FieldType fieldType) {
+    public void drawRectangleBetween(Position a, Position b, Simulation.FieldType fieldType) {
         double deltaX = b.getX() - a.getX();
         double deltaY = b.getY() - a.getY();
         int signumDeltaX = (int) Math.signum(deltaX);
@@ -229,7 +234,7 @@ public class SimulationGrid {
                         //PATH PATH PATH
                         //Create node only if paths above or below
                         if (data[rowAboveOffset + x] == Simulation.FieldType.FIELD_ROAD1 || data[rowBelowOffset + x] == Simulation.FieldType.FIELD_ROAD1) {
-                            n = new GraphNode(new Point2D(y, x));
+                            n = new GraphNode(new Position(y, x));
                             leftNode.neighbours[1] = n;
                             n.neighbours[3] = leftNode;
                             leftNode = n;
@@ -237,7 +242,7 @@ public class SimulationGrid {
                     } else {
                         // PATH PATH WALL
                         //Create path at end of corridor
-                        n = new GraphNode(new Point2D(y, x));
+                        n = new GraphNode(new Position(y, x));
                         leftNode.neighbours[1] = n;
                         n.neighbours[3] = leftNode;
                         leftNode = null;
@@ -246,14 +251,14 @@ public class SimulationGrid {
                     if (nxt == Simulation.FieldType.FIELD_ROAD1) {
                         //WALL PATH PATH
                         //Create path at start of corridor
-                        n = new GraphNode(new Point2D(y,x));
+                        n = new GraphNode(new Position(y,x));
                         leftNode = n;
                     } else {
                         //WALL PATH WALL
                         //Create node only if in dead end
                         if ((data[rowAboveOffset+x] != Simulation.FieldType.FIELD_ROAD1) || (data[rowBelowOffset + x] != Simulation.FieldType.FIELD_ROAD1)) {
                             //System.out.println("Create node in dead end");
-                            n = new GraphNode(new Point2D(y,x));
+                            n = new GraphNode(new Position(y,x));
                         }
                     }
                 }
@@ -280,7 +285,7 @@ public class SimulationGrid {
         rowOffset = (height-1)*width;
         for (int x=0; x<width; x++) {
             if (data[rowOffset + x] == Simulation.FieldType.FIELD_ROAD1) {
-                end = new GraphNode(new Point2D(height-1, x));
+                end = new GraphNode(new Position(height-1, x));
                 t = topNodes[x];
                 t.neighbours[2] = end;
                 end.neighbours[0] = t;
@@ -398,6 +403,39 @@ public class SimulationGrid {
 
 
 
+    }
+
+    public void drawPositionPath() {
+
+        Color color = Color.rgb(250, 22, 199);
+
+        if (positionPath != null) {
+            for (int i = 0; i < positionPath.size() - 1; i++) {
+                Position one = positionPath.get(i);
+                Position two = positionPath.get(i + 1);
+                if (one != null && two != null) {
+                    int x = one.getX();
+                    int y = one.getY();
+
+                    if (one.getX() == two.getX()) {
+                        double delta = two.getY() - one.getY();
+                        for (int j = 0; j <= Math.abs(delta); j++) {
+                            gc.setFill(color);
+                            gc.fillRect(fieldWidth * x, fieldHeight * y, fieldWidth, fieldHeight);
+                            y += Math.signum(delta);
+                        }
+                    } else if (one.getY() == two.getY()) {
+                        double delta = two.getX() - one.getX();
+                        for (int j = 0; j <= Math.abs(delta); j++) {
+
+                            gc.setFill(color);
+                            gc.fillRect(fieldWidth * x, fieldHeight * y, fieldWidth, fieldHeight);
+                            x += Math.signum(delta);
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }

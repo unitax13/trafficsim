@@ -1,20 +1,13 @@
 package stuff.gui;
 
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.stage.FileChooser;
 
 import java.io.*;
@@ -22,8 +15,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
-
-import static javafx.scene.paint.Color.*;
 
 public class MainWindow implements Initializable {
 
@@ -59,22 +50,24 @@ public class MainWindow implements Initializable {
     GraphNodesContainer paths;
     double distance;
 
+    boolean isExamining = false;
     private Simulation.FieldType chosenFieldType = Simulation.FieldType.FIELD_ROAD1;
 
 
 
 
     private Point2D previousMousePos = new Point2D(-1,-1);
-    private Point2D previousField = new Point2D(0,0);
+    private Position previousField = new Position(0,0);
     boolean isDragging = false;
     boolean escWasPressed = false;
 
     Simulation simulation;
     SimulationGrid simulationGrid;
     public GraphicsContext gc;
+    ExaminationTool examinationTool;
+
 
     GraphNodesContainer graphNodes;
-    //ArrayList<GraphNode> graphNodes;
     boolean rectangleDraw = false;
 
     SegmentsContainer segmentsContainer;
@@ -220,6 +213,7 @@ public class MainWindow implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        SimulationApplication.mainWindow = this;
         System.out.println(getClass() + "was called");
         gc = mainCanvas.getGraphicsContext2D();
         simulation = new Simulation();
@@ -231,12 +225,14 @@ public class MainWindow implements Initializable {
         simulationGrid = new SimulationGrid(this,simulation, fieldWidth,fieldHeight);
         gridOpacitySliderUpdated();
 
+        examinationTool = new ExaminationTool(simulation, simulationGrid,graphNodes,segmentsContainer);
+
         initGui();
 
 
 
         redraw();
-        SimulationApplication.mainWindow = this;
+
     }
 
     public void redraw() {
@@ -259,6 +255,8 @@ public class MainWindow implements Initializable {
         lineToggleButton.setToggleGroup(brushShapeToggleGroup);
 
         roadToggleButton.setSelected(true);
+
+
     }
 
     private void initCanvas() {
@@ -279,16 +277,20 @@ public class MainWindow implements Initializable {
 
 
         mainCanvas.setOnMousePressed(e -> {
-            if (e.getButton() == MouseButton.PRIMARY) {
-                System.out.println("Left mouse was pressed");
-                escWasPressed = false;
-                Point2D coords = simulationGrid.getFieldWithMouseOn();
-                simulation.grid[(int) coords.getX()][(int) coords.getY()] = chosenFieldType;
-            } else if (e.getButton() == MouseButton.SECONDARY) {
-                System.out.println("Right mouse was pressed");
-                escWasPressed = false;
-                Point2D coords = simulationGrid.getFieldWithMouseOn();
-                simulation.grid[(int) coords.getX()][(int) coords.getY()] = Simulation.FieldType.FIELD_EMPTY;
+            Position coords = simulationGrid.getFieldWithMouseOn();
+            if (!isExamining) {
+                if (e.getButton() == MouseButton.PRIMARY) {
+                    System.out.println("Left mouse was pressed");
+                    escWasPressed = false;
+                    simulation.grid[(int) coords.getX()][(int) coords.getY()] = chosenFieldType;
+                } else if (e.getButton() == MouseButton.SECONDARY) {
+                    System.out.println("Right mouse was pressed");
+                    escWasPressed = false;
+                    simulation.grid[(int) coords.getX()][(int) coords.getY()] = Simulation.FieldType.FIELD_EMPTY;
+                }
+            } else { //isExamining == true
+                examinationTool.showPath(coords.getX(), coords.getY());
+                examinationTool.printInfoAboutSegment(coords.getX(), coords.getY());
             }
 
         });
@@ -313,7 +315,7 @@ public class MainWindow implements Initializable {
             if (e.getButton() == MouseButton.PRIMARY) {
                 if (isDragging && !escWasPressed) {
                     isDragging = false;
-                    Point2D newField = simulationGrid.getFieldWithMouseOn();
+                    Position newField = simulationGrid.getFieldWithMouseOn();
                     if (rectangleDraw && chosenFieldType != Simulation.FieldType.FIELD_ROAD1) {
                         simulationGrid.drawRectangleBetween(previousField, newField, chosenFieldType);
                     } else {
@@ -323,7 +325,7 @@ public class MainWindow implements Initializable {
             } else if (e.getButton() == MouseButton.SECONDARY) {
                 if (isDragging && !escWasPressed) {
                     isDragging = false;
-                    Point2D newField = simulationGrid.getFieldWithMouseOn();
+                    Position newField = simulationGrid.getFieldWithMouseOn();
                     if (rectangleDraw) {
                         simulationGrid.drawRectangleBetween(previousField, newField, Simulation.FieldType.FIELD_EMPTY);
                     } else {
@@ -409,26 +411,26 @@ public class MainWindow implements Initializable {
         pathAndDistances = t.dijkstra(graphNodes.get(),start);
         System.out.println("Distances");
         for (int i=0; i<pathAndDistances.length; i++) {
-            System.out.printf(i+ "." + pathAndDistances[i].dist);
+            System.out.printf(i+ "." + pathAndDistances[i].dist); //whole distance
             System.out.printf("[");
             if (pathAndDistances[i].node != null)
-                System.out.printf(pathAndDistances[i].node.position.toString());
+                System.out.printf(pathAndDistances[i].node.position.toString()); //first/last node position
             System.out.printf("----->");
 
             PathAndDistances pad2 = pathAndDistances[i].predecessor;
 
-            ArrayList<GraphNode> path = new ArrayList<>();
-            path.add(pathAndDistances[i].node);
+            ArrayList<GraphNode> path = new ArrayList<>(); //a path to show is created as an arraylist
+            path.add(pathAndDistances[i].node); //the first/last node is added
 
-
+            //while the predecessors are not null
             while (pad2 !=null) {
-                if (pad2.node != null) {
-                    path.add(pad2.node);
-                    System.out.printf(pad2.node.position.toString() + "-->");
+                if (pad2.node != null) { //if there's a node
+                    path.add(pad2.node); // add it to a path to show
+                    System.out.printf(pad2.node.position.toString() + "-->"); //also print that node
                 }
                 pad2 = pad2.predecessor;
             }
-            System.out.printf(graphNodes.get().get(start).position.toString());
+            System.out.printf(graphNodes.get().get(start).position.toString()); //print the last one
             path.add(graphNodes.get().get(start));
             nodePaths.add(path);
 
@@ -484,7 +486,7 @@ public class MainWindow implements Initializable {
             if (graphNodes.get() != null) {
                 GraphNode node1 = graphNodes.get().get(distanceBetweenId1);
                 GraphNode node2 = graphNodes.get().get(distanceBetweenId2);
-                if (node1!= null && node2 != null) {
+                if (node1 != null && node2 != null) {
                     for (int i = 0; i < 4; i++) {
                         GraphNode n = node1.neighbours[i];
                         if (n!=null && n.equals(node2)) {
@@ -529,12 +531,22 @@ public class MainWindow implements Initializable {
 
     public void roadToggleButtonToggled() {
         chosenFieldType = Simulation.FieldType.FIELD_ROAD1;
+        simulationGrid.positionPathToDrawIsOn = false;
+        isExamining = false;
     }
     public void urbanAreaButtonToggled() {
         chosenFieldType = Simulation.FieldType.FIELD_URBAN1;
+        isExamining = false;
+        simulationGrid.positionPathToDrawIsOn = false;
     }
     public void industryAreaButtonToggled() {
         chosenFieldType = Simulation.FieldType.FIELD_INDUSTRY1;
+        isExamining = false;
+        simulationGrid.positionPathToDrawIsOn = false;
+    }
+    public void examineButtonPressed() {
+        examinationTool = new ExaminationTool(simulation, simulationGrid, graphNodes, segmentsContainer);
+        isExamining = true;
     }
 
     public void rectangleButtonToggled() {
@@ -555,6 +567,10 @@ public class MainWindow implements Initializable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open file...");
         File selectedFile = fileChooser.showOpenDialog(SimulationApplication.stage);
+        openFile(selectedFile);
+    }
+
+    public void openFile(File selectedFile) {
         if (selectedFile!=null) {
             try {
                 FileInputStream fileInputStream = new FileInputStream(selectedFile);
@@ -576,13 +592,17 @@ public class MainWindow implements Initializable {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
     }
+
     public void saveFileButtonPressed() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save file...");
         File file = fileChooser.showSaveDialog(SimulationApplication.stage);
+        saveFile(file);
+    }
+
+    public void saveFile (File file) {
         if (file!=null) {
             try {
                 FileOutputStream fileOutputStream = new FileOutputStream(file);
@@ -616,6 +636,8 @@ public class MainWindow implements Initializable {
             us.calculateClosestRoadSegment(simulation, 5);
             us.findClosestRoadNodes(simulation, graphNodes);
         }
+        for (UrbanSegment us: segmentsContainer.urbanSegments)
+            us.printSegmentStats();
 
         //urbanSegment = new UrbanSegment(40,40);
         //urbanSegment.calculateClosestRoadSegment(simulation,SEARCH_RADIUS);
@@ -626,19 +648,46 @@ public class MainWindow implements Initializable {
             is.calculateClosestRoadSegment(simulation, 5);
             is.findClosestRoadNodes(simulation, graphNodes);
         }
+        for (IndustrySegment is: segmentsContainer.industrySegments)
+            is.printSegmentStats();
 
         //urbanSegment.findClosestRoadNodes(simulation, graphNodes);
     }
     public void useButton3Pressed() {
         //urbanSegment.printSegmentStats();
-        for (UrbanSegment us: segmentsContainer.urbanSegments)
-            us.printSegmentStats();
-        for (IndustrySegment is: segmentsContainer.industrySegments)
-            is.printSegmentStats();
+
+
     }
     public void useButton4Pressed() {
 
+        segmentsContainer = new SegmentsContainer(simulation);
+        segmentsContainer.setGraphNodesContainer(graphNodes);
         segmentsContainer.bindRandomly();
+
+        for (UrbanSegment us: segmentsContainer.urbanSegments) {
+            us.calculateClosestRoadSegment(simulation, 5);
+            us.findClosestRoadNodes(simulation, graphNodes);
+        }
+
+        for (IndustrySegment is: segmentsContainer.industrySegments) {
+            is.calculateClosestRoadSegment(simulation, 5);
+            is.findClosestRoadNodes(simulation, graphNodes);
+        }
+
+        System.out.println("Urban segments stats:");
+        for (UrbanSegment us: segmentsContainer.urbanSegments)
+            us.printSegmentStats();
+        System.out.println("Industry segments stats:");
+        for (IndustrySegment is: segmentsContainer.industrySegments)
+            is.printSegmentStats();
+
+        System.out.println("Finding paths");
+        for (UrbanSegment us: segmentsContainer.urbanSegments) {
+            segmentsContainer.findPathToCorrespondingSegment(us);
+            System.out.println(String.valueOf(us.distanceToIndustry) + ":" + us.pathToIndustry);
+
+        }
+
     }
 
     public void printStats() {

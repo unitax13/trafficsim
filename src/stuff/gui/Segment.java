@@ -55,7 +55,7 @@ public class Segment {
 
             //search in a cross first
             if (i==(lastCrossCheckI + deltaToTheNextSquareCorner)) {
-                System.out.println("i = " + i + "; searching in a cross at range " + (spiralCircle+1));
+                //System.out.println("i = " + i + "; searching in a cross at range " + (spiralCircle+1));
                 pos = searchCrossAtRange(simulation, spiralCircle+1);
                 if (pos!=null) {
                     closestRoadSegment = pos;
@@ -73,11 +73,11 @@ public class Segment {
                 presentX = (X - x);
                 presentY = (Y - y);
                 if (simulation.grid[presentX][presentY] == Simulation.FieldType.FIELD_ROAD1) {
-                    System.out.println("Found road segment at [" + presentX + "," + presentY + "].");
+                    //System.out.println("Found road segment at [" + presentX + "," + presentY + "].");
                     closestRoadSegment = new Position(presentX, presentY);
                     return closestRoadSegment;
                 }
-                System.out.println("Step " + i + ". Checking cell [" + presentX + ","+ presentY + "].");
+                //System.out.println("Step " + i + ". Checking cell [" + presentX + ","+ presentY + "].");
 
             }
 
@@ -105,7 +105,7 @@ public class Segment {
         int presentX = X - i;
         int presentY = Y;
         if (simulation.grid[presentX][presentY] == Simulation.FieldType.FIELD_ROAD1) {
-            System.out.println("Found road segment at [" + presentX + "," + presentY + "].");
+            //System.out.println("Found road segment at [" + presentX + "," + presentY + "].");
             closestRoadSegment = new Position(presentX, presentY);
             return closestRoadSegment;
         }
@@ -113,7 +113,7 @@ public class Segment {
         presentY = Y + i;
         //UP
         if (simulation.grid[presentX][presentY] == Simulation.FieldType.FIELD_ROAD1) {
-            System.out.println("Found road segment at [" + presentX + "," + presentY + "].");
+            //System.out.println("Found road segment at [" + presentX + "," + presentY + "].");
             closestRoadSegment = new Position(presentX, presentY);
             return closestRoadSegment;
         }
@@ -121,7 +121,7 @@ public class Segment {
         presentX = X + i;
         presentY = Y;
         if (simulation.grid[presentX][presentY] == Simulation.FieldType.FIELD_ROAD1) {
-            System.out.println("Found road segment at [" + presentX + "," + presentY + "].");
+            //System.out.println("Found road segment at [" + presentX + "," + presentY + "].");
             closestRoadSegment = new Position(presentX, presentY);
             return closestRoadSegment;
         }
@@ -129,7 +129,7 @@ public class Segment {
         presentX = X;
         presentY = Y - i;
         if (simulation.grid[presentX][presentY] == Simulation.FieldType.FIELD_ROAD1) {
-            System.out.println("Found road segment at [" + presentX + "," + presentY + "].");
+            //System.out.println("Found road segment at [" + presentX + "," + presentY + "].");
             closestRoadSegment = new Position(presentX, presentY);
             return closestRoadSegment;
         }
@@ -148,7 +148,7 @@ public class Segment {
 
             if (graphNodes.isNode(x, y)) {
                 closestRoadSegmentIsNode = true;
-                System.out.println("Road segment at [" + x + "," + y + "] is a node already;");
+                //System.out.println("Road segment at [" + x + "," + y + "] is a node already;");
                 closestRoadNodes.add(new Position(x, y));
                 distancesToClosestRoadNodes.add(0.0);
                 return;
@@ -203,6 +203,17 @@ public class Segment {
 
     }
 
+    public double getDistanceToClosestRoadNodesByNodeId(int id, GraphNodesContainer graphNodes) {
+
+        for (int i=0; i<closestRoadNodes.size(); i++) {
+            if (id == graphNodes.containsNode(closestRoadNodes.get(i).getX(),closestRoadNodes.get(i).getY())) {
+                return distancesToClosestRoadNodes.get(i);
+            }
+        }
+        System.out.println("Did not find any ClosestRoadNodesByNodeId nodes matching id " + id);
+        return -1;
+    }
+
     public void printSegmentStats() {
         System.out.printf("Segment at [" + position.getX() + "," + position.getY() + "]. ");
         if (closestRoadSegment != null) {
@@ -227,6 +238,8 @@ public class Segment {
         }
 
     }
+
+
 
 
 }

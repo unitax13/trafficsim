@@ -21,7 +21,7 @@
       <CheckBox fx:id="urbanViewButton" layoutX="121.0" layoutY="711.0" mnemonicParsing="false" onAction="#configUpdated" prefHeight="17.0" prefWidth="110.0" selected="true" text="Urban areas" />
       <CheckBox fx:id="industryViewButton" layoutX="121.0" layoutY="737.0" mnemonicParsing="false" onAction="#configUpdated" selected="true" text="Industry areas" />
       <CheckBox fx:id="nodeNumbersCheckBox" layoutX="121.0" layoutY="764.0" mnemonicParsing="false" onAction="#configUpdated" prefHeight="17.0" prefWidth="110.0" selected="true" text="Node numbers" />
-      <ToggleButton fx:id="examineButton" layoutX="29.0" layoutY="477.0" mnemonicParsing="false" text="Examine" />
+      <ToggleButton fx:id="examineButton" layoutX="29.0" layoutY="477.0" mnemonicParsing="false" onAction="#examineButtonPressed" text="Examine" />
       <Slider fx:id="gridOpacitySlider" blockIncrement="1.0" layoutX="263.0" layoutY="730.0" onMousePressed="#gridOpacitySliderUpdated" onMouseReleased="#gridOpacitySliderUpdated" value="25.0" />
       <Label layoutX="300.0" layoutY="746.0" text="Grid Opacity" />
       <Button fx:id="generateGraphButton" layoutX="367.0" layoutY="682.0" mnemonicParsing="false" onAction="#generateGraphButtonPressed" text="Generate graph" />

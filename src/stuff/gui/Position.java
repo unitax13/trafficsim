@@ -47,5 +47,10 @@ public class Position {
         return Objects.hash(x, y);
     }
 
+    public String toString() {
+        double var10000 = this.getX();
+        return "Position [x = " + var10000 + ", y = " + this.getY() + "]";
+    }
+
 
 }
