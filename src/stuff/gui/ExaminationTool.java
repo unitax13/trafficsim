@@ -95,10 +95,8 @@ public class ExaminationTool {
 
     public String examineRoadSegment (int x, int y) {
         String info = "";
-        ArrayList<GraphNode> closestRoadNodes = new ArrayList<>();
-        ArrayList<Double> distancesToClosestRoadNodes = new ArrayList<>();
 
-        boolean directionIsHorizontal;
+
 
 
         if (graphNodes.isNode(x, y)) {
@@ -106,15 +104,13 @@ public class ExaminationTool {
             return "Is a intersection";
         }
 
-
+        ArrayList<GraphNode> closestRoadNodes = new ArrayList<>();
         if (simulation.grid[x - 1][y] == Simulation.FieldType.FIELD_ROAD1 && simulation.grid[x + 1][y] == Simulation.FieldType.FIELD_ROAD1) {
-            directionIsHorizontal = true;
 
             //W PRAWO
             for (int i = x; simulation.grid[i][y] == Simulation.FieldType.FIELD_ROAD1; i++) {
                 if (graphNodes.getGraphNodeAt(i, y) != null) {
                     closestRoadNodes.add(graphNodes.getGraphNodeAt(i, y));
-                    //distancesToClosestRoadNodes.add((double) Math.abs(i - x));
                     break;
                 }
             }
@@ -122,20 +118,17 @@ public class ExaminationTool {
             for (int i = x; simulation.grid[i][y] == Simulation.FieldType.FIELD_ROAD1; i--) {
                 if (graphNodes.getGraphNodeAt(i, y) != null) {
                     closestRoadNodes.add(graphNodes.getGraphNodeAt(i, y));
-                    //distancesToClosestRoadNodes.add((double) Math.abs(i - x));
                     break;
                 }
             }
 
         }
         if (simulation.grid[x][y - 1] == Simulation.FieldType.FIELD_ROAD1 && simulation.grid[x][y + 1] == Simulation.FieldType.FIELD_ROAD1) {
-            directionIsHorizontal = false;
 
             // W GÓRĘ
             for (int i = y; simulation.grid[x][i] == Simulation.FieldType.FIELD_ROAD1; i++) {
                 if (graphNodes.getGraphNodeAt(x, i) != null) {
                     closestRoadNodes.add(graphNodes.getGraphNodeAt(x, i));
-                    //distancesToClosestRoadNodes.add((double) Math.abs(i - y));
                     break;
                 }
             }
@@ -143,7 +136,6 @@ public class ExaminationTool {
             for (int i = y; simulation.grid[x][i] == Simulation.FieldType.FIELD_ROAD1; i--) {
                 if (graphNodes.getGraphNodeAt(x, i) != null) {
                     closestRoadNodes.add(graphNodes.getGraphNodeAt(x, i));
-                    //distancesToClosestRoadNodes.add((double) Math.abs(i - y));
                     break;
                 }
             }
@@ -156,19 +148,21 @@ public class ExaminationTool {
             //search in the graphnodes, count that pair containings
             int passengers = 0;
             for (UrbanSegment us : segmentsContainer.urbanSegments) {
-                for (int i = 0; i < us.nodeRouteToIndustry.size(); i++) {
-                    GraphNode routeNode = us.nodeRouteToIndustry.get(i);
-                    if (routeNode.equals(closestRoadNodes.get(0))) {
-                        if ((i > 0 && us.nodeRouteToIndustry.get(i - 1).equals(closestRoadNodes.get(1))) ||
-                                (i + 1 < us.nodeRouteToIndustry.size() && us.nodeRouteToIndustry.get(i + 1).equals(closestRoadNodes.get(1)))) {
-                            passengers++;
-                            break;
-                        }
-                    } else if (routeNode.equals(closestRoadNodes.get(1))) {
-                        if ((i > 0 && us.nodeRouteToIndustry.get(i - 1).equals(closestRoadNodes.get(0))) ||
-                                (i + 1 < us.nodeRouteToIndustry.size() && us.nodeRouteToIndustry.get(i + 1).equals(closestRoadNodes.get(0)))) {
-                            passengers++;
-                            break;
+                if (us.nodeRouteToIndustry!=null) {
+                    for (int i = 0; i < us.nodeRouteToIndustry.size(); i++) {
+                        GraphNode routeNode = us.nodeRouteToIndustry.get(i);
+                        if (routeNode.equals(closestRoadNodes.get(0))) {
+                            if ((i > 0 && us.nodeRouteToIndustry.get(i - 1).equals(closestRoadNodes.get(1))) ||
+                                    (i + 1 < us.nodeRouteToIndustry.size() && us.nodeRouteToIndustry.get(i + 1).equals(closestRoadNodes.get(1)))) {
+                                passengers++;
+                                break;
+                            }
+                        } else if (routeNode.equals(closestRoadNodes.get(1))) {
+                            if ((i > 0 && us.nodeRouteToIndustry.get(i - 1).equals(closestRoadNodes.get(0))) ||
+                                    (i + 1 < us.nodeRouteToIndustry.size() && us.nodeRouteToIndustry.get(i + 1).equals(closestRoadNodes.get(0)))) {
+                                passengers++;
+                                break;
+                            }
                         }
                     }
                 }
@@ -178,5 +172,7 @@ public class ExaminationTool {
         }
         return info;
     }
+
+
 
 }

@@ -71,8 +71,8 @@ public class MainWindow implements Initializable {
     boolean rectangleDraw = false;
 
     SegmentsContainer segmentsContainer;
+    RoadSegmentsContainer roadSegmentsContainer;
 
-    UrbanSegment urbanSegment;
 
 
 
@@ -634,10 +634,16 @@ public class MainWindow implements Initializable {
 
     public void viewModeNormalButtonPressed() {
         viewMode = 0;
+        redraw();
     }
 
     public void viewModeTrafficHeatButtonPressed() {
+        roadSegmentsContainer = new RoadSegmentsContainer(simulation);
+        roadSegmentsContainer.generatePassengersMap(simulation,graphNodes,segmentsContainer);
+        RoadOverlay roadOverlay = new RoadOverlay(roadSegmentsContainer, simulation);
+        simulationGrid.roadOverlay = roadOverlay;
         viewMode = 2;
+        redraw();
 
     }
 
@@ -666,6 +672,8 @@ public class MainWindow implements Initializable {
     }
     public void useButton3Pressed() {
         //urbanSegment.printSegmentStats();
+
+
 
 
     }

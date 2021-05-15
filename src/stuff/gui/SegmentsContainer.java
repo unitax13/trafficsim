@@ -221,7 +221,10 @@ public class SegmentsContainer {
             for (int i1 = 0; i1<pathList.get(whichOne).size()-1; i1++) {
                 GraphNode n1 = pathList.get(whichOne).get(i1);
                 GraphNode n2 = pathList.get(whichOne).get(i1+1);
-                graphNodesContainer.setDistanceBetweenNodes(n1,n2, graphNodesContainer.getDistanceBetweenNodes(n1,n2) + 5);
+
+                double newDistance = graphNodesContainer.getDistanceBetweenNodes(n1,n2) + 2;
+
+                graphNodesContainer.setDistanceBetweenNodes(n1,n2, newDistance);
             }
             //PATH DISTANCE CHANGE
             //ZATŁACZANIE

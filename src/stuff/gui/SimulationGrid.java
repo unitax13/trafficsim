@@ -18,6 +18,7 @@ public class SimulationGrid {
     private GraphicsContext gc;
     private Canvas mainCanvas;
 
+    public RoadOverlay roadOverlay;
     public ArrayList<Position> positionPath;
     public boolean positionPathToDrawIsOn = false;
 
@@ -39,6 +40,8 @@ public class SimulationGrid {
             drawNodeNumbers();
         if (mainWindow.pathIsDrawn)
             drawPath();
+        if (mainWindow.viewMode == 2 && roadOverlay != null)
+            drawRoadHeatOverlay();
         if (positionPathToDrawIsOn)
             drawPositionPath();
 
@@ -436,6 +439,20 @@ public class SimulationGrid {
                 }
             }
         }
+    }
+
+    public void drawRoadHeatOverlay() {
+        for (int i=0; i<simulation.width; i++) {
+            for (int j=0; j<simulation.height; j++) {
+                if (roadOverlay.colorMap[i][j].getOpacity()!=0.0) {
+                    //System.out.println(i + ";" + j +" opacity is not 0");
+                    gc.setFill(roadOverlay.colorMap[i][j]);
+                    gc.fillRect(fieldWidth * i, fieldHeight * j, fieldWidth, fieldHeight);
+                }
+            }
+        }
+
+
     }
 
 }
