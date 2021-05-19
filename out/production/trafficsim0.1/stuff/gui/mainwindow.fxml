@@ -5,10 +5,10 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="840.0" prefWidth="914.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stuff.gui.MainWindow">
    <children>
@@ -23,21 +23,8 @@
       <CheckBox fx:id="nodeNumbersCheckBox" layoutX="121.0" layoutY="764.0" mnemonicParsing="false" onAction="#configUpdated" prefHeight="17.0" prefWidth="110.0" selected="true" text="Node numbers" />
       <ToggleButton fx:id="examineButton" layoutX="29.0" layoutY="477.0" mnemonicParsing="false" onAction="#examineButtonPressed" text="Examine" />
       <Slider fx:id="gridOpacitySlider" blockIncrement="1.0" layoutX="263.0" layoutY="730.0" onMousePressed="#gridOpacitySliderUpdated" onMouseReleased="#gridOpacitySliderUpdated" value="25.0" />
-      <Label layoutX="300.0" layoutY="746.0" text="Grid Opacity" />
-      <Button fx:id="generateGraphButton" layoutX="367.0" layoutY="682.0" mnemonicParsing="false" onAction="#generateGraphButtonPressed" text="Generate graph" />
-      <Button fx:id="dijkstraButton" layoutX="498.0" layoutY="682.0" mnemonicParsing="false" onAction="#dijkstraButtonPressed" text="Apply Dijkstra" />
-      <Label layoutX="597.0" layoutY="686.0" text="For node:" />
-      <TextField fx:id="forNodeIdTextField" layoutX="648.0" layoutY="682.0" onAction="#configUpdated" onKeyPressed="#configUpdated" prefHeight="25.0" prefWidth="67.0" promptText="Node ID..." />
-      <Button fx:id="showPathToIdButton" layoutX="507.0" layoutY="716.0" mnemonicParsing="false" onAction="#showPathToIdButtonPressed" text="Show path" />
-      <Label layoutX="597.0" layoutY="720.0" text="To node:" />
-      <TextField fx:id="toNodeIdTextField" layoutX="648.0" layoutY="716.0" onAction="#configUpdated" onKeyPressed="#configUpdated" prefHeight="25.0" prefWidth="67.0" promptText="Node ID..." />
-      <Button fx:id="distanceBetweenSetButton" layoutX="761.0" layoutY="751.0" mnemonicParsing="false" onAction="#distanceBetweenSetButtonPressed" text="Set" />
-      <TextField fx:id="distanceBetweenIdField1" layoutX="629.0" layoutY="752.0" onAction="#distancePanelUpdated" onKeyPressed="#distancePanelUpdated" prefHeight="25.0" prefWidth="30.0" />
-      <Label layoutX="662.0" layoutY="756.0" text="and" />
-      <TextField fx:id="distanceBetweenIdField2" layoutX="682.0" layoutY="752.0" onAction="#distancePanelUpdated" onKeyPressed="#distancePanelUpdated" prefHeight="25.0" prefWidth="30.0" />
-      <Label layoutX="527.0" layoutY="755.0" text="Distance between" />
-      <TextField fx:id="distanceBetweenDistanceField" layoutX="724.0" layoutY="751.0" prefHeight="25.0" prefWidth="39.0" />
-      <Label layoutX="715.0" layoutY="755.0" text="=" />
+      <Label layoutX="300.0" layoutY="748.0" text="Grid Opacity" />
+      <Button fx:id="generateGraphButton" layoutX="270.0" layoutY="682.0" mnemonicParsing="false" onAction="#generateGraphButtonPressed" text="Generate graph" />
       <ToggleButton fx:id="roadToggleButton" layoutX="14.0" layoutY="86.0" mnemonicParsing="false" onAction="#roadToggleButtonToggled" prefHeight="25.0" prefWidth="89.0" text="Road" />
       <ToggleButton disable="true" layoutX="14.0" layoutY="111.0" mnemonicParsing="false" text="ToggleButton" />
       <ToggleButton fx:id="urbanAreaToggleButton" layoutX="14.0" layoutY="262.0" mnemonicParsing="false" onAction="#urbanAreaButtonToggled" prefHeight="25.0" prefWidth="89.0" text="Urban area" />
@@ -57,5 +44,19 @@
       <Button layoutX="285.0" layoutY="784.0" mnemonicParsing="false" onAction="#useButton2Pressed" prefHeight="25.0" prefWidth="30.0" text="B2" />
       <Button layoutX="315.0" layoutY="784.0" mnemonicParsing="false" onAction="#useButton3Pressed" prefHeight="25.0" prefWidth="33.0" text="B3" />
       <Button layoutX="348.0" layoutY="784.0" mnemonicParsing="false" onAction="#useButton4Pressed" text="B4" />
+      <Button layoutX="446.0" layoutY="682.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="27.0" text="■" />
+      <Button layoutX="473.0" layoutY="682.0" mnemonicParsing="false" prefHeight="25.0" text="►►">
+         <font>
+            <Font name="Arial" size="12.0" />
+         </font>
+      </Button>
+      <Button layoutX="513.0" layoutY="682.0" mnemonicParsing="false" prefHeight="25.0" text="▐►">
+         <font>
+            <Font name="Arial" size="12.0" />
+         </font>
+      </Button>
+      <Slider layoutX="423.0" layoutY="730.0" />
+      <Label layoutX="476.0" layoutY="748.0" text="Speed" />
+      <ToggleButton fx:id="shortestPathButton" layoutX="14.0" layoutY="502.0" mnemonicParsing="false" onAction="#shortestPathButtonPressed" text="Shortest path" />
    </children>
 </AnchorPane>

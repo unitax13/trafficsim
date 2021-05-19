@@ -50,7 +50,9 @@ public class MainWindow implements Initializable {
     GraphNodesContainer paths;
     double distance;
 
-    boolean isExamining = false;
+    int clickingMode = 0; // 0 = normal, 1 - examining, 2 - shortest pathing
+
+
     private Simulation.FieldType chosenFieldType = Simulation.FieldType.FIELD_ROAD1;
 
 
@@ -65,6 +67,7 @@ public class MainWindow implements Initializable {
     SimulationGrid simulationGrid;
     public GraphicsContext gc;
     ExaminationTool examinationTool;
+    ShortestPathingClass shortestPathingClass;
 
 
     GraphNodesContainer graphNodes;
@@ -88,6 +91,10 @@ public class MainWindow implements Initializable {
     private ToggleButton industryAreaToggleButton;
     @FXML
     private ToggleButton examineButton;
+    @FXML
+    private ToggleButton shortestPathButton;
+
+
 
 
     @FXML
@@ -247,6 +254,7 @@ public class MainWindow implements Initializable {
         urbanAreaToggleButton.setToggleGroup(brushToggleGroup);
         industryAreaToggleButton.setToggleGroup(brushToggleGroup);
         examineButton.setToggleGroup(brushToggleGroup);
+        shortestPathButton.setToggleGroup(brushToggleGroup);
         //roadToggleButton.setStyle("-fx-background-color: rgb(47, 79, 79);-fx-text-fill: white; -fx-background-insets: 0,1,2;.focused{-fx-background-color:rgb(87, 99, 99)}");
 
 
@@ -257,6 +265,7 @@ public class MainWindow implements Initializable {
         ToggleGroup viewModeToggleGroup = new ToggleGroup();
         normalViewButton.setToggleGroup(viewModeToggleGroup);
         heatMapViewButton.setToggleGroup(viewModeToggleGroup);
+
 
         roadToggleButton.setSelected(true);
 
@@ -282,25 +291,29 @@ public class MainWindow implements Initializable {
 
         mainCanvas.setOnMousePressed(e -> {
             Position coords = simulationGrid.getFieldWithMouseOn();
-            if (!isExamining) {
+            if (clickingMode==0) {
                 if (e.getButton() == MouseButton.PRIMARY) {
                     System.out.println("Left mouse was pressed");
                     escWasPressed = false;
-                    simulation.grid[(int) coords.getX()][(int) coords.getY()] = chosenFieldType;
+                    simulation.grid[coords.getX()][coords.getY()] = chosenFieldType;
                 } else if (e.getButton() == MouseButton.SECONDARY) {
                     System.out.println("Right mouse was pressed");
                     escWasPressed = false;
-                    simulation.grid[(int) coords.getX()][(int) coords.getY()] = Simulation.FieldType.FIELD_EMPTY;
+                    simulation.grid[coords.getX()][coords.getY()] = Simulation.FieldType.FIELD_EMPTY;
                 }
-            } else { //isExamining == true
+            } else if (clickingMode==1){ //isExamining == true
                 examinationTool.showPath(coords.getX(), coords.getY());
                 examinationTool.printInfoAboutSegment(coords.getX(), coords.getY());
+            } else if (clickingMode == 2) {
+                if (shortestPathingClass != null) {
+                    shortestPathingClass.add(coords);
+                }
             }
 
         });
 
         mainCanvas.setOnMouseDragged(e -> {
-            if (!isExamining) {
+            if (clickingMode==0) {
                 currentMousePos = new Point2D(e.getX(), e.getY());
                 // System.out.println("Is dragging");
                 if (isDragging == false) {
@@ -445,6 +458,21 @@ public class MainWindow implements Initializable {
 
     }
 
+    public void shortestPathButtonPressed() {
+        clickingMode = 2;
+        if (graphNodes!=null) {
+            shortestPathingClass = new ShortestPathingClass(simulation, simulationGrid, graphNodes, segmentsContainer);
+
+
+
+        }
+        else {
+            System.out.println("GRAPH NOT GENERATED YET");
+            System.out.println("GRAPH NOT GENERATED YET");
+            System.out.println("GRAPH NOT GENERATED YET");
+        }
+    }
+
     public void showPathToIdButtonPressed() {
         if (nodePaths!=null) {
 
@@ -538,21 +566,24 @@ public class MainWindow implements Initializable {
     public void roadToggleButtonToggled() {
         chosenFieldType = Simulation.FieldType.FIELD_ROAD1;
         simulationGrid.positionPathToDrawIsOn = false;
-        isExamining = false;
+        viewMode = 0;
+        clickingMode = 0;
     }
     public void urbanAreaButtonToggled() {
         chosenFieldType = Simulation.FieldType.FIELD_URBAN1;
-        isExamining = false;
+        viewMode = 0;
+        clickingMode = 0;
         simulationGrid.positionPathToDrawIsOn = false;
     }
     public void industryAreaButtonToggled() {
         chosenFieldType = Simulation.FieldType.FIELD_INDUSTRY1;
-        isExamining = false;
+        viewMode = 0;
+        clickingMode = 0;
         simulationGrid.positionPathToDrawIsOn = false;
     }
     public void examineButtonPressed() {
         examinationTool = new ExaminationTool(simulation, simulationGrid, graphNodes, segmentsContainer);
-        isExamining = true;
+        clickingMode = 1;
     }
 
     public void rectangleButtonToggled() {
@@ -702,7 +733,7 @@ public class MainWindow implements Initializable {
 
         System.out.println("Finding paths");
         for (UrbanSegment us: segmentsContainer.urbanSegments) {
-            segmentsContainer.findPathToCorrespondingSegment(us);
+            us.findPathToCorrespondingSegment(graphNodes);
             System.out.println(String.valueOf(us.distanceToIndustry) + ":" + us.pathToIndustry);
 
         }
