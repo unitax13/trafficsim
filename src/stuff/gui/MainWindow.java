@@ -173,27 +173,6 @@ public class MainWindow implements Initializable {
         else
             nodeNumbersAreOn = false;
 
-        if (forNodeIdTextField.getText()!=null) {
-            try {
-                forNodeId = Integer.parseInt(forNodeIdTextField.getText());
-            } catch (Exception e) {
-                System.out.println("Invalid number entered!");
-            }
-        }
-
-        if (toNodeIdTextField.getText()!=null) {
-            try {
-                System.out.println("Getting" + toNodeIdTextField.getText());
-                toNodeId = Integer.parseInt(toNodeIdTextField.getText());
-                System.out.println("Entered "+ toNodeId);
-            } catch (Exception e) {
-                System.out.println("Invalid number entered!");
-            }
-        }
-
-
-
-
         System.out.println("Config was updated");
         redraw();
     }
@@ -459,109 +438,24 @@ public class MainWindow implements Initializable {
     }
 
     public void shortestPathButtonPressed() {
-        clickingMode = 2;
-        if (graphNodes!=null) {
-            shortestPathingClass = new ShortestPathingClass(simulation, simulationGrid, graphNodes, segmentsContainer);
+        if (clickingMode!=2) {
+            clickingMode = 2;
+            if (graphNodes != null) {
+                shortestPathingClass = new ShortestPathingClass(simulation, simulationGrid, graphNodes, segmentsContainer);
 
 
-
-        }
-        else {
-            System.out.println("GRAPH NOT GENERATED YET");
-            System.out.println("GRAPH NOT GENERATED YET");
-            System.out.println("GRAPH NOT GENERATED YET");
-        }
-    }
-
-    public void showPathToIdButtonPressed() {
-        if (nodePaths!=null) {
-
-            configUpdated();
-            pathIsDrawn = false;
+            } else {
+                System.out.println("GRAPH NOT GENERATED YET");
+                System.out.println("GRAPH NOT GENERATED YET");
+                System.out.println("GRAPH NOT GENERATED YET");
+            }
+        } else {
+            clickingMode = 0;
+            simulationGrid.positionPathToDrawIsOn = false;
             redraw();
-
-            System.out.println("Showing path from " + forNodeId + " to " + toNodeId);
-            paths.graphNodes = nodePaths.get(toNodeId);
-            for (int i=paths.getSize()-1; i>=0; i--) {
-                if (paths.get().get(i)!=null)
-                    System.out.println(paths.get().get(i).position);
-            }
-            distance = pathAndDistances[toNodeId].dist;
-            System.out.println(distance);
-
-            pathIsDrawn = true;
-            simulationGrid.drawPath();
-            redraw();
-
-        }
-
-    }
-
-    public void distancePanelUpdated() {
-        if (distanceBetweenIdField1.getText()!=null) {
-            try {
-                distanceBetweenId1 = Integer.parseInt(distanceBetweenIdField1.getText());
-            } catch (Exception e) {
-                System.out.println("Invalid number entered!");
-                distanceBetweenId1 = -1;
-            }
-        }
-
-        if (distanceBetweenIdField2.getText()!=null) {
-            try {
-                distanceBetweenId2 = Integer.parseInt(distanceBetweenIdField2.getText());
-            } catch (Exception e) {
-                System.out.println("Invalid number entered!");
-                distanceBetweenId2 = -1;
-            }
-        }
-
-        if (distanceBetweenId1 != -1 && distanceBetweenId2 != -1) {
-            if (graphNodes.get() != null) {
-                GraphNode node1 = graphNodes.get().get(distanceBetweenId1);
-                GraphNode node2 = graphNodes.get().get(distanceBetweenId2);
-                if (node1 != null && node2 != null) {
-                    for (int i = 0; i < 4; i++) {
-                        GraphNode n = node1.neighbours[i];
-                        if (n!=null && n.equals(node2)) {
-                            double distance = n.distances[i];
-                            if (distance > 0)
-                                distanceBetweenDistanceField.setText(String.valueOf((int) distance));
-                        }
-                    }
-                }
-
-            }
         }
     }
 
-    public void distanceBetweenSetButtonPressed() {
-        //distancePanelUpdated();
-        if (distanceBetweenId1>0 && distanceBetweenId2 >0 && distanceBetweenId1 != distanceBetweenId2) {
-            double distance = -1;
-            try {
-                distance= Integer.parseInt(distanceBetweenDistanceField.getText());
-            } catch (Exception e) {
-                System.out.println("Invalid number entered!");
-            }
-            if (distance>0) {
-                GraphNode node1 = graphNodes.get().get(distanceBetweenId1);
-                GraphNode node2 = graphNodes.get().get(distanceBetweenId2);
-                for (int i = 0; i < 4; i++) {
-                    GraphNode n = node1.neighbours[i];
-                    if (n!=null && n.equals(node2)) {
-                        node1.distances[i] = distance;
-                        System.out.println("Distance was changed");
-                    }
-                    GraphNode n2 = node2.neighbours[i];
-                    if (n2!=null && n2.equals(node1)) {
-                        node2.distances[i] = distance;
-                        System.out.println("Distance was changed");
-                    }
-                }
-            }
-        }
-    }
 
     public void roadToggleButtonToggled() {
         chosenFieldType = Simulation.FieldType.FIELD_ROAD1;
@@ -582,8 +476,14 @@ public class MainWindow implements Initializable {
         simulationGrid.positionPathToDrawIsOn = false;
     }
     public void examineButtonPressed() {
-        examinationTool = new ExaminationTool(simulation, simulationGrid, graphNodes, segmentsContainer);
-        clickingMode = 1;
+        if (clickingMode!=1) {
+            examinationTool = new ExaminationTool(simulation, simulationGrid, graphNodes, segmentsContainer);
+            clickingMode = 1;
+        } else {
+            clickingMode = 0;
+            simulationGrid.positionPathToDrawIsOn = false;
+            redraw();
+        }
     }
 
     public void rectangleButtonToggled() {
@@ -669,12 +569,18 @@ public class MainWindow implements Initializable {
     }
 
     public void viewModeTrafficHeatButtonPressed() {
-        roadSegmentsContainer = new RoadSegmentsContainer(simulation);
-        roadSegmentsContainer.generatePassengersMap(simulation,graphNodes,segmentsContainer);
-        RoadOverlay roadOverlay = new RoadOverlay(roadSegmentsContainer, simulation);
-        simulationGrid.roadOverlay = roadOverlay;
-        viewMode = 2;
-        redraw();
+        if (viewMode!=2) {
+            roadSegmentsContainer = new RoadSegmentsContainer(simulation);
+            roadSegmentsContainer.generatePassengersMap(simulation, graphNodes, segmentsContainer);
+            RoadOverlay roadOverlay = new RoadOverlay(roadSegmentsContainer, simulation);
+            simulationGrid.roadOverlay = roadOverlay;
+            viewMode = 2;
+            redraw();
+        }
+        else {
+            viewMode = 0;
+            redraw();
+        }
 
     }
 

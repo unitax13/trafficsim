@@ -7,7 +7,6 @@ public class RoadSegmentsContainer {
     int width, height;
     
     public ArrayList<RoadSegment> roadSegments;
-    public int calculatedAlready = 0;
     
     public RoadSegmentsContainer(int width, int height) {
         this.width = width;
@@ -75,10 +74,12 @@ public class RoadSegmentsContainer {
 
             int passengers = 0;
 
+            //System.out.println("Checking segment " + x + " ; " + y);
+
             if (graphNodes.isNode(x, y)) {
                 passengers = graphNodes.getGraphNodeAt(x, y).getAllPassengers();
                 getRoadSegmentAt(x, y).passengers = passengers;
-                calculatedAlready++;
+                getRoadSegmentAt(x,y).passengersCalculatedAlready = true;
                 return passengers;
             }
 
@@ -156,7 +157,6 @@ public class RoadSegmentsContainer {
             for (Position position : segmentsToUpdate) {
                 getRoadSegmentAt(position.getX(), position.getY()).passengers = passengers;
                 getRoadSegmentAt(position.getX(), position.getY()).passengersCalculatedAlready = true;
-                calculatedAlready++;
             }
 
             return passengers;

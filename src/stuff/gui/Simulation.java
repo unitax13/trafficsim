@@ -22,7 +22,7 @@ public class Simulation implements Serializable {
         grid = new FieldType[width][height];
         simulationStats = new SimulationStats(this);
 
-        grid[40][40] = FieldType.FIELD_URBAN1;
+        //grid[40][40] = FieldType.FIELD_URBAN1;
 
     }
 
