@@ -8,6 +8,7 @@ public class UrbanSegment extends Segment {
     public ArrayList<Position> pathToIndustry;
     public ArrayList<GraphNode> nodeRouteToIndustry;
     public double distanceToIndustry;
+    public boolean outAlready = false;
 
     public UrbanSegment(int x, int y) {
         super(x, y);
@@ -22,7 +23,7 @@ public class UrbanSegment extends Segment {
         UrbanSegment urbanSegment = this;
 
 
-        if (urbanSegment.closestRoadNodes!=null && urbanSegment.boundIndustrySegment != null) {
+        if (urbanSegment.closestRoadNodes != null && urbanSegment.boundIndustrySegment != null) {
 
             System.out.println("urbanSegment.closestRoadNodes!=null");
             //System.out.println(urbanSegment.closestRoadNodes.get(0));
@@ -31,7 +32,7 @@ public class UrbanSegment extends Segment {
                 startIds.add(graphNodesContainer.containsNode(urbanSegment.closestRoadNodes.get(0).getX(), urbanSegment.closestRoadNodes.get(0).getY()));
                 startIds.add(graphNodesContainer.containsNode(urbanSegment.closestRoadNodes.get(1).getX(), urbanSegment.closestRoadNodes.get(1).getY()));
             } catch (IndexOutOfBoundsException e) {
-                if (startIds.size()==0) {
+                if (startIds.size() == 0) {
                     System.out.println("No closest road nodes found at start");
                     return;
                 }
@@ -41,27 +42,27 @@ public class UrbanSegment extends Segment {
                 destinationIds.add(graphNodesContainer.containsNode(urbanSegment.boundIndustrySegment.closestRoadNodes.get(0).getX(), urbanSegment.boundIndustrySegment.closestRoadNodes.get(0).getY()));
                 destinationIds.add(graphNodesContainer.containsNode(urbanSegment.boundIndustrySegment.closestRoadNodes.get(1).getX(), urbanSegment.boundIndustrySegment.closestRoadNodes.get(1).getY()));
             } catch (IndexOutOfBoundsException e) {
-                if (destinationIds.size()==0) {
+                if (destinationIds.size() == 0) {
                     System.out.println("No closest road nodes found at destination");
                     return;
                 }
             }
 
-            for (int a=0; a<startIds.size(); a++) {
+            for (int a = 0; a < startIds.size(); a++) {
 
                 ShortestPath path1 = new ShortestPath();
                 PathAndDistances[] pathAndDistances1 = path1.dijkstra(graphNodesContainer.get(), startIds.get(a));
                 for (int i = 0; i < pathAndDistances1.length; i++) {
 
-                    if ( ( destinationIds.size()>=1 && i == destinationIds.get(0) ) || ( destinationIds.size()>=2 && i == destinationIds.get(1) ) ) {
+                    if ((destinationIds.size() >= 1 && i == destinationIds.get(0)) || (destinationIds.size() >= 2 && i == destinationIds.get(1))) {
 
-                        System.out.printf(i+ ". " + pathAndDistances1[i].dist +" "); //whole distance
+                        System.out.printf(i + ". " + pathAndDistances1[i].dist + " "); //whole distance
                         pathAndDistances1[i].dist += urbanSegment.distancesToClosestRoadNodes.get(a);
-                        System.out.printf(" (" + pathAndDistances1[i].dist +") ");
+                        System.out.printf(" (" + pathAndDistances1[i].dist + ") ");
                         pathAndDistances1[i].dist += urbanSegment.boundIndustrySegment.getDistanceToClosestRoadNodesByNodeId(i, graphNodesContainer);
 
                         distances.add(pathAndDistances1[i].dist);
-                        System.out.printf(" (" + pathAndDistances1[i].dist +") ");
+                        System.out.printf(" (" + pathAndDistances1[i].dist + ") ");
 
                         if (pathAndDistances1[i].node != null)
                             System.out.printf(pathAndDistances1[i].node.position.toString()); //first/last node position
@@ -73,13 +74,13 @@ public class UrbanSegment extends Segment {
 
                         ArrayList<Position> singleSubPathToIndustry = new ArrayList<>();
                         singleSubPathToIndustry.add(urbanSegment.boundIndustrySegment.closestRoadSegment);
-                        if (pathAndDistances1[i].node != null )
+                        if (pathAndDistances1[i].node != null)
                             singleSubPathToIndustry.add(pathAndDistances1[i].node.position);
 
                         path.add(pathAndDistances1[i].node); //the first/last node is added
 
                         //while the predecessors are not null
-                        while (pad2 !=null) {
+                        while (pad2 != null) {
                             if (pad2.node != null) { //if there's a node
                                 path.add(pad2.node); // add it to a path to show
 
@@ -101,15 +102,14 @@ public class UrbanSegment extends Segment {
                         subPathToIndustry.add(singleSubPathToIndustry);
 
 
-
                     }
                 }
             }
 
             double minDistance = distances.get(0);
-            int whichOne =0;
-            for (int i=1; i< distances.size(); i++) {
-                if (minDistance>distances.get(i)) {
+            int whichOne = 0;
+            for (int i = 1; i < distances.size(); i++) {
+                if (minDistance > distances.get(i)) {
                     minDistance = distances.get(i);
                     whichOne = i;
                 }
@@ -134,9 +134,17 @@ public class UrbanSegment extends Segment {
             //ZATŁACZANIE
 
 
-
-
         }
+    }
 
+    public ArrayList<GraphNode> getRouteToIndustryNotReversed() {
+        if (nodeRouteToIndustry!= null) {
+            ArrayList<GraphNode> nodes = new ArrayList<>(nodeRouteToIndustry.size());
+            for (int i = 0; i < nodeRouteToIndustry.size(); i++) {
+                nodes.add(nodeRouteToIndustry.get(nodeRouteToIndustry.size() - 1 - i));
+            }
+
+            return nodes;
+        } else return null;
     }
 }

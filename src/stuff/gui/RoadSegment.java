@@ -4,6 +4,7 @@ public class RoadSegment {
 
     protected Position position;
     public int passengers;
+    public int capacity = 25;
     public boolean passengersCalculatedAlready = false;
 
     public RoadSegment(int x, int y) {

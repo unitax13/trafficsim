@@ -14,12 +14,13 @@ import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 public class MainWindow implements Initializable {
 
 
-    public int SEARCH_RADIUS = 4;
+    public int SEARCH_RADIUS = 5;
     private static final int minWidth = 100;
     private static final int heightForButtons = 200;
     private int width, height;
@@ -39,9 +40,6 @@ public class MainWindow implements Initializable {
     public int forNodeId = 0;
     public int toNodeId = 1;
     public boolean pathIsDrawn = false;
-
-    public int distanceBetweenId1;
-    public int distanceBetweenId2;
 
 
     private ArrayList<ArrayList<GraphNode>> nodePaths;
@@ -68,6 +66,9 @@ public class MainWindow implements Initializable {
     public GraphicsContext gc;
     ExaminationTool examinationTool;
     ShortestPathingClass shortestPathingClass;
+    CitizenMovementsContainer cmc;
+    CitizenTimer citizenTimer;
+    int urbanSegmentsNotOutYet = 100000;
 
 
     GraphNodesContainer graphNodes;
@@ -143,6 +144,17 @@ public class MainWindow implements Initializable {
     @FXML
     private Button useButton;
 
+    @FXML
+    private Slider mainSpeedSlider;
+    @FXML
+    private Button playingStopButton;
+    @FXML
+    private Button playingPlayButton;
+    @FXML
+    private Button playingOneStepForwardButton;
+    @FXML
+    private Label stepLabel;
+
     public TitledPane mainTitledPane;
     public Canvas mainCanvas;
 
@@ -154,46 +166,6 @@ public class MainWindow implements Initializable {
     public Point2D getCurrentMousePos() {
         return currentMousePos;
     }
-
-    public void configUpdated () {
-        if (roadsViewButton.isSelected())
-            roadsIsOn = true;
-        else
-            roadsIsOn = false;
-        if (urbanViewButton.isSelected())
-            urbanIsOn = true;
-        else
-            urbanIsOn = false;
-        if (industryViewButton.isSelected())
-            industryIsOn = true;
-        else
-            industryIsOn = false;
-        if (nodeNumbersCheckBox.isSelected())
-            nodeNumbersAreOn = true;
-        else
-            nodeNumbersAreOn = false;
-
-        System.out.println("Config was updated");
-        redraw();
-    }
-
-    public void gridOpacitySliderUpdated() {
-        gridOpacity = gridOpacitySlider.getValue();
-    }
-
-    public void generateGraphButtonPressed() {
-        System.out.println("Printing graph");
-        graphNodes = new GraphNodesContainer(simulationGrid.generateGraph());
-        for(GraphNode node: graphNodes.get() ) {
-            System.out.println(node.position);
-            System.out.println(Arrays.toString(node.distances));
-        }
-        redraw();
-    }
-
-
-
-
 
 
 
@@ -212,6 +184,8 @@ public class MainWindow implements Initializable {
         gridOpacitySliderUpdated();
 
         examinationTool = new ExaminationTool(simulation, simulationGrid,graphNodes,segmentsContainer);
+        cmc = new CitizenMovementsContainer(graphNodes);
+        citizenTimer = new CitizenTimer(cmc, graphNodes);
 
         initGui();
 
@@ -247,6 +221,8 @@ public class MainWindow implements Initializable {
 
 
         roadToggleButton.setSelected(true);
+
+
 
 
     }
@@ -336,31 +312,46 @@ public class MainWindow implements Initializable {
         });
     }
 
-    public void onMouseClicked() {
-        //System.out.println("onMouseClicked");
+    public void configUpdated () {
+        if (roadsViewButton.isSelected())
+            roadsIsOn = true;
+        else
+            roadsIsOn = false;
+        if (urbanViewButton.isSelected())
+            urbanIsOn = true;
+        else
+            urbanIsOn = false;
+        if (industryViewButton.isSelected())
+            industryIsOn = true;
+        else
+            industryIsOn = false;
+        if (nodeNumbersCheckBox.isSelected())
+            nodeNumbersAreOn = true;
+        else
+            nodeNumbersAreOn = false;
+
+        System.out.println("Config was updated");
+        redraw();
     }
 
-    public void onMouseDragged() {
-        //System.out.println("onMouseDragged");
+    public void gridOpacitySliderUpdated() {
+        gridOpacity = gridOpacitySlider.getValue();
     }
 
-    public void onMouseEntered() {
-       // System.out.println("onMouseEntered");
+    public void setMainSpeedSliderUpdated() {
+        double timeSpeed = mainSpeedSlider.getValue();
     }
-    public void onMouseExited() {
-        //System.out.println("onMouseExited");
-    }
-    public void onMouseMoved() {
-        //redraw();
-        //System.out.println("onMouseMoved");
-    }
-    public void onMousePressed() {
-        //System.out.println("onMousePressed");
-       // redraw();
-        //System.out.println(simulationGrid.getFieldWithMouseOn());
-    }
-    public void onMouseReleased() {
-        //System.out.println("onMouseReleased");
+
+    public void generateGraphButtonPressed() {
+        System.out.println("Printing graph");
+        graphNodes = new GraphNodesContainer(simulationGrid.generateGraph());
+        for(GraphNode node: graphNodes.get() ) {
+            System.out.println(node.position);
+            System.out.println(Arrays.toString(node.distances));
+        }
+        redraw();
+        cmc = new CitizenMovementsContainer(graphNodes);
+        citizenTimer = new CitizenTimer(cmc, graphNodes);
     }
 
     private void calculateSize(Simulation sim) {
@@ -572,8 +563,7 @@ public class MainWindow implements Initializable {
         if (viewMode!=2) {
             roadSegmentsContainer = new RoadSegmentsContainer(simulation);
             roadSegmentsContainer.generatePassengersMap(simulation, graphNodes, segmentsContainer);
-            RoadOverlay roadOverlay = new RoadOverlay(roadSegmentsContainer, simulation);
-            simulationGrid.roadOverlay = roadOverlay;
+            simulationGrid.roadOverlay = roadSegmentsContainer.getRoadOverlay();
             viewMode = 2;
             redraw();
         }
@@ -649,6 +639,46 @@ public class MainWindow implements Initializable {
     public void printStats() {
         simulation.simulationStats.updateSegmentsCount();
         simulation.simulationStats.printStats();
+    }
+
+    public void setPlayingStopButtonPressed() {
+        System.out.println("TIMER RESET");
+        cmc = new CitizenMovementsContainer(graphNodes);
+        citizenTimer = new CitizenTimer(cmc, graphNodes);
+
+        for (UrbanSegment us : segmentsContainer.urbanSegments) {
+            us.outAlready = false;
+        }
+
+    }
+
+    public void playingOneStepForwardButtonPressed() {
+        if (segmentsContainer.getUrbanSegmentsNotOutYet()!=null && urbanSegmentsNotOutYet>0) {
+
+
+
+            for (int i = 0; i < 30 && i < segmentsContainer.getUrbanSegmentsNotOutYet().size(); i++) {
+                Random r = new Random();
+                int bound = segmentsContainer.getUrbanSegmentsNotOutYet().size()>10 ? 10 : segmentsContainer.getUrbanSegmentsNotOutYet().size();
+                int j = r.nextInt(bound);
+                MovingCitizen movingCitizen = new MovingCitizen(segmentsContainer.getUrbanSegmentsNotOutYet().get(j));
+                segmentsContainer.getUrbanSegmentsNotOutYet().get(j).outAlready = true;
+                cmc.addMovingCitizen(movingCitizen);
+
+            }
+            urbanSegmentsNotOutYet = segmentsContainer.getUrbanSegmentsNotOutYet().size();
+        }
+        citizenTimer.incrementTimeAndCheck();
+        stepLabel.setText(String.valueOf(citizenTimer.getGeneration()));
+        citizenTimer.printTimeStats();
+
+        if (roadSegmentsContainer!=null) {
+            System.out.println("Updating heat");
+            roadSegmentsContainer.resetCalculatedAlready();
+            roadSegmentsContainer.generatePassengersMap(simulation, graphNodes, segmentsContainer);
+            simulationGrid.roadOverlay = roadSegmentsContainer.getRoadOverlay();
+        }
+        redraw();
     }
     
     

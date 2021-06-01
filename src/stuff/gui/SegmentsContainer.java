@@ -53,6 +53,15 @@ public class SegmentsContainer {
         return null;
     }
 
+    public ArrayList<UrbanSegment> getUrbanSegmentsNotOutYet() {
+        ArrayList<UrbanSegment> list = new ArrayList<>();
+        for (UrbanSegment us: urbanSegments) {
+            if (us.outAlready==false)
+                list.add(us);
+        }
+        return list;
+    }
+
     public ArrayList<UrbanSegment> getUnboundUrbanSegments() {
         ArrayList<UrbanSegment> list = new ArrayList<>();
         for (UrbanSegment us: urbanSegments) {

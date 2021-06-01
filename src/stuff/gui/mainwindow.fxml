@@ -1,22 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="840.0" prefWidth="914.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stuff.gui.MainWindow">
    <children>
-      <TitledPane fx:id="mainTitledPane" layoutX="106.0" prefHeight="666.0" prefWidth="808.0" text="File" textAlignment="CENTER">
-         <content>
-            <Canvas fx:id="mainCanvas" height="640.0" onMouseClicked="#onMouseClicked" onMouseDragged="#onMouseDragged" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" onMouseMoved="#onMouseMoved" onMousePressed="#onMousePressed" onMouseReleased="#onMouseReleased" width="800.0" />
-         </content>
-      </TitledPane>
+      <Canvas fx:id="mainCanvas" height="640.0" layoutX="105.0" layoutY="5.0" width="800.0" />
       <CheckBox fx:id="roadsViewButton" layoutX="121.0" layoutY="686.0" mnemonicParsing="false" onAction="#configUpdated" prefHeight="17.0" prefWidth="96.0" selected="true" text="Roads" />
       <CheckBox fx:id="urbanViewButton" layoutX="121.0" layoutY="711.0" mnemonicParsing="false" onAction="#configUpdated" prefHeight="17.0" prefWidth="110.0" selected="true" text="Urban areas" />
       <CheckBox fx:id="industryViewButton" layoutX="121.0" layoutY="737.0" mnemonicParsing="false" onAction="#configUpdated" selected="true" text="Industry areas" />
@@ -44,19 +40,25 @@
       <Button layoutX="285.0" layoutY="784.0" mnemonicParsing="false" onAction="#useButton2Pressed" prefHeight="25.0" prefWidth="30.0" text="B2" />
       <Button layoutX="315.0" layoutY="784.0" mnemonicParsing="false" onAction="#useButton3Pressed" prefHeight="25.0" prefWidth="33.0" text="B3" />
       <Button layoutX="348.0" layoutY="784.0" mnemonicParsing="false" onAction="#useButton4Pressed" text="B4" />
-      <Button layoutX="446.0" layoutY="682.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="27.0" text="■" />
-      <Button layoutX="473.0" layoutY="682.0" mnemonicParsing="false" prefHeight="25.0" text="►►">
+      <Button fx:id="playingStopButton" layoutX="446.0" layoutY="682.0" mnemonicParsing="false" onAction="#setPlayingStopButtonPressed" prefHeight="25.0" prefWidth="27.0" text="■" />
+      <Button fx:id="playingPlayButton" layoutX="473.0" layoutY="682.0" mnemonicParsing="false" prefHeight="25.0" text="►►">
          <font>
             <Font name="Arial" size="12.0" />
          </font>
       </Button>
-      <Button layoutX="513.0" layoutY="682.0" mnemonicParsing="false" prefHeight="25.0" text="▐►">
+      <Button fx:id="playingOneStepForwardButton" layoutX="513.0" layoutY="682.0" mnemonicParsing="false" onAction="#playingOneStepForwardButtonPressed" prefHeight="25.0" text="▐►">
          <font>
             <Font name="Arial" size="12.0" />
          </font>
       </Button>
-      <Slider layoutX="423.0" layoutY="730.0" />
+      <Slider fx:id="mainSpeedSlider" blockIncrement="1.0" layoutX="423.0" layoutY="730.0" />
       <Label layoutX="476.0" layoutY="748.0" text="Speed" />
       <ToggleButton fx:id="shortestPathButton" layoutX="14.0" layoutY="502.0" mnemonicParsing="false" onAction="#shortestPathButtonPressed" text="Shortest path" />
+      <Label layoutX="571.0" layoutY="686.0" prefHeight="17.0" prefWidth="73.0" text="Current step: " />
+      <Label fx:id="stepLabel" layoutX="644.0" layoutY="686.0" prefHeight="17.0" prefWidth="44.0" text="0" AnchorPane.leftAnchor="644.0">
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+      </Label>
    </children>
 </AnchorPane>
