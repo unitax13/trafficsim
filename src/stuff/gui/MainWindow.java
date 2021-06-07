@@ -1,5 +1,6 @@
 package stuff.gui;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
@@ -12,17 +13,12 @@ import javafx.stage.FileChooser;
 
 import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class MainWindow implements Initializable {
 
 
-    public int SEARCH_RADIUS = 5;
-    private static final int minWidth = 100;
-    private static final int heightForButtons = 200;
+    public int SEARCH_RADIUS = 6;
     private int width, height;
     private int fieldWidth, fieldHeight;
     private static final int maxHeight = 960;
@@ -35,7 +31,13 @@ public class MainWindow implements Initializable {
     public static boolean industryIsOn = true;
     public static boolean nodeNumbersAreOn = true;
 
-    public static int viewMode = 0; //0 - NORMAL, 2 - HEATMAP
+    enum viewMode {
+        NORMAL,
+        SECOND,
+        HEATMAP
+    }
+    public static viewMode viewMode;
+    //public static int viewMode = 0; //0 - NORMAL, 2 - HEATMAP
 
     public int forNodeId = 0;
     public int toNodeId = 1;
@@ -48,7 +50,12 @@ public class MainWindow implements Initializable {
     GraphNodesContainer paths;
     double distance;
 
-    int clickingMode = 0; // 0 = normal, 1 - examining, 2 - shortest pathing
+    enum clickingMode {
+        NORMAL,
+        EXAMINING,
+        SHORTEST_PATHING
+    }
+    public static clickingMode clickingMode = MainWindow.clickingMode.NORMAL; // 0 = normal, 1 - examining, 2 - shortest pathing
 
 
     private Simulation.FieldType chosenFieldType = Simulation.FieldType.FIELD_ROAD1;
@@ -68,7 +75,13 @@ public class MainWindow implements Initializable {
     ShortestPathingClass shortestPathingClass;
     CitizenMovementsContainer cmc;
     CitizenTimer citizenTimer;
-    int urbanSegmentsNotOutYet = 100000;
+    Timer time;
+    double timeSpeed = 50;
+    boolean timerPlaying = false;
+    TaskHelper currentTaskHelper;
+    int timerFps = 5;
+    static boolean citizensAreSmart = false;
+    static boolean noMovingCitizens = true;
 
 
     GraphNodesContainer graphNodes;
@@ -121,22 +134,6 @@ public class MainWindow implements Initializable {
     private Slider gridOpacitySlider;
     @FXML
     private Button generateGraphButton;
-    @FXML
-    private Button dijkstraButton;
-    @FXML
-    private Button showPathToIdButton;
-    @FXML
-    private TextField forNodeIdTextField;
-    @FXML
-    private TextField toNodeIdTextField;
-    @FXML
-    private TextField distanceBetweenIdField1;
-    @FXML
-    private TextField distanceBetweenIdField2;
-    @FXML
-    private TextField distanceBetweenDistanceField;
-    @FXML
-    private Button distanceBetweenSetButton;
 
 
     @FXML
@@ -154,6 +151,12 @@ public class MainWindow implements Initializable {
     private Button playingOneStepForwardButton;
     @FXML
     private Label stepLabel;
+    @FXML
+    private Label timeLabel;
+    @FXML
+    private Spinner<Integer> fpsSpinner;
+    @FXML
+    private CheckBox makeCitizensSmartCheckBox;
 
     public TitledPane mainTitledPane;
     public Canvas mainCanvas;
@@ -185,7 +188,7 @@ public class MainWindow implements Initializable {
 
         examinationTool = new ExaminationTool(simulation, simulationGrid,graphNodes,segmentsContainer);
         cmc = new CitizenMovementsContainer(graphNodes);
-        citizenTimer = new CitizenTimer(cmc, graphNodes);
+        // = new CitizenTimer(cmc, graphNodes, segmentsContainer, this);
 
         initGui();
 
@@ -222,6 +225,11 @@ public class MainWindow implements Initializable {
 
         roadToggleButton.setSelected(true);
 
+        mainSpeedSlider.setValue(timeSpeed);
+
+        fpsSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1,15, timerFps));
+
+
 
 
 
@@ -246,7 +254,7 @@ public class MainWindow implements Initializable {
 
         mainCanvas.setOnMousePressed(e -> {
             Position coords = simulationGrid.getFieldWithMouseOn();
-            if (clickingMode==0) {
+            if (clickingMode== clickingMode.NORMAL) {
                 if (e.getButton() == MouseButton.PRIMARY) {
                     System.out.println("Left mouse was pressed");
                     escWasPressed = false;
@@ -256,10 +264,10 @@ public class MainWindow implements Initializable {
                     escWasPressed = false;
                     simulation.grid[coords.getX()][coords.getY()] = Simulation.FieldType.FIELD_EMPTY;
                 }
-            } else if (clickingMode==1){ //isExamining == true
+            } else if (clickingMode== clickingMode.EXAMINING){ //isExamining == true
                 examinationTool.showPath(coords.getX(), coords.getY());
                 examinationTool.printInfoAboutSegment(coords.getX(), coords.getY());
-            } else if (clickingMode == 2) {
+            } else if (clickingMode == clickingMode.SHORTEST_PATHING) {
                 if (shortestPathingClass != null) {
                     shortestPathingClass.add(coords);
                 }
@@ -268,7 +276,7 @@ public class MainWindow implements Initializable {
         });
 
         mainCanvas.setOnMouseDragged(e -> {
-            if (clickingMode==0) {
+            if (clickingMode== clickingMode.NORMAL) {
                 currentMousePos = new Point2D(e.getX(), e.getY());
                 // System.out.println("Is dragging");
                 if (isDragging == false) {
@@ -338,9 +346,6 @@ public class MainWindow implements Initializable {
         gridOpacity = gridOpacitySlider.getValue();
     }
 
-    public void setMainSpeedSliderUpdated() {
-        double timeSpeed = mainSpeedSlider.getValue();
-    }
 
     public void generateGraphButtonPressed() {
         System.out.println("Printing graph");
@@ -351,7 +356,7 @@ public class MainWindow implements Initializable {
         }
         redraw();
         cmc = new CitizenMovementsContainer(graphNodes);
-        citizenTimer = new CitizenTimer(cmc, graphNodes);
+
     }
 
     private void calculateSize(Simulation sim) {
@@ -429,8 +434,8 @@ public class MainWindow implements Initializable {
     }
 
     public void shortestPathButtonPressed() {
-        if (clickingMode!=2) {
-            clickingMode = 2;
+        if (clickingMode!= clickingMode.SHORTEST_PATHING) {
+            clickingMode = clickingMode.SHORTEST_PATHING;
             if (graphNodes != null) {
                 shortestPathingClass = new ShortestPathingClass(simulation, simulationGrid, graphNodes, segmentsContainer);
 
@@ -441,7 +446,7 @@ public class MainWindow implements Initializable {
                 System.out.println("GRAPH NOT GENERATED YET");
             }
         } else {
-            clickingMode = 0;
+            clickingMode = clickingMode.NORMAL;
             simulationGrid.positionPathToDrawIsOn = false;
             redraw();
         }
@@ -451,27 +456,27 @@ public class MainWindow implements Initializable {
     public void roadToggleButtonToggled() {
         chosenFieldType = Simulation.FieldType.FIELD_ROAD1;
         simulationGrid.positionPathToDrawIsOn = false;
-        viewMode = 0;
-        clickingMode = 0;
+        viewMode = viewMode.NORMAL;
+        clickingMode = clickingMode.NORMAL;
     }
     public void urbanAreaButtonToggled() {
         chosenFieldType = Simulation.FieldType.FIELD_URBAN1;
-        viewMode = 0;
-        clickingMode = 0;
+        viewMode = viewMode.NORMAL;
+        clickingMode = clickingMode.NORMAL;
         simulationGrid.positionPathToDrawIsOn = false;
     }
     public void industryAreaButtonToggled() {
         chosenFieldType = Simulation.FieldType.FIELD_INDUSTRY1;
-        viewMode = 0;
-        clickingMode = 0;
+        viewMode = viewMode.NORMAL;
+        clickingMode = clickingMode.NORMAL;
         simulationGrid.positionPathToDrawIsOn = false;
     }
     public void examineButtonPressed() {
-        if (clickingMode!=1) {
+        if (clickingMode!= clickingMode.EXAMINING) {
             examinationTool = new ExaminationTool(simulation, simulationGrid, graphNodes, segmentsContainer);
-            clickingMode = 1;
+            clickingMode = clickingMode.EXAMINING;
         } else {
-            clickingMode = 0;
+            clickingMode = clickingMode.NORMAL;
             simulationGrid.positionPathToDrawIsOn = false;
             redraw();
         }
@@ -555,20 +560,20 @@ public class MainWindow implements Initializable {
     }
 
     public void viewModeNormalButtonPressed() {
-        viewMode = 0;
+        viewMode = viewMode.NORMAL;
         redraw();
     }
 
     public void viewModeTrafficHeatButtonPressed() {
-        if (viewMode!=2) {
+        if (viewMode!=viewMode.HEATMAP) {
             roadSegmentsContainer = new RoadSegmentsContainer(simulation);
             roadSegmentsContainer.generatePassengersMap(simulation, graphNodes, segmentsContainer);
             simulationGrid.roadOverlay = roadSegmentsContainer.getRoadOverlay();
-            viewMode = 2;
+            viewMode = viewMode.HEATMAP;
             redraw();
         }
         else {
-            viewMode = 0;
+            viewMode = viewMode.NORMAL;
             redraw();
         }
 
@@ -577,7 +582,7 @@ public class MainWindow implements Initializable {
     public void useButton1Pressed() {
         segmentsContainer = new SegmentsContainer(simulation);
         for (UrbanSegment us: segmentsContainer.urbanSegments) {
-            us.calculateClosestRoadSegment(simulation, 5);
+            us.calculateClosestRoadSegment(simulation, SEARCH_RADIUS);
             us.findClosestRoadNodes(simulation, graphNodes);
         }
         for (UrbanSegment us: segmentsContainer.urbanSegments)
@@ -589,7 +594,7 @@ public class MainWindow implements Initializable {
 
     public void useButton2Pressed() {
         for (IndustrySegment is: segmentsContainer.industrySegments) {
-            is.calculateClosestRoadSegment(simulation, 5);
+            is.calculateClosestRoadSegment(simulation, SEARCH_RADIUS);
             is.findClosestRoadNodes(simulation, graphNodes);
         }
         for (IndustrySegment is: segmentsContainer.industrySegments)
@@ -607,16 +612,17 @@ public class MainWindow implements Initializable {
     public void useButton4Pressed() {
 
         segmentsContainer = new SegmentsContainer(simulation);
+        citizenTimer = new CitizenTimer(cmc, graphNodes,segmentsContainer, this);
         segmentsContainer.setGraphNodesContainer(graphNodes);
         segmentsContainer.bindRandomly();
 
         for (UrbanSegment us: segmentsContainer.urbanSegments) {
-            us.calculateClosestRoadSegment(simulation, 5);
+            us.calculateClosestRoadSegment(simulation, SEARCH_RADIUS);
             us.findClosestRoadNodes(simulation, graphNodes);
         }
 
         for (IndustrySegment is: segmentsContainer.industrySegments) {
-            is.calculateClosestRoadSegment(simulation, 5);
+            is.calculateClosestRoadSegment(simulation, SEARCH_RADIUS);
             is.findClosestRoadNodes(simulation, graphNodes);
         }
 
@@ -629,7 +635,7 @@ public class MainWindow implements Initializable {
 
         System.out.println("Finding paths");
         for (UrbanSegment us: segmentsContainer.urbanSegments) {
-            us.findPathToCorrespondingSegment(graphNodes);
+            us.findPathToCorrespondingSegment(graphNodes, -1, true);
             System.out.println(String.valueOf(us.distanceToIndustry) + ":" + us.pathToIndustry);
 
         }
@@ -642,9 +648,13 @@ public class MainWindow implements Initializable {
     }
 
     public void setPlayingStopButtonPressed() {
+        timerPlaying = false;
+        currentTaskHelper.cancel();
+        time.cancel();
+        time.purge();
         System.out.println("TIMER RESET");
         cmc = new CitizenMovementsContainer(graphNodes);
-        citizenTimer = new CitizenTimer(cmc, graphNodes);
+        citizenTimer = new CitizenTimer(cmc, graphNodes,segmentsContainer, this);
 
         for (UrbanSegment us : segmentsContainer.urbanSegments) {
             us.outAlready = false;
@@ -652,24 +662,33 @@ public class MainWindow implements Initializable {
 
     }
 
-    public void playingOneStepForwardButtonPressed() {
-        if (segmentsContainer.getUrbanSegmentsNotOutYet()!=null && urbanSegmentsNotOutYet>0) {
+
+    public void setPlayingPlayButtonPressed() {
+        if (timerPlaying) {
+            timerPlaying = false;
+            currentTaskHelper.cancel();
 
 
-
-            for (int i = 0; i < 30 && i < segmentsContainer.getUrbanSegmentsNotOutYet().size(); i++) {
-                Random r = new Random();
-                int bound = segmentsContainer.getUrbanSegmentsNotOutYet().size()>10 ? 10 : segmentsContainer.getUrbanSegmentsNotOutYet().size();
-                int j = r.nextInt(bound);
-                MovingCitizen movingCitizen = new MovingCitizen(segmentsContainer.getUrbanSegmentsNotOutYet().get(j));
-                segmentsContainer.getUrbanSegmentsNotOutYet().get(j).outAlready = true;
-                cmc.addMovingCitizen(movingCitizen);
-
-            }
-            urbanSegmentsNotOutYet = segmentsContainer.getUrbanSegmentsNotOutYet().size();
+        } else {
+            timerPlaying = true;
+            time = new Timer();
+            currentTaskHelper = new TaskHelper(this);
+            citizenTimer.setTimeSpeed(timeSpeed);
+            time.schedule(currentTaskHelper,0, (long) (1000*(1.0f/timerFps)));
         }
+    }
+
+    public void playingOneStepForwardButtonPressed() {
+        citizenTimer.startCitizens();
+
         citizenTimer.incrementTimeAndCheck();
-        stepLabel.setText(String.valueOf(citizenTimer.getGeneration()));
+        Platform.runLater(
+                () -> {
+                    stepLabel.setText(String.valueOf(citizenTimer.getGeneration()));
+                    timeLabel.setText(String.valueOf(citizenTimer.getTime()));
+                }
+        );
+
         citizenTimer.printTimeStats();
 
         if (roadSegmentsContainer!=null) {
@@ -678,8 +697,41 @@ public class MainWindow implements Initializable {
             roadSegmentsContainer.generatePassengersMap(simulation, graphNodes, segmentsContainer);
             simulationGrid.roadOverlay = roadSegmentsContainer.getRoadOverlay();
         }
-        redraw();
+        Platform.runLater(
+                () -> {
+            redraw();
+        });
+
     }
-    
-    
+
+    public void setMainSpeedSliderUpdated() {
+        timeSpeed = mainSpeedSlider.getValue();
+        System.out.println("Slider's value: " + timeSpeed);
+        if (timerPlaying) {
+            currentTaskHelper.cancel();
+            currentTaskHelper = new TaskHelper(this);
+
+            citizenTimer.setTimeSpeed(timeSpeed);
+            time.scheduleAtFixedRate(currentTaskHelper, 500, (long) (1000*(1.0f/timerFps)));
+        }
+    }
+
+    public void fpsSpinnerUpdated() {
+        timerFps = fpsSpinner.getValue();
+
+        if (timerPlaying) {
+            currentTaskHelper.cancel();
+            currentTaskHelper = new TaskHelper(this);
+
+            citizenTimer.setTimeSpeed(timeSpeed);
+            time.scheduleAtFixedRate(currentTaskHelper, 500, (long) (1000*(1.0f/timerFps)));
+        }
+    }
+
+    public void makeCitizensSmartCheckBoxUpdated(){
+        citizensAreSmart = !citizensAreSmart;
+    }
+
+
+
 }

@@ -28,6 +28,15 @@ public class GraphNodesContainer {
         return false;
     }
 
+    public int getNodeId (GraphNode node) {
+        for (int i=0; i<graphNodes.size(); i++) {
+            if (node.equals(graphNodes.get(i))) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public int containsNode(int x, int y) {
         //System.out.println("Checking node at: " + x + ";" + y);
         for (int i=0; i<graphNodes.size(); i++) {
@@ -154,6 +163,12 @@ public class GraphNodesContainer {
                     }
                 }
             }
+            int passengersBetweenNodes = getPassengersBetweenNodes(node1,node2);
+//            if (getCapacityBetweenNodes(node1, node2) > passengersBetweenNodes ) {
+//
+//                setDistanceBetweenNodes(node1, node2, getDistanceBetweenNodes(node1, node2) * (1+passengersBetweenNodes*passengersBetweenNodes/(getCapacityBetweenNodes(n1,n2) * 100));
+//            }
+
         }
     }
 
@@ -283,9 +298,44 @@ public class GraphNodesContainer {
 
     public double getTimeBetweenNodes(GraphNode n1, GraphNode n2) {
         double distance = getDistanceBetweenNodes(n1,n2);
-        double passengersBetweenNodes = getPassengersBetweenNodes(n1,n2);
+        int passengersBetweenNodes = getPassengersBetweenNodes(n1,n2);
 
-        return 0.01*distance*(1+passengersBetweenNodes*passengersBetweenNodes/1000);
+        return 0.01*distance; //*(1+passengersBetweenNodes*passengersBetweenNodes/(getCapacityBetweenNodes(n1,n2) * 100));
+    }
+
+    public int calculateCapacityBetweenNodes(GraphNode n1, GraphNode n2) { //ONLY ONE ROAD TYPE, SO...
+        int deltaX = Math.abs(n1.position.getX() - n2.position.getX());
+        int deltaY = Math.abs(n1.position.getY() - n2.position.getY());
+
+        if (deltaY>deltaX) {
+            deltaX = deltaY;
+        }
+
+        int capacity = deltaX*1;
+
+
+        return capacity;
+    }
+
+    public void setCapacityBetweenNodes(GraphNode node1, GraphNode node2, int capacity) {
+        if (node1 != null && node2 != null) {
+
+            for (GraphNode gn : graphNodes) {
+                if (gn.equals(node1)) {
+                    for (int i = 0; i < 4; i++) {
+                        if (gn.neighbours[i] != null && gn.neighbours[i].equals(node2)) {
+                            gn.capacity[i] = capacity;
+                        }
+                    }
+                } else if (gn.equals(node2)) {
+                    for (int i = 0; i < 4; i++) {
+                        if (gn.neighbours[i] != null && gn.neighbours[i].equals(node1)) {
+                            gn.capacity[i] = capacity;
+                        }
+                    }
+                }
+            }
+        }
     }
 
 

@@ -46,7 +46,7 @@ public class ShortestPathingClass {
             is.calculateClosestRoadSegment(simulation, 10);
             is.findClosestRoadNodes(simulation, graphNodes);
 
-            us.findPathToCorrespondingSegment(graphNodes);
+            us.findPathToCorrespondingSegment(graphNodes, -1, true);
 
             simulationGrid.positionPath = us.pathToIndustry;
             simulationGrid.positionPathToDrawIsOn = true;

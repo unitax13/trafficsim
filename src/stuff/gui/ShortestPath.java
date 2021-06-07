@@ -49,7 +49,7 @@ public class ShortestPath {
                     GraphNode n = graphNodes.get(u).neighbours[k];
                     if (n!= null && n.equals(graphNodes.get(v))) {
                         thereIsAnEdgeFromUToV = k;
-                        distance = graphNodes.get(u).distances[k];
+                        distance = graphNodes.get(u).getDistance(k);
                     }
                 }
 

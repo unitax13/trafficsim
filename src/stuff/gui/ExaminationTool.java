@@ -154,8 +154,9 @@ public class ExaminationTool {
 
                 //search in the graphnodes, count that pair containings
                 int passengers = 0;
-                    passengers = graphNodes.getPassengersBetweenNodes(closestRoadNodes.get(0), closestRoadNodes.get(1));
-                info += "\nPassengers: " + passengers;
+                passengers = graphNodes.getPassengersBetweenNodes(closestRoadNodes.get(0), closestRoadNodes.get(1));
+                double capacity = graphNodes.calculateCapacityBetweenNodes(closestRoadNodes.get(0), closestRoadNodes.get(1));
+                info += "\nPassengers: " + passengers  + " [capacity: " + capacity + "]";
 
             }
         }

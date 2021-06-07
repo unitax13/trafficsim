@@ -81,6 +81,7 @@ public class RoadSegmentsContainer {
             ArrayList<Position> segmentsToUpdate = new ArrayList<>();
 
             int passengers = 0;
+            int capacityForWholeEdge = 20;
 
             //System.out.println("Checking segment " + x + " ; " + y);
 
@@ -88,6 +89,7 @@ public class RoadSegmentsContainer {
                 passengers = graphNodes.getGraphNodeAt(x, y).getAllPassengers();
                 getRoadSegmentAt(x, y).passengers = passengers;
                 getRoadSegmentAt(x,y).passengersCalculatedAlready = true;
+                getRoadSegmentAt(x,y).capacity = 20;
                 return passengers;
             }
 
@@ -136,8 +138,9 @@ public class RoadSegmentsContainer {
                 //System.out.println("Road between " + closestRoadNodes.get(0).position + " and " + closestRoadNodes.get(1).position + " of current distance "
                  //       + graphNodes.getDistanceBetweenNodes(closestRoadNodes.get(0), closestRoadNodes.get(1)));
 
-                //search in the graphnodes, count that pair containings
-            passengers = graphNodes.getPassengersBetweenNodes(closestRoadNodes.get(0),closestRoadNodes.get(1));
+                passengers = graphNodes.getPassengersBetweenNodes(closestRoadNodes.get(0),closestRoadNodes.get(1));
+                capacityForWholeEdge = graphNodes.calculateCapacityBetweenNodes(closestRoadNodes.get(0),closestRoadNodes.get(1)); // capacity
+                graphNodes.setCapacityBetweenNodes(closestRoadNodes.get(0),closestRoadNodes.get(1),capacityForWholeEdge);
 
 
             }
@@ -145,6 +148,7 @@ public class RoadSegmentsContainer {
             for (Position position : segmentsToUpdate) {
                 getRoadSegmentAt(position.getX(), position.getY()).passengers = passengers;
                 getRoadSegmentAt(position.getX(), position.getY()).passengersCalculatedAlready = true;
+                getRoadSegmentAt(position.getX(), position.getY()).capacity = capacityForWholeEdge;
             }
 
             return passengers;

@@ -40,7 +40,7 @@ public class SimulationGrid {
             drawNodeNumbers();
         if (mainWindow.pathIsDrawn)
             drawPath();
-        if (mainWindow.viewMode == 2 && roadOverlay != null)
+        if (mainWindow.viewMode == MainWindow.viewMode.HEATMAP && roadOverlay != null)
             drawRoadHeatOverlay();
         if (positionPathToDrawIsOn)
             drawPositionPath();

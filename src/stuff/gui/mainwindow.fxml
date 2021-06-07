@@ -6,6 +6,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
@@ -41,24 +42,29 @@
       <Button layoutX="315.0" layoutY="784.0" mnemonicParsing="false" onAction="#useButton3Pressed" prefHeight="25.0" prefWidth="33.0" text="B3" />
       <Button layoutX="348.0" layoutY="784.0" mnemonicParsing="false" onAction="#useButton4Pressed" text="B4" />
       <Button fx:id="playingStopButton" layoutX="446.0" layoutY="682.0" mnemonicParsing="false" onAction="#setPlayingStopButtonPressed" prefHeight="25.0" prefWidth="27.0" text="■" />
-      <Button fx:id="playingPlayButton" layoutX="473.0" layoutY="682.0" mnemonicParsing="false" prefHeight="25.0" text="►►">
+      <Button fx:id="playingPlayButton" layoutX="473.0" layoutY="682.0" mnemonicParsing="false" onAction="#setPlayingPlayButtonPressed" prefHeight="25.0" prefWidth="40.0" text="►‖">
          <font>
             <Font name="Arial" size="12.0" />
          </font>
       </Button>
-      <Button fx:id="playingOneStepForwardButton" layoutX="513.0" layoutY="682.0" mnemonicParsing="false" onAction="#playingOneStepForwardButtonPressed" prefHeight="25.0" text="▐►">
+      <Button fx:id="playingOneStepForwardButton" layoutX="513.0" layoutY="682.0" mnemonicParsing="false" onAction="#playingOneStepForwardButtonPressed" prefHeight="25.0" text="‖►">
          <font>
             <Font name="Arial" size="12.0" />
          </font>
       </Button>
-      <Slider fx:id="mainSpeedSlider" blockIncrement="1.0" layoutX="423.0" layoutY="730.0" />
+      <Slider fx:id="mainSpeedSlider" blockIncrement="1.0" layoutX="423.0" layoutY="730.0" min="1.0" onMousePressed="#setMainSpeedSliderUpdated" onMouseReleased="#setMainSpeedSliderUpdated" value="25.0" />
       <Label layoutX="476.0" layoutY="748.0" text="Speed" />
       <ToggleButton fx:id="shortestPathButton" layoutX="14.0" layoutY="502.0" mnemonicParsing="false" onAction="#shortestPathButtonPressed" text="Shortest path" />
       <Label layoutX="571.0" layoutY="686.0" prefHeight="17.0" prefWidth="73.0" text="Current step: " />
-      <Label fx:id="stepLabel" layoutX="644.0" layoutY="686.0" prefHeight="17.0" prefWidth="44.0" text="0" AnchorPane.leftAnchor="644.0">
+      <Label fx:id="stepLabel" layoutX="644.0" layoutY="686.0" prefHeight="17.0" prefWidth="50.0" text="0" AnchorPane.leftAnchor="644.0">
          <opaqueInsets>
             <Insets />
          </opaqueInsets>
       </Label>
+      <Label layoutX="571.0" layoutY="703.0" prefHeight="17.0" prefWidth="73.0" text="Current time:" />
+      <Label fx:id="timeLabel" layoutX="644.0" layoutY="703.0" prefHeight="17.0" prefWidth="50.0" text="0" />
+      <Spinner fx:id="fpsSpinner" editable="true" layoutX="599.0" layoutY="725.0" onMouseClicked="#fpsSpinnerUpdated" onMouseReleased="#fpsSpinnerUpdated" prefHeight="25.0" prefWidth="56.0" />
+      <Label layoutX="571.0" layoutY="729.0" text="FPS:" />
+      <CheckBox fx:id="makeCitizensSmartCheckBox" layoutX="440.0" layoutY="788.0" mnemonicParsing="false" onAction="#makeCitizensSmartCheckBoxUpdated" text="Make citizens smart" />
    </children>
 </AnchorPane>
