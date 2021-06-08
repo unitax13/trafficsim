@@ -74,7 +74,7 @@ public class ExaminationTool {
                 IndustrySegment is = urbanSegment.boundIndustrySegment;
                 if (is!=null) {
                     info += "Bound to industry at" + is.position;
-                    info += "\t Distance between: " + urbanSegment.distanceToIndustry;
+                    info += "\t Distance between: " + urbanSegment.calculatePositionDistance();
                 } else {
                     info += "Unbound segment.";
                 }
@@ -86,7 +86,7 @@ public class ExaminationTool {
                 UrbanSegment us = industrySegment.boundUrbanSegment;
                 if (us!=null) {
                     info += "Bound to urban at" + us.position;
-                    info += "\t Distance between: " + us.distanceToIndustry;
+                    info += "\t Distance between: " + us.calculatePositionDistance();
                 } else {
                     info += "Unbound segment.";
                 }

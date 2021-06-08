@@ -632,8 +632,12 @@ public class MainWindow implements Initializable {
     }
 
     public void setPlayingStopButtonPressed() {
+
+
         timerPlaying = false;
-        currentTaskHelper.cancel();
+        if (currentTaskHelper!=null) {
+            currentTaskHelper.cancel();
+        }
         time.cancel();
         time.purge();
         System.out.println("TIMER RESET");
@@ -643,6 +647,9 @@ public class MainWindow implements Initializable {
         for (UrbanSegment us : segmentsContainer.urbanSegments) {
             us.outAlready = false;
         }
+
+        timeLabel.setText("0");
+        stepLabel.setText("0");
 
     }
 

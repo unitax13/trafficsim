@@ -130,7 +130,7 @@ public class CitizenMovementsContainer {
                     ArrayList<GraphNode> newPath = new ArrayList<>();
                     ArrayList<Position> newPositionPath = new ArrayList<>();
 
-                    //newPositionPath.add(mv.originSegment.pathToIndustry.get(mv.originSegment.pathToIndustry.size()-1));
+                    newPositionPath.add(mv.originSegment.pathToIndustry.get(mv.originSegment.pathToIndustry.size()-1));
 
 
                     if (updatedRemainingPath != null) {

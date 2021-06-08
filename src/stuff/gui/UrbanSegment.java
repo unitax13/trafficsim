@@ -143,4 +143,22 @@ public class UrbanSegment extends Segment {
             return nodes;
         } else return null;
     }
+
+    public int calculatePositionDistance() {
+        int dist = 0;
+        Position previous = null;
+        for (Position p: pathToIndustry) {
+            if (previous==null) {
+                previous = p;
+            } else {
+                int delta = Math.abs(previous.getX() - p.getX());
+                if (Math.abs(previous.getY() - p.getY()) > delta) {
+                    delta = Math.abs(previous.getY() - p.getY());
+                }
+                dist+= delta;
+                previous = p;
+            }
+        }
+        return dist;
+    }
 }
