@@ -14,7 +14,7 @@ public class UrbanSegment extends Segment {
         super(x, y);
     }
 
-    public ArrayList<GraphNode> findPathToCorrespondingSegment(GraphNodesContainer graphNodesContainer, int startId, boolean doUpdateSegment) {
+    public ArrayList<Object> findPathToCorrespondingSegment(GraphNodesContainer graphNodesContainer, int startId, boolean doUpdateSegment) {
         ArrayList<Integer> startIds = new ArrayList<>();
         if (startId>-1) {
             startIds.add(startId);
@@ -122,7 +122,11 @@ public class UrbanSegment extends Segment {
                 urbanSegment.distanceToIndustry = minDistance;
             }
 
-            return pathList.get(whichOne);
+            //return pathList.get(whichOne);
+            ArrayList<Object> toReturn = new ArrayList<>();
+            toReturn.add(pathList.get(whichOne));
+            toReturn.add(subPathToIndustry.get(whichOne));
+            return toReturn;
 
         }
         return null;

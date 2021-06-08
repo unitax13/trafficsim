@@ -85,7 +85,6 @@ public class MainWindow implements Initializable {
 
 
     GraphNodesContainer graphNodes;
-    boolean rectangleDraw = false;
 
     SegmentsContainer segmentsContainer;
     RoadSegmentsContainer roadSegmentsContainer;
@@ -214,10 +213,6 @@ public class MainWindow implements Initializable {
         //roadToggleButton.setStyle("-fx-background-color: rgb(47, 79, 79);-fx-text-fill: white; -fx-background-insets: 0,1,2;.focused{-fx-background-color:rgb(87, 99, 99)}");
 
 
-        ToggleGroup brushShapeToggleGroup = new ToggleGroup();
-        rectangleToggleButton.setToggleGroup(brushShapeToggleGroup);
-        lineToggleButton.setToggleGroup(brushShapeToggleGroup);
-
         ToggleGroup viewModeToggleGroup = new ToggleGroup();
         normalViewButton.setToggleGroup(viewModeToggleGroup);
         heatMapViewButton.setToggleGroup(viewModeToggleGroup);
@@ -298,7 +293,7 @@ public class MainWindow implements Initializable {
                 if (isDragging && !escWasPressed) {
                     isDragging = false;
                     Position newField = simulationGrid.getFieldWithMouseOn();
-                    if (rectangleDraw && chosenFieldType != Simulation.FieldType.FIELD_ROAD1) {
+                    if (chosenFieldType != Simulation.FieldType.FIELD_ROAD1) {
                         simulationGrid.drawRectangleBetween(previousField, newField, chosenFieldType);
                     } else {
                         simulationGrid.drawPerpendicularLineBetween(previousField, newField, chosenFieldType);
@@ -308,11 +303,7 @@ public class MainWindow implements Initializable {
                 if (isDragging && !escWasPressed) {
                     isDragging = false;
                     Position newField = simulationGrid.getFieldWithMouseOn();
-                    if (rectangleDraw) {
-                        simulationGrid.drawRectangleBetween(previousField, newField, Simulation.FieldType.FIELD_EMPTY);
-                    } else {
-                        simulationGrid.drawPerpendicularLineBetween(previousField, newField, Simulation.FieldType.FIELD_EMPTY);
-                    }
+                    simulationGrid.drawRectangleBetween(previousField, newField, Simulation.FieldType.FIELD_EMPTY);
                 }
             }
             isDragging = false;
@@ -480,13 +471,6 @@ public class MainWindow implements Initializable {
             simulationGrid.positionPathToDrawIsOn = false;
             redraw();
         }
-    }
-
-    public void rectangleButtonToggled() {
-        rectangleDraw = true;
-    }
-    public void lineButtonToggled() {
-        rectangleDraw = false;
     }
 
     public void newButtonPressed() {

@@ -23,12 +23,8 @@
       <Label layoutX="300.0" layoutY="748.0" text="Grid Opacity" />
       <Button fx:id="generateGraphButton" layoutX="270.0" layoutY="682.0" mnemonicParsing="false" onAction="#generateGraphButtonPressed" text="Generate graph" />
       <ToggleButton fx:id="roadToggleButton" layoutX="14.0" layoutY="86.0" mnemonicParsing="false" onAction="#roadToggleButtonToggled" prefHeight="25.0" prefWidth="89.0" text="Road" />
-      <ToggleButton disable="true" layoutX="14.0" layoutY="111.0" mnemonicParsing="false" text="ToggleButton" />
-      <ToggleButton fx:id="urbanAreaToggleButton" layoutX="14.0" layoutY="262.0" mnemonicParsing="false" onAction="#urbanAreaButtonToggled" prefHeight="25.0" prefWidth="89.0" text="Urban area" />
-      <ToggleButton fx:id="industryAreaToggleButton" layoutX="14.0" layoutY="287.0" mnemonicParsing="false" onAction="#industryAreaButtonToggled" prefHeight="25.0" prefWidth="89.0" text="Industry area" />
-      <ToggleButton disable="true" layoutX="14.0" layoutY="136.0" mnemonicParsing="false" text="ToggleButton" />
-      <ToggleButton fx:id="rectangleToggleButton" layoutX="14.0" layoutY="60.0" mnemonicParsing="false" onAction="#rectangleButtonToggled" prefHeight="25.0" prefWidth="44.0" text="□" />
-      <ToggleButton fx:id="lineToggleButton" layoutX="59.0" layoutY="60.0" mnemonicParsing="false" onAction="#lineButtonToggled" prefHeight="25.0" prefWidth="44.0" text="|" />
+      <ToggleButton fx:id="urbanAreaToggleButton" layoutX="16.0" layoutY="130.0" mnemonicParsing="false" onAction="#urbanAreaButtonToggled" prefHeight="25.0" prefWidth="89.0" text="Urban area" />
+      <ToggleButton fx:id="industryAreaToggleButton" layoutX="16.0" layoutY="155.0" mnemonicParsing="false" onAction="#industryAreaButtonToggled" prefHeight="25.0" prefWidth="89.0" text="Industry area" />
       <Button fx:id="openFileButton" layoutX="26.0" layoutY="607.0" mnemonicParsing="false" onAction="#openFileButtonPressed" text="Open file" />
       <Button fx:id="saveFileButton" layoutX="26.0" layoutY="632.0" mnemonicParsing="false" onAction="#saveFileButtonPressed" prefHeight="25.0" prefWidth="65.0" text="Save file" />
       <Button fx:id="newButton" layoutX="26.0" layoutY="582.0" mnemonicParsing="false" onAction="#newButtonPressed" prefHeight="25.0" prefWidth="65.0" text="New" />
