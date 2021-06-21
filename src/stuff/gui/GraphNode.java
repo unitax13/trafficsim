@@ -26,7 +26,20 @@ public class GraphNode {
         if (capacity[i]<4 || passengers[i] <= capacity[i]) {
             return distances[i];
         } else {
-            return distances[i] * ((float) passengers[i] / (float) capacity[i]);
+            //PROSTE LINIOWE ZWIĘKSZENIE
+            double multiplier = ((float) passengers[i] / (float) capacity[i]);
+
+            if (multiplier > 1 && multiplier < 1.5) {
+                return distances[i]*multiplier;
+            } else if (multiplier>1.5 && multiplier < 2) {
+                multiplier =multiplier*multiplier;
+                return distances[i]*multiplier;
+            } else if (multiplier>=2) {
+                return distances[i]*multiplier*multiplier*multiplier;
+                // Double.MAX_VALUE;
+            } else {
+                return distances[i];
+            }
         }
     }
 

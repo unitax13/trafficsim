@@ -6,8 +6,6 @@ public class MovingCitizen {
 
     CitizenMovement currentMovement;
 
-    int currentPreviousNodeNumber = 0;
-
 
 
     public MovingCitizen(UrbanSegment originSegment) {
@@ -18,10 +16,13 @@ public class MovingCitizen {
     public void setMovement(GraphNode startNode, GraphNode endNode, double time, double duration, GraphNodesContainer graphNodes) {
         if (startNode!=null && endNode!=null)
         currentMovement = new CitizenMovement(startNode, endNode, time, duration);
-        System.out.println("Citizen from " + originSegment.position + " started going from " + currentMovement.startNode.position + " to " + currentMovement.endNode.position + "; reaches next node at " + currentMovement.getMovementEndTime());
+        if (currentMovement!=null) {
+            System.out.println("Citizen from " + originSegment.position + " started going from " + currentMovement.startNode.position + " to " + currentMovement.endNode.position + "; reaches next node at " + currentMovement.getMovementEndTime());
 
-        currentPreviousNodeNumber++;
-        graphNodes.addPassengersBetweenNodes(startNode,endNode,1);
+            graphNodes.addPassengersBetweenNodes(startNode, endNode, 1);
+        } else {
+            System.out.println("NULL MOVEMENT");
+        }
     }
 
     public void initCitizen(GraphNodesContainer graphNodes, double time) {

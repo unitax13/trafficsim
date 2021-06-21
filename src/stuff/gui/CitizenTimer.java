@@ -3,6 +3,7 @@ package stuff.gui;
 import javafx.concurrent.Task;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 import java.util.TimerTask;
 
@@ -70,18 +71,28 @@ class CitizenTimer{
     }
 
     public void startCitizens() {
+        int MAX_PACK = 30;
         if (segmentsContainer.getUrbanSegmentsNotOutYet()!=null && urbanSegmentsNotOutYet>0) {
+            ArrayList<UrbanSegment> segmentsNotOutYet = segmentsContainer.getUrbanSegmentsNotOutYet();
 
-            for (int i = 0; i < 30 && i < segmentsContainer.getUrbanSegmentsNotOutYet().size(); i++) {
+            for (int i = 0; i < MAX_PACK && i < segmentsNotOutYet.size(); i++) {
                 Random r = new Random();
-                int bound = segmentsContainer.getUrbanSegmentsNotOutYet().size()>10 ? 10 : segmentsContainer.getUrbanSegmentsNotOutYet().size();
+                int bound = segmentsNotOutYet.size();
                 int j = r.nextInt(bound);
-                MovingCitizen movingCitizen = new MovingCitizen(segmentsContainer.getUrbanSegmentsNotOutYet().get(j));
-                segmentsContainer.getUrbanSegmentsNotOutYet().get(j).outAlready = true;
+                Collections.swap(segmentsNotOutYet, i,j);
+
+            }
+
+            for (int i = 0; i < MAX_PACK && i < segmentsNotOutYet.size(); i++) {
+                Random r = new Random();
+                int bound = segmentsNotOutYet.size()>MAX_PACK ? MAX_PACK : segmentsNotOutYet.size();
+                int j = r.nextInt(bound);
+                MovingCitizen movingCitizen = new MovingCitizen(segmentsNotOutYet.get(j));
+                segmentsNotOutYet.get(j).outAlready = true;
                 cmc.addMovingCitizen(movingCitizen);
 
             }
-            urbanSegmentsNotOutYet = segmentsContainer.getUrbanSegmentsNotOutYet().size();
+            urbanSegmentsNotOutYet = segmentsNotOutYet.size();
         }
     }
 
