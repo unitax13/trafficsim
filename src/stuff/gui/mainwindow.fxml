@@ -32,11 +32,8 @@
       <ToggleButton fx:id="normalViewButton" layoutX="32.0" layoutY="707.0" mnemonicParsing="false" onAction="#viewModeNormalButtonPressed" text="Normal" />
       <ToggleButton fx:id="heatMapViewButton" layoutX="22.0" layoutY="733.0" mnemonicParsing="false" onAction="#viewModeTrafficHeatButtonPressed" text="Traffic heat" />
       <ToggleButton disable="true" layoutX="15.0" layoutY="759.0" mnemonicParsing="false" text="ToggleButton" />
-      <Button fx:id="useButton" layoutX="255.0" layoutY="784.0" mnemonicParsing="false" onAction="#useButton1Pressed" text="B1" />
       <Button fx:id="statsButton" layoutX="140.0" layoutY="784.0" mnemonicParsing="false" onAction="#printStats" prefHeight="25.0" prefWidth="73.0" text="Show stats" />
-      <Button layoutX="285.0" layoutY="784.0" mnemonicParsing="false" onAction="#useButton2Pressed" prefHeight="25.0" prefWidth="30.0" text="B2" />
-      <Button layoutX="315.0" layoutY="784.0" mnemonicParsing="false" onAction="#useButton3Pressed" prefHeight="25.0" prefWidth="33.0" text="B3" />
-      <Button layoutX="348.0" layoutY="784.0" mnemonicParsing="false" onAction="#useButton4Pressed" text="B4" />
+      <Button layoutX="258.0" layoutY="784.0" mnemonicParsing="false" onAction="#useButton4Pressed" text="Bind and calculate paths" />
       <Button fx:id="playingStopButton" layoutX="446.0" layoutY="682.0" mnemonicParsing="false" onAction="#setPlayingStopButtonPressed" prefHeight="25.0" prefWidth="27.0" text="■" />
       <Button fx:id="playingPlayButton" layoutX="473.0" layoutY="682.0" mnemonicParsing="false" onAction="#setPlayingPlayButtonPressed" prefHeight="25.0" prefWidth="40.0" text="►‖">
          <font>

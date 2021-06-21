@@ -22,6 +22,10 @@ public class SimulationGrid {
     public ArrayList<Position> positionPath;
     public boolean positionPathToDrawIsOn = false;
 
+    public int cameraX = 0;
+    public int cameraY = 0;
+    public float cameraScale = 1;
+
     public SimulationGrid(MainWindow mainWindow, Simulation simulation, int fieldWidth, int fieldHeight) {
         this.mainWindow = mainWindow;
         this.simulation = simulation;

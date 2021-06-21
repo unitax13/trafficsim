@@ -474,7 +474,7 @@ public class MainWindow implements Initializable {
     }
 
     public void newButtonPressed() {
-        Simulation simulation1 = new Simulation();
+        Simulation simulation1 = new Simulation(100,100);
         simulation = simulation1;
         calculateSize(simulation);
         simulationGrid = new SimulationGrid(this,simulation, fieldWidth,fieldHeight);
@@ -563,36 +563,6 @@ public class MainWindow implements Initializable {
 
     }
 
-    public void useButton1Pressed() {
-        segmentsContainer = new SegmentsContainer(simulation);
-        for (UrbanSegment us: segmentsContainer.urbanSegments) {
-            us.calculateClosestRoadSegment(simulation, SEARCH_RADIUS);
-            us.findClosestRoadNodes(simulation, graphNodes);
-        }
-        for (UrbanSegment us: segmentsContainer.urbanSegments)
-            us.printSegmentStats();
-
-        //urbanSegment = new UrbanSegment(40,40);
-        //urbanSegment.calculateClosestRoadSegment(simulation,SEARCH_RADIUS);
-    }
-
-    public void useButton2Pressed() {
-        for (IndustrySegment is: segmentsContainer.industrySegments) {
-            is.calculateClosestRoadSegment(simulation, SEARCH_RADIUS);
-            is.findClosestRoadNodes(simulation, graphNodes);
-        }
-        for (IndustrySegment is: segmentsContainer.industrySegments)
-            is.printSegmentStats();
-
-        //urbanSegment.findClosestRoadNodes(simulation, graphNodes);
-    }
-    public void useButton3Pressed() {
-        //urbanSegment.printSegmentStats();
-
-
-
-
-    }
     public void useButton4Pressed() {
 
         segmentsContainer = new SegmentsContainer(simulation);
