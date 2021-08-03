@@ -74,7 +74,7 @@ public class ExaminationTool {
                 IndustrySegment is = urbanSegment.boundIndustrySegment;
                 if (is!=null) {
                     info += "Bound to industry at" + is.position;
-                    info += "\t Distance between: " + urbanSegment.distanceToIndustry;
+                    info += "\t Distance between: " + urbanSegment.calculatePositionDistance();
                 } else {
                     info += "Unbound segment.";
                 }
@@ -86,7 +86,7 @@ public class ExaminationTool {
                 UrbanSegment us = industrySegment.boundUrbanSegment;
                 if (us!=null) {
                     info += "Bound to urban at" + us.position;
-                    info += "\t Distance between: " + us.distanceToIndustry;
+                    info += "\t Distance between: " + us.calculatePositionDistance();
                 } else {
                     info += "Unbound segment.";
                 }
@@ -154,31 +154,9 @@ public class ExaminationTool {
 
                 //search in the graphnodes, count that pair containings
                 int passengers = 0;
-                for (UrbanSegment us : segmentsContainer.urbanSegments) {
-                    if (us.nodeRouteToIndustry != null && !us.nodeRouteToIndustry.contains(null)) {
-                        for (int i = 0; i < us.nodeRouteToIndustry.size(); i++) {
-                            GraphNode routeNode = us.nodeRouteToIndustry.get(i);
-                            if (routeNode != null) {
-                                if (routeNode.equals(closestRoadNodes.get(0))) {
-                                    if ((i > 0 && us.nodeRouteToIndustry.get(i - 1).equals(closestRoadNodes.get(1))) ||
-                                            (i + 1 < us.nodeRouteToIndustry.size() && us.nodeRouteToIndustry.get(i + 1).equals(closestRoadNodes.get(1)))) {
-                                        passengers++;
-                                        break;
-                                    }
-                                } else if (routeNode.equals(closestRoadNodes.get(1))) {
-                                    if ((i > 0 && us.nodeRouteToIndustry.get(i - 1).equals(closestRoadNodes.get(0))) ||
-                                            (i + 1 < us.nodeRouteToIndustry.size() && us.nodeRouteToIndustry.get(i + 1).equals(closestRoadNodes.get(0)))) {
-                                        passengers++;
-                                        break;
-                                    }
-                                }
-                            } else {
-                                System.out.println("Route nodes are null");
-                            }
-                        }
-                    }
-                }
-                info += "\nPassengers: " + passengers;
+                passengers = graphNodes.getPassengersBetweenNodes(closestRoadNodes.get(0), closestRoadNodes.get(1));
+                double capacity = graphNodes.calculateCapacityBetweenNodes(closestRoadNodes.get(0), closestRoadNodes.get(1));
+                info += "\nPassengers: " + passengers  + " [capacity: " + capacity + "]";
 
             }
         }

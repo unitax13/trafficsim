@@ -7,6 +7,7 @@ public class RoadSegmentsContainer {
     int width, height;
     
     public ArrayList<RoadSegment> roadSegments;
+    private Simulation simulation;
     
     public RoadSegmentsContainer(int width, int height) {
         this.width = width;
@@ -15,6 +16,7 @@ public class RoadSegmentsContainer {
     }
 
     public RoadSegmentsContainer(Simulation simulation) {
+        this.simulation = simulation;
         this.width = simulation.width;
         this.height = simulation.height;
 
@@ -27,6 +29,12 @@ public class RoadSegmentsContainer {
             }
         }
 
+    }
+
+    public void resetCalculatedAlready () {
+        for (RoadSegment rs: roadSegments) {
+            rs.passengersCalculatedAlready = false;
+        }
     }
 
     public int checkCalculatedAlready() {
@@ -73,6 +81,7 @@ public class RoadSegmentsContainer {
             ArrayList<Position> segmentsToUpdate = new ArrayList<>();
 
             int passengers = 0;
+            int capacityForWholeEdge = 20;
 
             //System.out.println("Checking segment " + x + " ; " + y);
 
@@ -80,6 +89,7 @@ public class RoadSegmentsContainer {
                 passengers = graphNodes.getGraphNodeAt(x, y).getAllPassengers();
                 getRoadSegmentAt(x, y).passengers = passengers;
                 getRoadSegmentAt(x,y).passengersCalculatedAlready = true;
+                getRoadSegmentAt(x,y).capacity = 20;
                 return passengers;
             }
 
@@ -128,28 +138,9 @@ public class RoadSegmentsContainer {
                 //System.out.println("Road between " + closestRoadNodes.get(0).position + " and " + closestRoadNodes.get(1).position + " of current distance "
                  //       + graphNodes.getDistanceBetweenNodes(closestRoadNodes.get(0), closestRoadNodes.get(1)));
 
-                //search in the graphnodes, count that pair containings
-
-                for (UrbanSegment us : segmentsContainer.urbanSegments) {
-                    if (us.nodeRouteToIndustry != null) {
-                        for (int i = 0; i < us.nodeRouteToIndustry.size(); i++) {
-                            GraphNode routeNode = us.nodeRouteToIndustry.get(i);
-                            if (routeNode.equals(closestRoadNodes.get(0))) {
-                                if ((i > 0 && us.nodeRouteToIndustry.get(i - 1).equals(closestRoadNodes.get(1))) ||
-                                        (i + 1 < us.nodeRouteToIndustry.size() && us.nodeRouteToIndustry.get(i + 1).equals(closestRoadNodes.get(1)))) {
-                                    passengers++;
-                                    break;
-                                }
-                            } else if (routeNode.equals(closestRoadNodes.get(1))) {
-                                if ((i > 0 && us.nodeRouteToIndustry.get(i - 1).equals(closestRoadNodes.get(0))) ||
-                                        (i + 1 < us.nodeRouteToIndustry.size() && us.nodeRouteToIndustry.get(i + 1).equals(closestRoadNodes.get(0)))) {
-                                    passengers++;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
+                passengers = graphNodes.getPassengersBetweenNodes(closestRoadNodes.get(0),closestRoadNodes.get(1));
+                capacityForWholeEdge = graphNodes.calculateCapacityBetweenNodes(closestRoadNodes.get(0),closestRoadNodes.get(1)); // capacity
+                graphNodes.setCapacityBetweenNodes(closestRoadNodes.get(0),closestRoadNodes.get(1),capacityForWholeEdge);
 
 
             }
@@ -157,10 +148,16 @@ public class RoadSegmentsContainer {
             for (Position position : segmentsToUpdate) {
                 getRoadSegmentAt(position.getX(), position.getY()).passengers = passengers;
                 getRoadSegmentAt(position.getX(), position.getY()).passengersCalculatedAlready = true;
+                getRoadSegmentAt(position.getX(), position.getY()).capacity = capacityForWholeEdge;
             }
 
             return passengers;
         } else return getRoadSegmentAt(x,y).passengers;
+    }
+
+    public RoadOverlay getRoadOverlay() {
+        RoadOverlay roadOverlay = new RoadOverlay(this, simulation);
+        return roadOverlay;
     }
 
 }

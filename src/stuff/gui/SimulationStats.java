@@ -1,6 +1,11 @@
 package stuff.gui;
 
-import java.util.ArrayList;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class SimulationStats {
 
@@ -31,10 +36,30 @@ public class SimulationStats {
         }
     }
 
-    public void printStats() {
+    public void printStats() throws IOException {
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("statsWindow.fxml"));
+        Parent root = loader.load();
+
+        Stage window = new Stage();
+        window.setTitle("Chart");
+        window.setMinWidth(250.0);
+
+        window.setScene(new Scene(root));
+        window.show();
+
+        StatsWindowController statsWindowController = loader.getController();
+
+        if (statsWindowController ==null) {
+            System.out.println("statsController is null");
+        } else {
+            statsWindowController.showStatsWindow(this);
+        }
+
         System.out.println("Number of urban segments: " + numberOfUrbanSegments + " (employed: " + boundSegments + ")");
         System.out.println("Number of industry segments: " + numberOfIndustrySegments);
-
         System.out.println("Number of road1 segments: " + numberOfRoad1Segments);
+
+
     }
 }
