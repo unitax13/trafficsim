@@ -31,27 +31,45 @@ public class SimulationApplication extends Application {
     public void start(Stage stage) throws Exception {
 
         FXMLLoader loader = new FXMLLoader();
-        root = loader.load(getClass().getResource("mainwindow.fxml"));
+        root = loader.load(getClass().getResource("mainWindow.fxml"));
         this.stage = stage;
 
 
         stage.setTitle("TrafficSIM");
         scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-//        scene.setOnKeyPressed(keyEvent -> {
-//            System.out.println("Key event:" + keyEvent.toString());
-//            if (keyEvent.getCode() == KeyCode.ESCAPE) {
-//                System.out.println("Esc was clicked");
-//            }
-//        });
 
-        File file = new File("C:\\Users\\Jacek\\Desktop\\stufff\\symetry_triple");
+        File file = new File("C:\\Users\\Jacek\\Desktop\\stufff\\kratownica_wycieta");
         mainWindow.openFile(file);
 
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                KeyListener.keyIsPressed(keyEvent.getCode().getCode());
+                //KeyListener.keyIsPressed(keyEvent.getCode().getCode());
+
+                //System.out.println("Key of code " + keyEvent.getCode() + " was pressed");
+                switch (keyEvent.getCode()) {
+                    case A:
+                        mainWindow.simulationGrid.cameraX -= 10;
+                        break;
+                    case D:
+                        mainWindow.simulationGrid.cameraX += 10;
+                        break;
+                    case W:
+                        mainWindow.simulationGrid.cameraY -= 10;
+                        break;
+                    case S:
+                        mainWindow.simulationGrid.cameraY += 10;
+                        break;
+                    case F1:
+                        mainWindow.simulationGrid.cameraX = 0;
+                        mainWindow.simulationGrid.cameraY = 0;
+                        mainWindow.simulationGrid.cameraScale = 1;
+                        mainWindow.redraw();
+                    default:
+                        break;
+                }
+                mainWindow.redraw();
             }
 
         });
@@ -61,6 +79,8 @@ public class SimulationApplication extends Application {
                 KeyListener.keyIsReleased(keyEvent.getCode().getCode());
             }
         });
+
+
 
 
         stage.setScene(scene);

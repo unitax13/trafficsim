@@ -1,15 +1,21 @@
 package stuff.gui;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.chart.BarChart;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.URL;
@@ -19,6 +25,7 @@ public class MainWindow implements Initializable {
 
 
     public int SEARCH_RADIUS = 6;
+
     private int width, height;
     private int fieldWidth, fieldHeight;
     private static final int maxHeight = 960;
@@ -30,6 +37,11 @@ public class MainWindow implements Initializable {
     public static boolean urbanIsOn = true;
     public static boolean industryIsOn = true;
     public static boolean nodeNumbersAreOn = true;
+
+    public MainWindow() {
+    }
+
+
 
     enum viewMode {
         NORMAL,
@@ -65,6 +77,7 @@ public class MainWindow implements Initializable {
 
     private Point2D previousMousePos = new Point2D(-1,-1);
     private Position previousField = new Position(0,0);
+    
     boolean isDragging = false;
     boolean escWasPressed = false;
 
@@ -157,6 +170,11 @@ public class MainWindow implements Initializable {
     @FXML
     private CheckBox makeCitizensSmartCheckBox;
 
+    @FXML
+    private Button chartsButton;
+    @FXML
+    private BarChart<Number, Number> barChart;
+
     public TitledPane mainTitledPane;
     public Canvas mainCanvas;
 
@@ -164,6 +182,7 @@ public class MainWindow implements Initializable {
         return mainCanvas;
     }
 
+    Position currentCoords = new Position(0,0);
     private Point2D currentMousePos = new Point2D(-1,-1);
     public Point2D getCurrentMousePos() {
         return currentMousePos;
@@ -240,54 +259,102 @@ public class MainWindow implements Initializable {
 
         gc.setFill(Color.LIGHTCYAN);
         gc.fillRect(50, 100,200,300);
-    }
 
-    public void initCallbacks() {
+        mainCanvas.setOnScroll(scrollEvent -> {
+            int deltaY = (int) scrollEvent.getDeltaY()/40;
+
+            if (deltaY>0) {
+                simulationGrid.cameraScale *= Math.abs(1.5 * deltaY);
+            } else {
+                simulationGrid.cameraScale /= Math.abs(1.5 * deltaY);
+            }
+            //System.out.println("Gotten scroll event of delta " + deltaY);
+            redraw();
+        });
+
+        mainCanvas.setOnKeyPressed(keyEvent -> {
+
+            //System.out.println("Key of code " + keyEvent.getCode() + " was pressed");
+            switch (keyEvent.getCode()) {
+                case A:
+                    simulationGrid.cameraX += 10;
+                    break;
+                case D:
+                    simulationGrid.cameraX -= 10;
+                    break;
+                case W:
+                    simulationGrid.cameraY +=10;
+                    break;
+                case S:
+                    simulationGrid.cameraY -=10;
+                    break;
+                default:
+
+            }
+
+        });
 
 
 
 
         mainCanvas.setOnMousePressed(e -> {
-            Position coords = simulationGrid.getFieldWithMouseOn();
+            currentCoords = simulationGrid.getFieldWithMouseOn();
             if (clickingMode== clickingMode.NORMAL) {
                 if (e.getButton() == MouseButton.PRIMARY) {
-                    System.out.println("Left mouse was pressed");
+                    //System.out.println("Left mouse was pressed");
                     escWasPressed = false;
-                    simulation.grid[coords.getX()][coords.getY()] = chosenFieldType;
+                    simulation.grid[currentCoords.getX()][currentCoords.getY()] = chosenFieldType;
                 } else if (e.getButton() == MouseButton.SECONDARY) {
-                    System.out.println("Right mouse was pressed");
+                    //System.out.println("Right mouse was pressed");
                     escWasPressed = false;
-                    simulation.grid[coords.getX()][coords.getY()] = Simulation.FieldType.FIELD_EMPTY;
+                    simulation.grid[currentCoords.getX()][currentCoords.getY()] = Simulation.FieldType.FIELD_EMPTY;
                 }
             } else if (clickingMode== clickingMode.EXAMINING){ //isExamining == true
-                examinationTool.showPath(coords.getX(), coords.getY());
-                examinationTool.printInfoAboutSegment(coords.getX(), coords.getY());
+                examinationTool.showPath(currentCoords.getX(), currentCoords.getY());
+                examinationTool.printInfoAboutSegment(currentCoords.getX(), currentCoords.getY());
             } else if (clickingMode == clickingMode.SHORTEST_PATHING) {
                 if (shortestPathingClass != null) {
-                    shortestPathingClass.add(coords);
+                    shortestPathingClass.add(currentCoords);
                 }
             }
 
         });
 
         mainCanvas.setOnMouseDragged(e -> {
-            if (clickingMode== clickingMode.NORMAL) {
-                currentMousePos = new Point2D(e.getX(), e.getY());
-                // System.out.println("Is dragging");
+            if (e.getButton() == MouseButton.MIDDLE) { // CAMERA DRAGGING
                 if (isDragging == false) {
                     isDragging = true;
                     previousMousePos = getCurrentMousePos();
-
-                    previousField = simulationGrid.getFieldWithMouseOn();
-
+                    simulationGrid.prevCameraY = simulationGrid.cameraY;
+                    simulationGrid.prevCameraX = simulationGrid.cameraX;
+                } else {
+                    double deltaX = previousMousePos.getX() - e.getX();
+                    double deltaY = previousMousePos.getY() - e.getY();
+                    simulationGrid.cameraX = (int) (simulationGrid.prevCameraX + deltaX);
+                    simulationGrid.cameraY = (int) (simulationGrid.prevCameraY + deltaY);
+                    redraw();
                 }
-                //System.out.println("Prevoius field: " + previousField);
-                //System.out.println("Previous mouse pos: " + previousMousePos);
-                redraw();
+            } else {
+
+                if (clickingMode == clickingMode.NORMAL) {
+                    currentMousePos = new Point2D(e.getX(), e.getY());
+                    // System.out.println("Is dragging");
+                    if (isDragging == false) {
+                        isDragging = true;
+                        previousMousePos = getCurrentMousePos();
+
+                        previousField = simulationGrid.getFieldWithMouseOn();
+
+                    }
+                    //System.out.println("Prevoius field: " + previousField);
+                    //System.out.println("Previous mouse pos: " + previousMousePos);
+                    redraw();
+                }
             }
         });
 
         mainCanvas.setOnMouseReleased( e -> {
+            //System.out.println("Mouse released");
             currentMousePos = new Point2D(e.getX(), e.getY());
             if (e.getButton() == MouseButton.PRIMARY) {
                 if (isDragging && !escWasPressed) {
@@ -309,6 +376,13 @@ public class MainWindow implements Initializable {
             isDragging = false;
             redraw();
         });
+
+    }
+
+    public void initCallbacks() {
+
+
+
     }
 
     public void configUpdated () {
@@ -335,6 +409,7 @@ public class MainWindow implements Initializable {
 
     public void gridOpacitySliderUpdated() {
         gridOpacity = gridOpacitySlider.getValue();
+        redraw();
     }
 
 
@@ -549,7 +624,7 @@ public class MainWindow implements Initializable {
     }
 
     public void viewModeTrafficHeatButtonPressed() {
-        if (viewMode!=viewMode.HEATMAP) {
+        if (viewMode!=viewMode.HEATMAP && graphNodes!=null) {
             roadSegmentsContainer = new RoadSegmentsContainer(simulation);
             roadSegmentsContainer.generatePassengersMap(simulation, graphNodes, segmentsContainer);
             simulationGrid.roadOverlay = roadSegmentsContainer.getRoadOverlay();
@@ -565,38 +640,42 @@ public class MainWindow implements Initializable {
 
     public void useButton4Pressed() {
 
-        segmentsContainer = new SegmentsContainer(simulation);
-        citizenTimer = new CitizenTimer(cmc, graphNodes,segmentsContainer, this);
-        segmentsContainer.setGraphNodesContainer(graphNodes);
-        segmentsContainer.bindRandomly();
+        if (graphNodes != null) {
+            segmentsContainer = new SegmentsContainer(simulation);
+            citizenTimer = new CitizenTimer(cmc, graphNodes, segmentsContainer, this);
+            segmentsContainer.setGraphNodesContainer(graphNodes);
+            segmentsContainer.bindRandomly();
 
-        for (UrbanSegment us: segmentsContainer.urbanSegments) {
-            us.calculateClosestRoadSegment(simulation, SEARCH_RADIUS);
-            us.findClosestRoadNodes(simulation, graphNodes);
+            for (UrbanSegment us : segmentsContainer.urbanSegments) {
+                us.calculateClosestRoadSegment(simulation, SEARCH_RADIUS);
+                us.findClosestRoadNodes(simulation, graphNodes);
+            }
+
+            for (IndustrySegment is : segmentsContainer.industrySegments) {
+                is.calculateClosestRoadSegment(simulation, SEARCH_RADIUS);
+                is.findClosestRoadNodes(simulation, graphNodes);
+            }
+
+            System.out.println("Urban segments stats:");
+            for (UrbanSegment us : segmentsContainer.urbanSegments)
+                us.printSegmentStats();
+            System.out.println("Industry segments stats:");
+            for (IndustrySegment is : segmentsContainer.industrySegments)
+                is.printSegmentStats();
+
+            System.out.println("Finding paths");
+            for (UrbanSegment us : segmentsContainer.urbanSegments) {
+                us.findPathToCorrespondingSegment(graphNodes, -1, true);
+                System.out.println(String.valueOf(us.distanceToIndustry) + ":" + us.pathToIndustry);
+
+            }
+
+        } else {
+            System.out.println("Graph nodes is null!");
         }
-
-        for (IndustrySegment is: segmentsContainer.industrySegments) {
-            is.calculateClosestRoadSegment(simulation, SEARCH_RADIUS);
-            is.findClosestRoadNodes(simulation, graphNodes);
-        }
-
-        System.out.println("Urban segments stats:");
-        for (UrbanSegment us: segmentsContainer.urbanSegments)
-            us.printSegmentStats();
-        System.out.println("Industry segments stats:");
-        for (IndustrySegment is: segmentsContainer.industrySegments)
-            is.printSegmentStats();
-
-        System.out.println("Finding paths");
-        for (UrbanSegment us: segmentsContainer.urbanSegments) {
-            us.findPathToCorrespondingSegment(graphNodes, -1, true);
-            System.out.println(String.valueOf(us.distanceToIndustry) + ":" + us.pathToIndustry);
-
-        }
-
     }
 
-    public void printStats() {
+    public void printStats() throws IOException {
         simulation.simulationStats.updateSegmentsCount();
         simulation.simulationStats.printStats();
     }
@@ -625,21 +704,26 @@ public class MainWindow implements Initializable {
 
 
     public void setPlayingPlayButtonPressed() {
-        if (timerPlaying) {
-            timerPlaying = false;
-            currentTaskHelper.cancel();
+        if (citizenTimer != null) {
+            if (timerPlaying) {
+                timerPlaying = false;
+                currentTaskHelper.cancel();
 
 
+            } else {
+                timerPlaying = true;
+                time = new Timer();
+                currentTaskHelper = new TaskHelper(this);
+                citizenTimer.setTimeSpeed(timeSpeed);
+                time.schedule(currentTaskHelper, 0, (long) (1000 * (1.0f / timerFps)));
+            }
         } else {
-            timerPlaying = true;
-            time = new Timer();
-            currentTaskHelper = new TaskHelper(this);
-            citizenTimer.setTimeSpeed(timeSpeed);
-            time.schedule(currentTaskHelper,0, (long) (1000*(1.0f/timerFps)));
+            System.out.println("Citizen timer is null!");
         }
     }
 
     public void playingOneStepForwardButtonPressed() {
+        if (citizenTimer != null) {
         citizenTimer.startCitizens();
 
         citizenTimer.incrementTimeAndCheck();
@@ -662,6 +746,9 @@ public class MainWindow implements Initializable {
                 () -> {
             redraw();
         });
+        } else {
+            System.out.println("Citizen timer is null!");
+        }
 
     }
 
@@ -691,6 +778,58 @@ public class MainWindow implements Initializable {
 
     public void makeCitizensSmartCheckBoxUpdated(){
         citizensAreSmart = !citizensAreSmart;
+    }
+
+    public void showChart1(ActionEvent actionEvent) throws IOException {
+        if (segmentsContainer!=null) {
+
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("distanceChartWindow.fxml"));
+            Parent root = loader.load();
+
+            Stage window = new Stage();
+            window.setTitle("Distance chart");
+            window.setMinWidth(250.0);
+
+            window.setScene(new Scene(root));
+            window.show();
+
+            DistanceChartWindowController charts = loader.getController();
+
+            if (charts==null) {
+                System.out.println("charts is null");
+            }
+
+            //ChartsController charts = new ChartsController();
+            charts.showBarChartDistance(segmentsContainer);
+        }
+    }
+
+    public void showTimeChart(ActionEvent actionEvent) throws IOException {
+        if (segmentsContainer!=null) {
+
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("timeChartWindow.fxml"));
+            Parent root = loader.load();
+
+            Stage window = new Stage();
+            window.setTitle("Time chart");
+            window.setMinWidth(250.0);
+
+            window.setScene(new Scene(root));
+            window.show();
+
+            TimeChartWindowController charts = loader.getController();
+
+            if (charts==null) {
+                System.out.println("charts is null");
+            }
+
+            charts.showBarChartTime(segmentsContainer);
+        }
+    }
+
+    public void showStepsChart(ActionEvent actionEvent) {
     }
 
 

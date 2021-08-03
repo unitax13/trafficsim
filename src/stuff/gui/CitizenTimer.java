@@ -18,11 +18,13 @@ class CitizenTimer{
     CitizenMovementsContainer cmc;
     GraphNodesContainer graphNodes;
     SegmentsContainer segmentsContainer;
+    MainWindow mainWindow;
 
     public CitizenTimer(CitizenMovementsContainer cmc, GraphNodesContainer graphNodes, SegmentsContainer segmentsContainer, MainWindow mainWindow) {
         this.cmc = cmc;
         this.graphNodes = graphNodes;
         this.segmentsContainer = segmentsContainer;
+        this.mainWindow = mainWindow;
     }
 
 
@@ -42,9 +44,14 @@ class CitizenTimer{
         setStep(speed/1000);
     }
     public void incrementTimeAndCheck() {
-        generation++;
-        incrementOnlyTime();
-        applyStepTask();
+        if (mainWindow.noMovingCitizens==false) {
+            generation++;
+            incrementOnlyTime();
+            applyStepTask();
+        } else {
+            mainWindow.timerPlaying = false;
+            mainWindow.currentTaskHelper.cancel();
+        }
     }
 
     public int getGeneration() {
@@ -87,7 +94,7 @@ class CitizenTimer{
                 Random r = new Random();
                 int bound = segmentsNotOutYet.size()>MAX_PACK ? MAX_PACK : segmentsNotOutYet.size();
                 int j = r.nextInt(bound);
-                MovingCitizen movingCitizen = new MovingCitizen(segmentsNotOutYet.get(j));
+                MovingCitizen movingCitizen = new MovingCitizen(segmentsNotOutYet.get(j), generation, time, step);
                 segmentsNotOutYet.get(j).outAlready = true;
                 cmc.addMovingCitizen(movingCitizen);
 

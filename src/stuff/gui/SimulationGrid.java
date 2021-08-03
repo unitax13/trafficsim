@@ -22,6 +22,9 @@ public class SimulationGrid {
     public ArrayList<Position> positionPath;
     public boolean positionPathToDrawIsOn = false;
 
+
+    public int prevCameraX = 0;
+    public int prevCameraY = 0;
     public int cameraX = 0;
     public int cameraY = 0;
     public float cameraScale = 1;
@@ -36,6 +39,9 @@ public class SimulationGrid {
     }
 
     public void draw(GraphicsContext gc) {
+        //gc.clearRect(0,0, fieldWidth*cameraScale*simulation.width, fieldHeight*cameraScale*simulation.height);
+        gc.setFill(Color.CORNSILK);
+        gc.fillRect(0,0, mainCanvas.getWidth(), mainCanvas.getHeight());
         drawGrid(gc);
         drawSelection(gc);
         drawCoords();
@@ -54,26 +60,33 @@ public class SimulationGrid {
     public Position getFieldWithMouseOn() {
         Point2D p = mainWindow.getCurrentMousePos();
         if (p!= null) {
-            int chosenFieldX = (int)(p.getX() / fieldWidth);
-            int chosenFieldY = (int)(p.getY() / fieldHeight);
+            int chosenFieldX = (int)( (p.getX() + cameraX) / (fieldWidth*cameraScale));
+            int chosenFieldY = (int)( (p.getY() + cameraY) / (fieldHeight*cameraScale));
             if (chosenFieldX >= 0 && chosenFieldX < simulation.width && chosenFieldY >= 0 && chosenFieldY < simulation.height)
                 return new Position(chosenFieldX, chosenFieldY);
-            else
-                return new Position(-1, -1);
+            else {
+                //throw new ArrayIndexOutOfBoundsException();
+                System.out.println("Unreachable coords");
+                return mainWindow.currentCoords;
+                //return new Position(-1, -1);
+            }
+
         }
         return new Position(-1, -1);
         }
 
     private void drawSelection(GraphicsContext gc) {
-        Position selectedField = getFieldWithMouseOn();
-        if (selectedField.getX() != -1 && selectedField.getY() != -1) {
-            Color inverse = Color.LIGHTGRAY;
+        if (!mainWindow.isDragging) {
+            Position selectedField = getFieldWithMouseOn();
+            if (selectedField.getX() != -1 && selectedField.getY() != -1) {
+                Color inverse = Color.LIGHTGRAY;
 
-            gc.setGlobalBlendMode(BlendMode.DARKEN);
-            gc.setFill(inverse);
-            gc.fillRect((int) (fieldWidth * selectedField.getX()), (int) (fieldHeight * selectedField.getY()), fieldWidth, fieldHeight);
+                gc.setGlobalBlendMode(BlendMode.DARKEN);
+                gc.setFill(inverse);
+                gc.fillRect((int) (fieldWidth * cameraScale * selectedField.getX() - cameraX), (int) (fieldHeight * cameraScale * selectedField.getY() - cameraY), fieldWidth * cameraScale, fieldHeight * cameraScale);
 
-            gc.setGlobalBlendMode(BlendMode.SRC_OVER);
+                gc.setGlobalBlendMode(BlendMode.SRC_OVER);
+            }
         }
     }
 
@@ -164,7 +177,7 @@ public class SimulationGrid {
                     color = Color.CORNSILK;
                 }
                 gc.setFill(color);
-                gc.fillRect(fieldWidth*x, fieldHeight*y,fieldWidth, fieldHeight);
+                gc.fillRect(fieldWidth*cameraScale*x- cameraX, fieldHeight*cameraScale*y- cameraY,fieldWidth*cameraScale, fieldHeight*cameraScale);
 
             }
         }
@@ -182,8 +195,8 @@ public class SimulationGrid {
                 gc.setLineWidth(1*mainWindow.gridOpacity/100);
             else
                 gc.setLineWidth(0.5*mainWindow.gridOpacity/100);
-            gc.strokeLine(x*fieldWidth,-1,x*fieldWidth,SimulationApplication.SCREEN_HEIGHT);
-            gc.strokeLine(-1, x*fieldWidth, SimulationApplication.SCREEN_WIDTH,x*fieldWidth);
+            gc.strokeLine(x*fieldWidth*cameraScale- cameraX,-1 - cameraY,x*fieldWidth*cameraScale- cameraX,SimulationApplication.SCREEN_HEIGHT*cameraScale- cameraY);
+            gc.strokeLine(-1 - cameraX, x*fieldWidth*cameraScale- cameraY, SimulationApplication.SCREEN_WIDTH*cameraScale- cameraX,x*fieldWidth*cameraScale- cameraY);
         }
     }
 
@@ -333,7 +346,7 @@ public class SimulationGrid {
             for (int i = 0; i < mainWindow.graphNodes.getSize(); i++) {
                 GraphNode node = mainWindow.graphNodes.get().get(i);
                 gc.setFill(Color.BLACK);
-                gc.fillText(String.valueOf(i), node.position.getX() * fieldWidth + fieldWidth, node.position.getY() * fieldWidth, fieldWidth);
+                gc.fillText(String.valueOf(i), node.position.getX() * fieldWidth*cameraScale + fieldWidth*cameraScale, node.position.getY() * fieldWidth*cameraScale, fieldWidth*cameraScale);
 
             }
         }
@@ -374,7 +387,7 @@ public class SimulationGrid {
 
 
                         gc.setFill(Color.rgb((int) scRed, (int) scGreen, (int) scBlue));
-                        gc.fillRect(fieldWidth * x, fieldHeight * y, fieldWidth, fieldHeight);
+                        gc.fillRect(fieldWidth*cameraScale * x - cameraX, fieldHeight*cameraScale * y - cameraY, fieldWidth*cameraScale, fieldHeight*cameraScale);
                         y += Math.signum(delta);
                     }
                 } else if (one.position.getY() == two.position.getY()) {
@@ -401,7 +414,7 @@ public class SimulationGrid {
 
 
                         gc.setFill(Color.rgb((int) scRed, (int) scGreen, (int) scBlue));
-                        gc.fillRect(fieldWidth * x, fieldHeight * y, fieldWidth, fieldHeight);
+                        gc.fillRect(fieldWidth*cameraScale * x - cameraX, fieldHeight*cameraScale * y - cameraY, fieldWidth*cameraScale, fieldHeight*cameraScale);
                         x += Math.signum(delta);
                     }
                 }
@@ -428,7 +441,7 @@ public class SimulationGrid {
                         double delta = two.getY() - one.getY();
                         for (int j = 0; j <= Math.abs(delta); j++) {
                             gc.setFill(color);
-                            gc.fillRect(fieldWidth * x, fieldHeight * y, fieldWidth, fieldHeight);
+                            gc.fillRect(fieldWidth*cameraScale * x - cameraX, fieldHeight*cameraScale * y - cameraY, fieldWidth*cameraScale, fieldHeight*cameraScale);
                             y += Math.signum(delta);
                         }
                     } else if (one.getY() == two.getY()) {
@@ -436,7 +449,7 @@ public class SimulationGrid {
                         for (int j = 0; j <= Math.abs(delta); j++) {
 
                             gc.setFill(color);
-                            gc.fillRect(fieldWidth * x, fieldHeight * y, fieldWidth, fieldHeight);
+                            gc.fillRect(fieldWidth*cameraScale * x - cameraX, fieldHeight*cameraScale * y - cameraY, fieldWidth*cameraScale, fieldHeight*cameraScale);
                             x += Math.signum(delta);
                         }
                     }
@@ -451,7 +464,7 @@ public class SimulationGrid {
                 if (roadOverlay.colorMap[i][j].getOpacity()!=0.0) {
                     //System.out.println(i + ";" + j +" opacity is not 0");
                     gc.setFill(roadOverlay.colorMap[i][j]);
-                    gc.fillRect(fieldWidth * i, fieldHeight * j, fieldWidth, fieldHeight);
+                    gc.fillRect(fieldWidth*cameraScale * i - cameraX, fieldHeight*cameraScale * j-cameraY, fieldWidth*cameraScale, fieldHeight*cameraScale);
                 }
             }
         }

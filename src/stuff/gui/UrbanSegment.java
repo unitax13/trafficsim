@@ -10,6 +10,9 @@ public class UrbanSegment extends Segment {
     public double distanceToIndustry;
     public boolean outAlready = false;
 
+    public int totalStepsTravellingTook = 0;
+    public double totalTimeTravellingTook = 0;
+
     public UrbanSegment(int x, int y) {
         super(x, y);
     }
@@ -121,6 +124,7 @@ public class UrbanSegment extends Segment {
                 urbanSegment.nodeRouteToIndustry = pathList.get(whichOne);
                 urbanSegment.distanceToIndustry = minDistance;
             }
+
 
             //return pathList.get(whichOne);
             ArrayList<Object> toReturn = new ArrayList<>();
