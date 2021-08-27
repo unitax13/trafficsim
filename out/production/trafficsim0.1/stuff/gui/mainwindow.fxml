@@ -61,6 +61,6 @@
       <CheckBox fx:id="makeCitizensSmartCheckBox" layoutX="440.0" layoutY="794.0" mnemonicParsing="false" onAction="#makeCitizensSmartCheckBoxUpdated" text="Make citizens smart" />
       <Button fx:id="chartsButton" layoutX="714.0" layoutY="691.0" mnemonicParsing="false" onAction="#showChart1" text="Distance chart" />
       <Button layoutX="714.0" layoutY="725.0" mnemonicParsing="false" onAction="#showTimeChart" prefHeight="25.0" prefWidth="132.0" text="Travelling time chart" />
-      <Button layoutX="714.0" layoutY="761.0" mnemonicParsing="false" onAction="#showStepsChart" text="Steps chart" />
+      <Button layoutX="714.0" layoutY="761.0" mnemonicParsing="false" onAction="#showCitizensNumberOnMapChart" text="Total citizens out chart" />
    </children>
 </AnchorPane>

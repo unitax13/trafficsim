@@ -23,7 +23,7 @@ public class GraphNode {
     }
 
     public double getDistance(int i) {
-        if (capacity[i]<4 || passengers[i] <= capacity[i]) {
+        if (capacity[i]<2 || passengers[i] <= capacity[i]) {
             return distances[i];
         } else {
 
@@ -31,12 +31,14 @@ public class GraphNode {
 
             if (multiplier > 1 && multiplier < 1.5) {//LINIOWE ZWIĘKSZENIE
                 return distances[i]*multiplier;
+
             } else if (multiplier>1.5 && multiplier < 2) { //ZWIĘKSZENIE DO KWADRATU
                 multiplier =multiplier*multiplier;
                 return distances[i]*multiplier;
+
             } else if (multiplier>=2) { //ZWIĘKSZENIE DO SZEŚCIANU
                 return distances[i]*multiplier*multiplier*multiplier;
-                // Double.MAX_VALUE;
+
             } else {
                 return distances[i];
             }

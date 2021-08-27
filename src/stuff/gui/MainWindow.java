@@ -26,6 +26,7 @@ public class MainWindow implements Initializable {
 
     public int SEARCH_RADIUS = 6;
 
+
     private int width, height;
     private int fieldWidth, fieldHeight;
     private static final int maxHeight = 960;
@@ -70,14 +71,18 @@ public class MainWindow implements Initializable {
     public static clickingMode clickingMode = MainWindow.clickingMode.NORMAL; // 0 = normal, 1 - examining, 2 - shortest pathing
 
 
-    private Simulation.FieldType chosenFieldType = Simulation.FieldType.FIELD_ROAD1;
+    public Simulation.FieldType chosenFieldType = Simulation.FieldType.FIELD_ROAD1;
 
 
 
 
     private Point2D previousMousePos = new Point2D(-1,-1);
-    private Position previousField = new Position(0,0);
+    public Position previousField = new Position(0,0);
     
+    boolean primaryIsDown = false;
+    boolean middleIsDown = false;
+    boolean secondaryIsDown = false;
+
     boolean isDragging = false;
     boolean escWasPressed = false;
 
@@ -101,6 +106,7 @@ public class MainWindow implements Initializable {
 
     SegmentsContainer segmentsContainer;
     RoadSegmentsContainer roadSegmentsContainer;
+    public static ArrayList<Integer> statMovingCitizensSizeStat = new ArrayList<>();
 
 
 
@@ -218,6 +224,7 @@ public class MainWindow implements Initializable {
 
     public void redraw() {
         simulationGrid.draw(gc);
+
     }
 
     private void initGui() {
@@ -298,6 +305,23 @@ public class MainWindow implements Initializable {
 
 
         mainCanvas.setOnMousePressed(e -> {
+            switch (e.getButton()) {
+                case PRIMARY:
+                    primaryIsDown = true;
+                    break;
+                case MIDDLE:
+                    middleIsDown = true;
+                    break;
+                case SECONDARY:
+                    secondaryIsDown = true;
+                    break;
+                default:
+                    primaryIsDown = false;
+                    middleIsDown = false;
+                    secondaryIsDown = false;
+                    break;
+            }
+
             currentCoords = simulationGrid.getFieldWithMouseOn();
             if (clickingMode== clickingMode.NORMAL) {
                 if (e.getButton() == MouseButton.PRIMARY) {
@@ -373,6 +397,21 @@ public class MainWindow implements Initializable {
                     simulationGrid.drawRectangleBetween(previousField, newField, Simulation.FieldType.FIELD_EMPTY);
                 }
             }
+
+            switch (e.getButton()) {
+                case PRIMARY:
+                    primaryIsDown = false;
+                    break;
+                case MIDDLE:
+                    middleIsDown = false;
+                    break;
+                case SECONDARY:
+                    secondaryIsDown = false;
+                    break;
+                default:
+                    break;
+            }
+
             isDragging = false;
             redraw();
         });
@@ -830,6 +869,30 @@ public class MainWindow implements Initializable {
     }
 
     public void showStepsChart(ActionEvent actionEvent) {
+    }
+
+    public void showCitizensNumberOnMapChart(ActionEvent actionEvent) throws IOException {
+        if (segmentsContainer!=null && cmc!=null) {
+
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("citizensOnMapChartWindow.fxml"));
+            Parent root = loader.load();
+
+            Stage window = new Stage();
+            window.setTitle("Citizens out chart");
+            window.setMinWidth(250.0);
+
+            window.setScene(new Scene(root));
+            window.show();
+
+            CitizensOnMapChartWindowController charts = loader.getController();
+
+            if (charts==null) {
+                System.out.println("charts is null");
+            }
+
+            charts.showLineChartTime(segmentsContainer);
+        }
     }
 
 

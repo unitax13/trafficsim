@@ -16,6 +16,10 @@ public class DistanceChartWindowController {
     @FXML
     private Label medianText;
     @FXML
+    private  Label minText;
+    @FXML
+    private  Label maxText;
+    @FXML
     private BarChart barChart;
     @FXML
     private Axis<String> xAxis;
@@ -46,11 +50,23 @@ public class DistanceChartWindowController {
 
         data.forEach((k,v) -> mainSeries.getData().add(new XYChart.Data<>("" + k, v)));
 
+        double min = -1;
+        double max = -1;
+        if (!data.isEmpty()) {
+            min = data.firstKey();
+            max = data.firstKey();
+        }
+
         double average = 0;
         int totalCitizens = 0;
         for (double key:data.keySet()) {
             average += key*data.get(key);
             totalCitizens += data.get(key);
+
+            if (key>max)
+                max = key;
+            if (key<min)
+                min = key;
         }
 
         average = average/totalCitizens;
@@ -66,6 +82,8 @@ public class DistanceChartWindowController {
         }
         averageText.setText("" + ((double)Math.round(average*1000))/1000);
         medianText.setText("" + ((double)Math.round(median*1000))/1000);
+        minText.setText("" + ((double)Math.round(min*1000))/1000);
+        maxText.setText("" + ((double)Math.round(max*1000))/1000);
 
         yAxis.setAnimated(false);
 

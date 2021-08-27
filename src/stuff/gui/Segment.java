@@ -72,7 +72,7 @@ public class Segment {
             if ((-X / 2 <= x) && (x <= X / 2) && (-Y / 2 <= y) && (y <= Y / 2)) {
                 presentX = (X - x);
                 presentY = (Y - y);
-                if (simulation.grid[presentX][presentY] == Simulation.FieldType.FIELD_ROAD1) {
+                if (simulation.get(presentX,presentY) == Simulation.FieldType.FIELD_ROAD1) {
                     //System.out.println("Found road segment at [" + presentX + "," + presentY + "].");
                     closestRoadSegment = new Position(presentX, presentY);
                     return closestRoadSegment;

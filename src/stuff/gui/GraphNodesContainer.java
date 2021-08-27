@@ -314,8 +314,14 @@ public class GraphNodesContainer {
 
         int capacity = deltaX*1;
 
-
+        //CAPACITY
+        //CAPACITY
+        //CAPACITY
+        //return 2;
         return capacity;
+        //CAPACITY
+        //CAPACITY
+        //CAPACITY
     }
 
     public void setCapacityBetweenNodes(GraphNode node1, GraphNode node2, int capacity) {

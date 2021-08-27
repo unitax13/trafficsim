@@ -60,17 +60,25 @@ public class UrbanSegment extends Segment {
 
                     if ((destinationIds.size() >= 1 && i == destinationIds.get(0)) || (destinationIds.size() >= 2 && i == destinationIds.get(1))) {
 
-                        System.out.printf(i + ". " + pathAndDistances1[i].dist + " "); //whole distance
+                        if (SimulationApplication.IS_DEBUGGING)
+                            System.out.printf(i + ". " + pathAndDistances1[i].dist + " "); //whole distance
+
                         pathAndDistances1[i].dist += urbanSegment.distancesToClosestRoadNodes.get(a);
-                        System.out.printf(" (" + pathAndDistances1[i].dist + ") ");
+                        if (SimulationApplication.IS_DEBUGGING)
+                            System.out.printf(" (" + pathAndDistances1[i].dist + ") ");
+
                         pathAndDistances1[i].dist += urbanSegment.boundIndustrySegment.getDistanceToClosestRoadNodesByNodeId(i, graphNodesContainer);
 
                         distances.add(pathAndDistances1[i].dist);
-                        System.out.printf(" (" + pathAndDistances1[i].dist + ") ");
 
-                        if (pathAndDistances1[i].node != null)
-                            System.out.printf(pathAndDistances1[i].node.position.toString()); //first/last node position
-                        System.out.printf("----->");
+                        if (SimulationApplication.IS_DEBUGGING)
+                            System.out.printf(" (" + pathAndDistances1[i].dist + ") ");
+
+                        if (SimulationApplication.IS_DEBUGGING) {
+                            if (pathAndDistances1[i].node != null)
+                                System.out.printf(pathAndDistances1[i].node.position.toString()); //first/last node position
+                            System.out.printf("----->");
+                        }
 
                         PathAndDistances pad2 = pathAndDistances1[i].predecessor;
 
@@ -89,14 +97,15 @@ public class UrbanSegment extends Segment {
                                 path.add(pad2.node); // add it to a path to show
 
                                 singleSubPathToIndustry.add(pad2.node.position);
-
-                                System.out.printf(pad2.node.position.toString() + "-->"); //also print that node
+                                if (SimulationApplication.IS_DEBUGGING)
+                                    System.out.printf(pad2.node.position.toString() + "-->"); //also print that node
                             }
                             pad2 = pad2.predecessor;
                         }
 
-
-                        System.out.printf(graphNodesContainer.get().get(startIds.get(a)).position.toString() + "\n"); //print the last one
+                        if (SimulationApplication.IS_DEBUGGING) {
+                            System.out.printf(graphNodesContainer.get().get(startIds.get(a)).position.toString() + "\n"); //print the last one
+                        }
                         path.add(graphNodesContainer.get().get(startIds.get(a))); //finish the node path and add that path to urban segment
                         pathList.add(path);
 
@@ -151,18 +160,20 @@ public class UrbanSegment extends Segment {
     public int calculatePositionDistance() {
         int dist = 0;
         Position previous = null;
-        for (Position p: pathToIndustry) {
-            if (previous==null) {
-                previous = p;
-            } else {
-                int delta = Math.abs(previous.getX() - p.getX());
-                if (Math.abs(previous.getY() - p.getY()) > delta) {
-                    delta = Math.abs(previous.getY() - p.getY());
+        if (pathToIndustry!=null) {
+            for (Position p : pathToIndustry) {
+                if (previous == null) {
+                    previous = p;
+                } else {
+                    int delta = Math.abs(previous.getX() - p.getX());
+                    if (Math.abs(previous.getY() - p.getY()) > delta) {
+                        delta = Math.abs(previous.getY() - p.getY());
+                    }
+                    dist += delta;
+                    previous = p;
                 }
-                dist+= delta;
-                previous = p;
             }
-        }
-        return dist;
+            return dist;
+        } else return -1;
     }
 }

@@ -47,9 +47,9 @@ public class RoadSegmentsContainer {
     }
 
     public RoadSegment getRoadSegmentAt(int x, int y) {
-        for (int i=0; i<roadSegments.size(); i++) {
-            if (x==roadSegments.get(i).position.getX() && y==roadSegments.get(i).position.getY())
-                return roadSegments.get(i);
+        for (RoadSegment roadSegment : roadSegments) {
+            if (x == roadSegment.position.getX() && y == roadSegment.position.getY())
+                return roadSegment;
         }
         return null;
     }
