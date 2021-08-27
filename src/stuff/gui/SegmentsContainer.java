@@ -56,7 +56,7 @@ public class SegmentsContainer {
     public ArrayList<UrbanSegment> getUrbanSegmentsNotOutYet() {
         ArrayList<UrbanSegment> list = new ArrayList<>();
         for (UrbanSegment us: urbanSegments) {
-            if (us.outAlready==false)
+            if (us.outAlready==false && us.boundIndustrySegment!=null)
                 list.add(us);
         }
         return list;

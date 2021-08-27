@@ -26,6 +26,7 @@ public class SimulationApplication extends Application {
 
     public static int SCREEN_WIDTH = 892;
     public static int SCREEN_HEIGHT = 840;
+    public static boolean IS_DEBUGGING = false;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -39,7 +40,7 @@ public class SimulationApplication extends Application {
         scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 
-        File file = new File("C:\\Users\\Jacek\\Desktop\\stufff\\kratownica_wycieta");
+        File file = new File("C:\\Users\\Jacek\\Desktop\\stufff\\symetry20");
         mainWindow.openFile(file);
 
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {

@@ -9,11 +9,11 @@ import java.util.TimerTask;
 
 class CitizenTimer{
 
-    private double time = 0.001;
+    private double time = 0.000001;
     private double step = 0.05;
     private int generation = 0;
 
-    int urbanSegmentsNotOutYet = 100000;
+    int urbanSegmentsNotOutYet = 1000000;
 
     CitizenMovementsContainer cmc;
     GraphNodesContainer graphNodes;
@@ -94,9 +94,12 @@ class CitizenTimer{
                 Random r = new Random();
                 int bound = segmentsNotOutYet.size()>MAX_PACK ? MAX_PACK : segmentsNotOutYet.size();
                 int j = r.nextInt(bound);
-                MovingCitizen movingCitizen = new MovingCitizen(segmentsNotOutYet.get(j), generation, time, step);
-                segmentsNotOutYet.get(j).outAlready = true;
-                cmc.addMovingCitizen(movingCitizen);
+                if (segmentsNotOutYet.get(j).outAlready == false) {
+                    MovingCitizen movingCitizen = new MovingCitizen(segmentsNotOutYet.get(j), generation, time, step);
+                    segmentsNotOutYet.get(j).outAlready = true;
+                    cmc.addMovingCitizen(movingCitizen);
+                }
+
 
             }
             urbanSegmentsNotOutYet = segmentsNotOutYet.size();

@@ -18,14 +18,15 @@ public class MovingCitizen {
     }
 
     public void setMovement(GraphNode startNode, GraphNode endNode, double time, double duration, GraphNodesContainer graphNodes) {
-        if (startNode!=null && endNode!=null)
-        currentMovement = new CitizenMovement(startNode, endNode, time, duration);
+        if (startNode!=null && endNode!=null) {
+            currentMovement = new CitizenMovement(startNode, endNode, time, duration);
 
-        originSegment.totalStepsTravellingTook = (int) ( (time+duration - (startGeneration*step))/step );
-        originSegment.totalTimeTravellingTook = Math.ceil(((time+duration) - startTime)*100)/100;
+            originSegment.totalStepsTravellingTook = (int) ((time + duration - (startGeneration * step)) / step);
+            originSegment.totalTimeTravellingTook = Math.ceil(((time + duration) - startTime) * 100) / 100;
+        }
 
         if (currentMovement!=null) {
-            System.out.println("Citizen from " + originSegment.position + " started going from " + currentMovement.startNode.position + " to " + currentMovement.endNode.position + "; reaches next node at " + currentMovement.getMovementEndTime());
+            System.out.println("Citizen from " + originSegment.position + " started going from " + currentMovement.startNode.position + " to " + currentMovement.endNode.position + "; reaches next node at " + currentMovement.getMovementEndTime() + "\n");
 
             graphNodes.addPassengersBetweenNodes(startNode, endNode, 1);
 
