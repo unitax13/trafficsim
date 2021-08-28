@@ -7,6 +7,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 
+import java.util.ArrayList;
 import java.util.TreeMap;
 
 public class CitizensOnMapChartWindowController {
@@ -20,7 +21,7 @@ public class CitizensOnMapChartWindowController {
     private Axis<Number> yAxis;
 
 
-    public void showLineChartTime(SegmentsContainer segmentsContainer) {
+    public void showLineChartTime(ArrayList<ArrayList<Integer>> movingCitizensChartData) {
 
 
         yAxis.setLabel("Citizens on the map");
@@ -28,21 +29,25 @@ public class CitizensOnMapChartWindowController {
 
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
+        for (int i=0; i<movingCitizensChartData.size(); i++ ) {
 
-        TreeMap<Double, Integer> data = new TreeMap<>();
-        int i=0;
-        for(int number: MainWindow.statMovingCitizensSizeStat) {
-            data.put((double) i, number);
-            i++;
+            ArrayList<Integer> movingCitizensSizeStat = movingCitizensChartData.get(i);
+
+            TreeMap<Double, Integer> data = new TreeMap<>();
+            int j = 0;
+            for (int number : movingCitizensSizeStat) {
+                data.put((double) j, number);
+                j++;
+            }
+
+
+            data.forEach((k, v) -> series.getData().add(new XYChart.Data<>(k, v)));
+
+
+            yAxis.setAnimated(false);
+
+            lineChart.getData().add(series);
         }
-
-
-        data.forEach((k,v) -> series.getData().add(new XYChart.Data<>(k, v)));
-
-
-        yAxis.setAnimated(false);
-
-        lineChart.getData().add(series);
 
         lineChart.setLegendVisible(false);
         lineChart.setTitle("Citizens out at each time step chart");

@@ -23,6 +23,7 @@ public class SimulationApplication extends Application {
     public Scene scene;
     private Parent root;
     public static MainWindow mainWindow;
+    public static StatsContainer statsContainer = new StatsContainer();
 
     public static int SCREEN_WIDTH = 892;
     public static int SCREEN_HEIGHT = 840;

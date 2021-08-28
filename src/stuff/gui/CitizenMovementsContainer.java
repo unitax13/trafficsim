@@ -16,7 +16,7 @@ public class CitizenMovementsContainer {
         //stuckCitizens = new ArrayList<>();
         this.graphNodes = graphNodes;
         MainWindow.noMovingCitizens = false;
-        MainWindow.statMovingCitizensSizeStat = new ArrayList<>();
+        SimulationApplication.statsContainer.createStatMovingCitizensSizeStat();
     }
 
 
@@ -31,7 +31,7 @@ public class CitizenMovementsContainer {
 
         int currentlyMoving = movingCitizens.size();
         System.out.println("Currently moving: " + currentlyMoving);
-        MainWindow.statMovingCitizensSizeStat.add(currentlyMoving);
+        SimulationApplication.statsContainer.addStatMovingCitizensSizeStat(currentlyMoving);
 
         for (MovingCitizen mv: movingCitizens) {
             if (mv.currentMovement!= null) {

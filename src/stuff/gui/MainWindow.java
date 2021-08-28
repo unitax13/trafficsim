@@ -106,7 +106,7 @@ public class MainWindow implements Initializable {
 
     SegmentsContainer segmentsContainer;
     RoadSegmentsContainer roadSegmentsContainer;
-    public static ArrayList<Integer> statMovingCitizensSizeStat = new ArrayList<>();
+
 
 
 
@@ -709,6 +709,7 @@ public class MainWindow implements Initializable {
 
             }
 
+            SimulationApplication.statsContainer.clearStats();
         } else {
             System.out.println("Graph nodes is null!");
         }
@@ -819,79 +820,25 @@ public class MainWindow implements Initializable {
         citizensAreSmart = !citizensAreSmart;
     }
 
-    public void showChart1(ActionEvent actionEvent) throws IOException {
+    public void showDistanceChart(ActionEvent actionEvent) throws IOException {
         if (segmentsContainer!=null) {
-
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("distanceChartWindow.fxml"));
-            Parent root = loader.load();
-
-            Stage window = new Stage();
-            window.setTitle("Distance chart");
-            window.setMinWidth(250.0);
-
-            window.setScene(new Scene(root));
-            window.show();
-
-            DistanceChartWindowController charts = loader.getController();
-
-            if (charts==null) {
-                System.out.println("charts is null");
-            }
-
-            //ChartsController charts = new ChartsController();
-            charts.showBarChartDistance(segmentsContainer);
+            SimulationApplication.statsContainer.createDistanceData(segmentsContainer);
+            SimulationApplication.statsContainer.showDistanceChart(segmentsContainer);
         }
     }
 
     public void showTimeChart(ActionEvent actionEvent) throws IOException {
         if (segmentsContainer!=null) {
+            SimulationApplication.statsContainer.createTimeData(segmentsContainer);
+            SimulationApplication.statsContainer.showTimeChart(segmentsContainer);
 
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("timeChartWindow.fxml"));
-            Parent root = loader.load();
-
-            Stage window = new Stage();
-            window.setTitle("Time chart");
-            window.setMinWidth(250.0);
-
-            window.setScene(new Scene(root));
-            window.show();
-
-            TimeChartWindowController charts = loader.getController();
-
-            if (charts==null) {
-                System.out.println("charts is null");
-            }
-
-            charts.showBarChartTime(segmentsContainer);
         }
     }
 
-    public void showStepsChart(ActionEvent actionEvent) {
-    }
 
     public void showCitizensNumberOnMapChart(ActionEvent actionEvent) throws IOException {
         if (segmentsContainer!=null && cmc!=null) {
-
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("citizensOnMapChartWindow.fxml"));
-            Parent root = loader.load();
-
-            Stage window = new Stage();
-            window.setTitle("Citizens out chart");
-            window.setMinWidth(250.0);
-
-            window.setScene(new Scene(root));
-            window.show();
-
-            CitizensOnMapChartWindowController charts = loader.getController();
-
-            if (charts==null) {
-                System.out.println("charts is null");
-            }
-
-            charts.showLineChartTime(segmentsContainer);
+            SimulationApplication.statsContainer.showCitizensNumberOnMapChart();
         }
     }
 
