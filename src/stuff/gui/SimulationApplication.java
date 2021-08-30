@@ -41,7 +41,7 @@ public class SimulationApplication extends Application {
         scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 
-        File file = new File("C:\\Users\\Jacek\\Desktop\\stufff\\symetry20");
+        File file = new File("C:\\Users\\Jacek\\Desktop\\stufff\\mala_kratownica");
         mainWindow.openFile(file);
 
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {

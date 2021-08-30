@@ -48,9 +48,11 @@ class CitizenTimer{
             generation++;
             incrementOnlyTime();
             applyStepTask();
+
         } else {
             mainWindow.timerPlaying = false;
             mainWindow.currentTaskHelper.cancel();
+            SimulationApplication.statsContainer.printSummary();
         }
     }
 

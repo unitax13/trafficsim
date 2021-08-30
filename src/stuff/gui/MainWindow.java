@@ -172,6 +172,8 @@ public class MainWindow implements Initializable {
     @FXML
     private Label timeLabel;
     @FXML
+    private Label currentlyMovingLabel;
+    @FXML
     private Spinner<Integer> fpsSpinner;
     @FXML
     private CheckBox makeCitizensSmartCheckBox;
@@ -733,6 +735,13 @@ public class MainWindow implements Initializable {
         cmc = new CitizenMovementsContainer(graphNodes);
         citizenTimer = new CitizenTimer(cmc, graphNodes,segmentsContainer, this);
 
+        if (viewMode==viewMode.HEATMAP && graphNodes!=null) {
+            roadSegmentsContainer = new RoadSegmentsContainer(simulation);
+            roadSegmentsContainer.generatePassengersMap(simulation, graphNodes, segmentsContainer);
+            simulationGrid.roadOverlay = roadSegmentsContainer.getRoadOverlay();
+            redraw();
+        }
+
         for (UrbanSegment us : segmentsContainer.urbanSegments) {
             us.outAlready = false;
         }
@@ -771,6 +780,7 @@ public class MainWindow implements Initializable {
                 () -> {
                     stepLabel.setText(String.valueOf(citizenTimer.getGeneration()));
                     timeLabel.setText(String.valueOf(citizenTimer.getTime()));
+                    currentlyMovingLabel.setText(String.valueOf(SimulationApplication.statsContainer.currentlyMoving));
                 }
         );
 

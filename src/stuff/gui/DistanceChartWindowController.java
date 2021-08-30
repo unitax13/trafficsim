@@ -22,7 +22,7 @@ public class DistanceChartWindowController {
     @FXML
     private  Label maxText;
     @FXML
-    private BarChart barChart;
+    private AreaChart areaChart;
     @FXML
     private Axis<String> xAxis;
     @FXML
@@ -43,7 +43,7 @@ public class DistanceChartWindowController {
 
             TreeMap<Double,Integer> data = distanceChartData.get(i);
 
-            data.forEach((k, v) -> mainSeries.getData().add(new XYChart.Data<>("" + k, v)));
+
 
             double min = -1;
             double max = -1;
@@ -82,12 +82,19 @@ public class DistanceChartWindowController {
 
             yAxis.setAnimated(false);
 
-            barChart.getData().add(mainSeries);
+
+
+            data.forEach((k, v) -> mainSeries.getData().add(new XYChart.Data<>("" + k, v)));
+
+            areaChart.getData().add(mainSeries);
         }
 
-        barChart.setLegendVisible(true);
-        barChart.setTitle("Distance to destination chart");
-//        barChart.setLegendVisible(true);
+        //xAxis.setAutoRanging(true);
+        //xAxis.setTickLength(1);
+        areaChart.setLegendVisible(false);
+        areaChart.setTitle("Distance to destination chart");
+        //areaChart.
+//        areaChart.setLegendVisible(true);
 
 
 

@@ -13,21 +13,36 @@ import java.util.TreeMap;
 public class StatsContainer {
 
     public ArrayList<ArrayList<Integer>> movingCitizensChartData = new ArrayList<>();
-
     public ArrayList<TreeMap<Double, Integer>> distanceChartData = new ArrayList<>();
     public ArrayList<TreeMap<Double, Integer>> timeChartData = new ArrayList<>();
 
-    public
+    public int currentlyMoving = 0;
+    public int pathsChanges = 0;
+    public int turnsBackAround = 0;
 
 
     StatsContainer() {
 
     }
 
+    public void printSummary() {
+        System.out.println("\nSIMULATION SUMMARY:");
+        System.out.println("Smart citizen path changes: " + pathsChanges);
+        System.out.println("Number of back-around turns: " + turnsBackAround);
+        System.out.println(" ");
+    }
+
     public void clearStats() {
         movingCitizensChartData = new ArrayList<>();
         distanceChartData = new ArrayList<>();
         timeChartData = new ArrayList<>();
+        clearLightStats();
+    }
+
+    public void clearLightStats() {
+        currentlyMoving = 0;
+        pathsChanges = 0;
+        turnsBackAround = 0;
     }
 
     public void createStatMovingCitizensSizeStat() {
@@ -55,6 +70,13 @@ public class StatsContainer {
                 }
             }
         }
+        double min = data.firstKey();
+        double max = data.lastKey();
+        for (int j= (int) Math.floor(min); j< (int) Math.ceil(max); j++) {
+            if (!data.containsKey((double) j)) {
+                data.put((double) j, 0);
+            }
+        }
 
         if (!distanceChartData.contains(data)) //So that they are unique
             distanceChartData.add(data);
@@ -72,6 +94,14 @@ public class StatsContainer {
                 }
             }
         }
+//        double min = data.firstKey();
+//        double max = data.lastKey();
+//        for (double j= Math.floor(min*100)/100; j< Math.ceil(max*100)/100; j+=0.01) {
+//            if (!data.containsKey( j)) {
+//                data.put( j, 0);
+//            }
+//        }
+
         if (!timeChartData.contains(data)) {
             timeChartData.add(data);
         }

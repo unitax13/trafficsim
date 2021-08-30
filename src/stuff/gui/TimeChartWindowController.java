@@ -3,6 +3,7 @@ package stuff.gui;
 import javafx.fxml.FXML;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
@@ -22,9 +23,9 @@ public class TimeChartWindowController {
     @FXML
     private  Label maxText;
     @FXML
-    private BarChart barChart;
+    private ScatterChart scatterChart;
     @FXML
-    private Axis<String> xAxis;
+    private Axis<Number> xAxis;
     @FXML
     private Axis<Number> yAxis;
 
@@ -40,11 +41,11 @@ public class TimeChartWindowController {
 
         for (int i=0; i< timeChartData.size(); i++) {
 
-            XYChart.Series<String, Number> series = new XYChart.Series<>();
+            XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
             TreeMap<Double, Integer> data = timeChartData.get(i);
 
-            data.forEach((k, v) -> series.getData().add(new XYChart.Data<>("" + k, v)));
+            data.forEach((k, v) -> series.getData().add(new XYChart.Data<>(k, v)));
 
             double min = -1;
             double max = -1;
@@ -84,14 +85,14 @@ public class TimeChartWindowController {
 
             yAxis.setAnimated(false);
 
-            barChart.getData().add(series);
+            scatterChart.getData().add(series);
         }
+        xAxis.setAutoRanging(true);
+        scatterChart.setLegendVisible(false);
+        scatterChart.setTitle("Time to destination of citizens chart");
 
-        barChart.setLegendVisible(true);
-        barChart.setTitle("Time to destination of citizens chart");
 
-
-//        barChart.setLegendVisible(true);
+//        scatterChart.setLegendVisible(true);
 
 
 

@@ -16,7 +16,7 @@ public class CitizensOnMapChartWindowController {
     @FXML
     private LineChart lineChart;
     @FXML
-    private Axis<String> xAxis;
+    private Axis<Number> xAxis;
     @FXML
     private Axis<Number> yAxis;
 
@@ -27,16 +27,17 @@ public class CitizensOnMapChartWindowController {
         yAxis.setLabel("Citizens on the map");
         xAxis.setLabel("Steps");
 
-        XYChart.Series<Number, Number> series = new XYChart.Series<>();
+
 
         for (int i=0; i<movingCitizensChartData.size(); i++ ) {
 
+            XYChart.Series<Number, Number> series = new XYChart.Series<>();
             ArrayList<Integer> movingCitizensSizeStat = movingCitizensChartData.get(i);
 
-            TreeMap<Double, Integer> data = new TreeMap<>();
+            TreeMap<Integer, Integer> data = new TreeMap<>();
             int j = 0;
             for (int number : movingCitizensSizeStat) {
-                data.put((double) j, number);
+                data.put(j, number);
                 j++;
             }
 

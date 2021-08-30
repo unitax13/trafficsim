@@ -17,6 +17,7 @@ public class CitizenMovementsContainer {
         this.graphNodes = graphNodes;
         MainWindow.noMovingCitizens = false;
         SimulationApplication.statsContainer.createStatMovingCitizensSizeStat();
+        SimulationApplication.statsContainer.clearLightStats();
     }
 
 
@@ -29,9 +30,6 @@ public class CitizenMovementsContainer {
         ArrayList<MovingCitizen> sublist = new ArrayList<>();
         ArrayList<MovingCitizen> nullMovements = new ArrayList<>();
 
-        int currentlyMoving = movingCitizens.size();
-        System.out.println("Currently moving: " + currentlyMoving);
-        SimulationApplication.statsContainer.addStatMovingCitizensSizeStat(currentlyMoving);
 
         for (MovingCitizen mv: movingCitizens) {
             if (mv.currentMovement!= null) {
@@ -88,6 +86,10 @@ public class CitizenMovementsContainer {
             list.addAll(getFinishedMovementsAt(time));
 
             System.out.println("Gotten finished movements at " + time + " of size " + list.size());
+
+            SimulationApplication.statsContainer.currentlyMoving = movingCitizens.size();
+            System.out.println("Currently moving: " + SimulationApplication.statsContainer.currentlyMoving);
+            SimulationApplication.statsContainer.addStatMovingCitizensSizeStat(SimulationApplication.statsContainer.currentlyMoving);
 
 
             for (MovingCitizen mv : list) {
@@ -180,6 +182,7 @@ public class CitizenMovementsContainer {
 
                                 if ( h>0 && updatedRemainingPath.size()>1 && mv.originSegment.getRouteToIndustryNotReversed().get(h-1).equals( updatedRemainingPath.get(1) ) ) {
                                     System.out.printf("Citizen from " + mv.originSegment.position + " TURNED BACK!!!! ");
+                                    SimulationApplication.statsContainer.turnsBackAround++;
                                 }
 
                                 if (SimulationApplication.IS_DEBUGGING) {
@@ -207,6 +210,7 @@ public class CitizenMovementsContainer {
                                 //if (!isStuck) {
                                     if (pathsAreNotEqual) {
                                         System.out.println("Paths were not equal, combining them");
+                                        SimulationApplication.statsContainer.pathsChanges++;
 
                                         //newPositionPath.add(updatedRemainingPositionPath.get(0));
                                         for (int g = 1; g < updatedRemainingPath.size(); g++) {

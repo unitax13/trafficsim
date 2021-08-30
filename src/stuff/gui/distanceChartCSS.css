@@ -1,0 +1,5 @@
+.chart-area-symbol   { -fx-background-color: transparent }
+.chart-series-area-line {
+    -fx-stroke-width: 2px;
+}
+
