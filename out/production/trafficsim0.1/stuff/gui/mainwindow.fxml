@@ -62,5 +62,11 @@
       <Button fx:id="chartsButton" layoutX="714.0" layoutY="691.0" mnemonicParsing="false" onAction="#showDistanceChart" text="Distance chart" />
       <Button layoutX="714.0" layoutY="725.0" mnemonicParsing="false" onAction="#showTimeChart" prefHeight="25.0" prefWidth="132.0" text="Travelling time chart" />
       <Button layoutX="714.0" layoutY="761.0" mnemonicParsing="false" onAction="#showCitizensNumberOnMapChart" text="Total citizens out chart" />
+      <Label layoutX="571.0" layoutY="669.0" prefHeight="17.0" prefWidth="99.0" text="Currently moving: " />
+      <Label fx:id="currentlyMovingLabel" layoutX="669.0" layoutY="669.0" prefHeight="17.0" prefWidth="40.0" text="0">
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+      </Label>
    </children>
 </AnchorPane>
