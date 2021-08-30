@@ -1,20 +1,16 @@
 package stuff.gui;
 
 import javafx.application.Application;
-import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import stuff.gui.chartsAndStats.StatsContainer;
+import stuff.gui.utils.KeyListener;
 
-import java.awt.event.MouseListener;
 import java.io.File;
-import java.util.Timer;
-import java.util.TimerTask;
 
 
 public class SimulationApplication extends Application {

@@ -1,16 +1,16 @@
 package stuff.gui;
 
-import javafx.geometry.Point2D;
+import stuff.gui.utils.Position;
 
 public class GraphNode {
 
-    Position position;
-    GraphNode neighbours[] = new GraphNode[4];
-    double distances[] = new double[4];
-    int passengers[] = new int[4];
-    int capacity[] = new int[4];
+    public Position position;
+    public GraphNode neighbours[] = new GraphNode[4];
+    public double distances[] = new double[4];
+    public int passengers[] = new int[4];
+    public int capacity[] = new int[4];
 
-    GraphNode(Position position) {
+    public GraphNode(Position position) {
         this.position = position;
     }
 

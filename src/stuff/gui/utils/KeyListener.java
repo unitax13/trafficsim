@@ -1,4 +1,4 @@
-package stuff.gui;
+package stuff.gui.utils;
 
 import javafx.scene.input.KeyCode;
 

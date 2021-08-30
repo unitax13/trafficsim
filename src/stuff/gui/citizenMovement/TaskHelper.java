@@ -1,4 +1,6 @@
-package stuff.gui;
+package stuff.gui.citizenMovement;
+
+import stuff.gui.MainWindow;
 
 import java.util.TimerTask;
 

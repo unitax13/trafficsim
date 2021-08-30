@@ -1,4 +1,4 @@
-package stuff.gui;
+package stuff.gui.utils;
 
 public class MouseListener {
     private static MouseListener instance;

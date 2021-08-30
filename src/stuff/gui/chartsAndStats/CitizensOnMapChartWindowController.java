@@ -1,4 +1,4 @@
-package stuff.gui;
+package stuff.gui.chartsAndStats;
 
 import javafx.fxml.FXML;
 import javafx.scene.chart.Axis;

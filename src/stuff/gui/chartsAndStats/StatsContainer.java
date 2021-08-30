@@ -1,10 +1,11 @@
-package stuff.gui;
+package stuff.gui.chartsAndStats;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import stuff.gui.SegmentsContainer;
+import stuff.gui.UrbanSegment;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class StatsContainer {
     public int turnsBackAround = 0;
 
 
-    StatsContainer() {
+    public StatsContainer() {
 
     }
 

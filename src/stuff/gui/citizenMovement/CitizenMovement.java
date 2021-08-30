@@ -1,4 +1,6 @@
-package stuff.gui;
+package stuff.gui.citizenMovement;
+
+import stuff.gui.GraphNode;
 
 public class CitizenMovement {
 

@@ -3,11 +3,8 @@ package stuff.gui;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.chart.BarChart;
@@ -15,7 +12,10 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
+import stuff.gui.citizenMovement.CitizenMovementsContainer;
+import stuff.gui.citizenMovement.CitizenTimer;
+import stuff.gui.citizenMovement.TaskHelper;
+import stuff.gui.utils.Position;
 
 import java.io.*;
 import java.net.URL;
@@ -59,9 +59,9 @@ public class MainWindow implements Initializable {
 
     private ArrayList<ArrayList<GraphNode>> nodePaths;
 
-    PathAndDistances[] pathAndDistances;
-    GraphNodesContainer paths;
-    double distance;
+    public PathAndDistances[] pathAndDistances;
+    public GraphNodesContainer paths;
+    public double distance;
 
     enum clickingMode {
         NORMAL,
@@ -78,16 +78,16 @@ public class MainWindow implements Initializable {
 
     private Point2D previousMousePos = new Point2D(-1,-1);
     public Position previousField = new Position(0,0);
-    
-    boolean primaryIsDown = false;
-    boolean middleIsDown = false;
-    boolean secondaryIsDown = false;
 
-    boolean isDragging = false;
-    boolean escWasPressed = false;
+    public boolean primaryIsDown = false;
+    public boolean middleIsDown = false;
+    public boolean secondaryIsDown = false;
+
+    public boolean isDragging = false;
+    public boolean escWasPressed = false;
 
     Simulation simulation;
-    SimulationGrid simulationGrid;
+    public SimulationGrid simulationGrid;
     public GraphicsContext gc;
     ExaminationTool examinationTool;
     ShortestPathingClass shortestPathingClass;
@@ -95,14 +95,14 @@ public class MainWindow implements Initializable {
     CitizenTimer citizenTimer;
     Timer time;
     double timeSpeed = 50;
-    boolean timerPlaying = false;
-    TaskHelper currentTaskHelper;
+    public boolean timerPlaying = false;
+    public TaskHelper currentTaskHelper;
     int timerFps = 5;
-    static boolean citizensAreSmart = false;
-    static boolean noMovingCitizens = true;
+    public static boolean citizensAreSmart = false;
+    public static boolean noMovingCitizens = true;
 
 
-    GraphNodesContainer graphNodes;
+    public GraphNodesContainer graphNodes;
 
     SegmentsContainer segmentsContainer;
     RoadSegmentsContainer roadSegmentsContainer;
@@ -190,7 +190,7 @@ public class MainWindow implements Initializable {
         return mainCanvas;
     }
 
-    Position currentCoords = new Position(0,0);
+    public Position currentCoords = new Position(0,0);
     private Point2D currentMousePos = new Point2D(-1,-1);
     public Point2D getCurrentMousePos() {
         return currentMousePos;

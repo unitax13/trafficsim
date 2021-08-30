@@ -1,4 +1,7 @@
-package stuff.gui;
+package stuff.gui.citizenMovement;
+
+import stuff.gui.*;
+import stuff.gui.utils.Position;
 
 import java.util.ArrayList;
 import java.util.Collections;

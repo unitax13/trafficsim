@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="chartsWindowPane" prefHeight="512.0" prefWidth="600.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="stuff.gui.TimeChartWindowController">
+<AnchorPane fx:id="chartsWindowPane" prefHeight="512.0" prefWidth="600.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="stuff.gui.chartsAndStats.TimeChartWindowController">
     <children>
         <ScatterChart fx:id="scatterChart" prefHeight="408.0" prefWidth="600.0">
             <xAxis>
