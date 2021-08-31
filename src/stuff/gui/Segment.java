@@ -1,6 +1,6 @@
 package stuff.gui;
 
-import javafx.geometry.Point2D;
+import stuff.gui.utils.Position;
 
 import java.util.ArrayList;
 

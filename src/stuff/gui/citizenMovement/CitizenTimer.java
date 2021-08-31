@@ -1,13 +1,14 @@
-package stuff.gui;
+package stuff.gui.citizenMovement;
 
-import javafx.concurrent.Task;
+import stuff.gui.*;
+import stuff.gui.citizenMovement.CitizenMovementsContainer;
+import stuff.gui.citizenMovement.MovingCitizen;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
-import java.util.TimerTask;
 
-class CitizenTimer{
+public class CitizenTimer{
 
     private double time = 0.000001;
     private double step = 0.05;
@@ -48,9 +49,11 @@ class CitizenTimer{
             generation++;
             incrementOnlyTime();
             applyStepTask();
+
         } else {
             mainWindow.timerPlaying = false;
             mainWindow.currentTaskHelper.cancel();
+            SimulationApplication.statsContainer.printSummary();
         }
     }
 
@@ -70,8 +73,8 @@ class CitizenTimer{
 
     public void applyStepTask() {
 
-        cmc.getFinishedMovementsAndAddNextOnes(time);
-        cmc.initMovementForNotMoving(time);
+        cmc.getFinishedMovementsAndAddNextOnes(time, generation);
+        cmc.initMovementForNotMoving(time, generation);
 
 
 

@@ -1,16 +1,16 @@
 package stuff.gui;
 
-import javafx.geometry.Point2D;
+import stuff.gui.utils.Position;
 
 public class GraphNode {
 
-    Position position;
-    GraphNode neighbours[] = new GraphNode[4];
-    double distances[] = new double[4];
-    int passengers[] = new int[4];
-    int capacity[] = new int[4];
+    public Position position;
+    public GraphNode neighbours[] = new GraphNode[4];
+    public double distances[] = new double[4];
+    public int passengers[] = new int[4];
+    public int capacity[] = new int[4];
 
-    GraphNode(Position position) {
+    public GraphNode(Position position) {
         this.position = position;
     }
 
@@ -29,15 +29,18 @@ public class GraphNode {
 
             double multiplier = ((float) passengers[i] / (float) capacity[i]);
 
-            if (multiplier > 1 && multiplier < 1.5) {//LINIOWE ZWIĘKSZENIE
-                return distances[i]*multiplier;
-
-            } else if (multiplier>1.5 && multiplier < 2) { //ZWIĘKSZENIE DO KWADRATU
-                multiplier =multiplier*multiplier;
-                return distances[i]*multiplier;
-
-            } else if (multiplier>=2) { //ZWIĘKSZENIE DO SZEŚCIANU
+            if (multiplier > 1) {
                 return distances[i]*multiplier*multiplier*multiplier;
+
+//            if (multiplier > 1 && multiplier < 1.5) {//LINIOWE ZWIĘKSZENIE
+//                return distances[i]*multiplier;
+//
+//            } else if (multiplier>1.5 && multiplier < 2) { //ZWIĘKSZENIE DO KWADRATU
+//                multiplier =multiplier*multiplier;
+//                return distances[i]*multiplier;
+//
+//            } else if (multiplier>=2) { //ZWIĘKSZENIE DO SZEŚCIANU
+//                return distances[i]*multiplier*multiplier*multiplier;
 
             } else {
                 return distances[i];

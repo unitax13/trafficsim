@@ -32,7 +32,7 @@ public class RoadOverlay {
 //            Color color = Color.rgb(red,green,0,0.9);
             double hue = 110;
             double differenceFactor = ( (double) rs.passengers/(double) rs.capacity );
-            if (differenceFactor > 1) {
+            if (differenceFactor > 0.1) {
                 hue = (110 - 30 * (differenceFactor)); /// HERE IS COLOR <<----------
             }
 

@@ -5,7 +5,7 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="chartsWindowPane" prefHeight="467.0" prefWidth="600.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="stuff.gui.CitizensOnMapChartWindowController">
+<AnchorPane fx:id="chartsWindowPane" prefHeight="467.0" prefWidth="600.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="stuff.gui.chartsAndStats.CitizensOnMapChartWindowController">
     <children>
       <LineChart fx:id="lineChart" prefHeight="398.0" prefWidth="600.0">
         <xAxis>

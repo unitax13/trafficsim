@@ -3,11 +3,8 @@ package stuff.gui;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.chart.BarChart;
@@ -15,7 +12,10 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
+import stuff.gui.citizenMovement.CitizenMovementsContainer;
+import stuff.gui.citizenMovement.CitizenTimer;
+import stuff.gui.citizenMovement.TaskHelper;
+import stuff.gui.utils.Position;
 
 import java.io.*;
 import java.net.URL;
@@ -59,9 +59,9 @@ public class MainWindow implements Initializable {
 
     private ArrayList<ArrayList<GraphNode>> nodePaths;
 
-    PathAndDistances[] pathAndDistances;
-    GraphNodesContainer paths;
-    double distance;
+    public PathAndDistances[] pathAndDistances;
+    public GraphNodesContainer paths;
+    public double distance;
 
     enum clickingMode {
         NORMAL,
@@ -78,16 +78,16 @@ public class MainWindow implements Initializable {
 
     private Point2D previousMousePos = new Point2D(-1,-1);
     public Position previousField = new Position(0,0);
-    
-    boolean primaryIsDown = false;
-    boolean middleIsDown = false;
-    boolean secondaryIsDown = false;
 
-    boolean isDragging = false;
-    boolean escWasPressed = false;
+    public boolean primaryIsDown = false;
+    public boolean middleIsDown = false;
+    public boolean secondaryIsDown = false;
+
+    public boolean isDragging = false;
+    public boolean escWasPressed = false;
 
     Simulation simulation;
-    SimulationGrid simulationGrid;
+    public SimulationGrid simulationGrid;
     public GraphicsContext gc;
     ExaminationTool examinationTool;
     ShortestPathingClass shortestPathingClass;
@@ -95,18 +95,18 @@ public class MainWindow implements Initializable {
     CitizenTimer citizenTimer;
     Timer time;
     double timeSpeed = 50;
-    boolean timerPlaying = false;
-    TaskHelper currentTaskHelper;
+    public boolean timerPlaying = false;
+    public TaskHelper currentTaskHelper;
     int timerFps = 5;
-    static boolean citizensAreSmart = false;
-    static boolean noMovingCitizens = true;
+    public static boolean citizensAreSmart = false;
+    public static boolean noMovingCitizens = true;
 
 
-    GraphNodesContainer graphNodes;
+    public GraphNodesContainer graphNodes;
 
     SegmentsContainer segmentsContainer;
     RoadSegmentsContainer roadSegmentsContainer;
-    public static ArrayList<Integer> statMovingCitizensSizeStat = new ArrayList<>();
+
 
 
 
@@ -172,6 +172,8 @@ public class MainWindow implements Initializable {
     @FXML
     private Label timeLabel;
     @FXML
+    private Label currentlyMovingLabel;
+    @FXML
     private Spinner<Integer> fpsSpinner;
     @FXML
     private CheckBox makeCitizensSmartCheckBox;
@@ -188,7 +190,7 @@ public class MainWindow implements Initializable {
         return mainCanvas;
     }
 
-    Position currentCoords = new Position(0,0);
+    public Position currentCoords = new Position(0,0);
     private Point2D currentMousePos = new Point2D(-1,-1);
     public Point2D getCurrentMousePos() {
         return currentMousePos;
@@ -709,6 +711,7 @@ public class MainWindow implements Initializable {
 
             }
 
+            SimulationApplication.statsContainer.clearStats();
         } else {
             System.out.println("Graph nodes is null!");
         }
@@ -731,6 +734,13 @@ public class MainWindow implements Initializable {
         System.out.println("TIMER RESET");
         cmc = new CitizenMovementsContainer(graphNodes);
         citizenTimer = new CitizenTimer(cmc, graphNodes,segmentsContainer, this);
+
+        if (viewMode==viewMode.HEATMAP && graphNodes!=null) {
+            roadSegmentsContainer = new RoadSegmentsContainer(simulation);
+            roadSegmentsContainer.generatePassengersMap(simulation, graphNodes, segmentsContainer);
+            simulationGrid.roadOverlay = roadSegmentsContainer.getRoadOverlay();
+            redraw();
+        }
 
         for (UrbanSegment us : segmentsContainer.urbanSegments) {
             us.outAlready = false;
@@ -770,6 +780,7 @@ public class MainWindow implements Initializable {
                 () -> {
                     stepLabel.setText(String.valueOf(citizenTimer.getGeneration()));
                     timeLabel.setText(String.valueOf(citizenTimer.getTime()));
+                    currentlyMovingLabel.setText(String.valueOf(SimulationApplication.statsContainer.currentlyMoving));
                 }
         );
 
@@ -819,79 +830,25 @@ public class MainWindow implements Initializable {
         citizensAreSmart = !citizensAreSmart;
     }
 
-    public void showChart1(ActionEvent actionEvent) throws IOException {
+    public void showDistanceChart(ActionEvent actionEvent) throws IOException {
         if (segmentsContainer!=null) {
-
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("distanceChartWindow.fxml"));
-            Parent root = loader.load();
-
-            Stage window = new Stage();
-            window.setTitle("Distance chart");
-            window.setMinWidth(250.0);
-
-            window.setScene(new Scene(root));
-            window.show();
-
-            DistanceChartWindowController charts = loader.getController();
-
-            if (charts==null) {
-                System.out.println("charts is null");
-            }
-
-            //ChartsController charts = new ChartsController();
-            charts.showBarChartDistance(segmentsContainer);
+            SimulationApplication.statsContainer.createDistanceData(segmentsContainer);
+            SimulationApplication.statsContainer.showDistanceChart(segmentsContainer);
         }
     }
 
     public void showTimeChart(ActionEvent actionEvent) throws IOException {
         if (segmentsContainer!=null) {
+            SimulationApplication.statsContainer.createTimeData(segmentsContainer);
+            SimulationApplication.statsContainer.showTimeChart(segmentsContainer);
 
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("timeChartWindow.fxml"));
-            Parent root = loader.load();
-
-            Stage window = new Stage();
-            window.setTitle("Time chart");
-            window.setMinWidth(250.0);
-
-            window.setScene(new Scene(root));
-            window.show();
-
-            TimeChartWindowController charts = loader.getController();
-
-            if (charts==null) {
-                System.out.println("charts is null");
-            }
-
-            charts.showBarChartTime(segmentsContainer);
         }
     }
 
-    public void showStepsChart(ActionEvent actionEvent) {
-    }
 
     public void showCitizensNumberOnMapChart(ActionEvent actionEvent) throws IOException {
         if (segmentsContainer!=null && cmc!=null) {
-
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("citizensOnMapChartWindow.fxml"));
-            Parent root = loader.load();
-
-            Stage window = new Stage();
-            window.setTitle("Citizens out chart");
-            window.setMinWidth(250.0);
-
-            window.setScene(new Scene(root));
-            window.show();
-
-            CitizensOnMapChartWindowController charts = loader.getController();
-
-            if (charts==null) {
-                System.out.println("charts is null");
-            }
-
-            charts.showLineChartTime(segmentsContainer);
+            SimulationApplication.statsContainer.showCitizensNumberOnMapChart();
         }
     }
 

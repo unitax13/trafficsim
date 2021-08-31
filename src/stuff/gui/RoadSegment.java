@@ -1,5 +1,7 @@
 package stuff.gui;
 
+import stuff.gui.utils.Position;
+
 public class RoadSegment {
 
     protected Position position;

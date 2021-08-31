@@ -1,4 +1,4 @@
-package stuff.gui;
+package stuff.gui.utils;
 
 import java.util.Objects;
 

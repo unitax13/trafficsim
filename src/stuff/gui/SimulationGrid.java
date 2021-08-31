@@ -5,10 +5,9 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import stuff.gui.utils.Position;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 
 public class SimulationGrid {

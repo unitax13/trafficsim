@@ -4,6 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import stuff.gui.chartsAndStats.StatsWindowController;
 
 import java.io.IOException;
 
@@ -38,7 +39,7 @@ public class SimulationStats {
 
     public void printStats() throws IOException {
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("statsWindow.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("chartsAndStats/statsWindow.fxml"));
         Parent root = loader.load();
 
         Stage window = new Stage();

@@ -7,9 +7,9 @@ public class SegmentsContainer {
 
     Simulation simulation;
 
-    GraphNodesContainer graphNodesContainer;
-    ArrayList<UrbanSegment> urbanSegments;
-    ArrayList<IndustrySegment> industrySegments;
+    public GraphNodesContainer graphNodesContainer;
+    public ArrayList<UrbanSegment> urbanSegments;
+    public ArrayList<IndustrySegment> industrySegments;
 
 
     public SegmentsContainer() {

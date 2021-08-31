@@ -1,20 +1,16 @@
 package stuff.gui;
 
 import javafx.application.Application;
-import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import stuff.gui.chartsAndStats.StatsContainer;
+import stuff.gui.utils.KeyListener;
 
-import java.awt.event.MouseListener;
 import java.io.File;
-import java.util.Timer;
-import java.util.TimerTask;
 
 
 public class SimulationApplication extends Application {
@@ -23,6 +19,7 @@ public class SimulationApplication extends Application {
     public Scene scene;
     private Parent root;
     public static MainWindow mainWindow;
+    public static StatsContainer statsContainer = new StatsContainer();
 
     public static int SCREEN_WIDTH = 892;
     public static int SCREEN_HEIGHT = 840;
@@ -40,7 +37,7 @@ public class SimulationApplication extends Application {
         scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 
-        File file = new File("C:\\Users\\Jacek\\Desktop\\stufff\\symetry20");
+        File file = new File("C:\\Users\\Jacek\\Desktop\\stufff\\kratownica_wycieta");
         mainWindow.openFile(file);
 
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {

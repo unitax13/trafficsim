@@ -1,4 +1,4 @@
-package stuff.gui;
+package stuff.gui.chartsAndStats;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Label;
+import stuff.gui.SimulationStats;
 
 public class StatsWindowController {
     @FXML
