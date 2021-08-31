@@ -14,6 +14,11 @@ public class MovingCitizen {
     public int startGeneration;
     public double step;
 
+    //IMPORTANT VALUES
+    public int movesSinceLastPathChange = 2;
+    public int stubbornnessFactor = 5;
+    //IMPORTANT VALUES
+
     public MovingCitizen(UrbanSegment originSegment, int startGeneration, double startTime, double step) {
         this.originSegment = originSegment;
         this.startGeneration = startGeneration;
@@ -23,6 +28,7 @@ public class MovingCitizen {
 
     public void setMovement(GraphNode startNode, GraphNode endNode, double time, double duration, GraphNodesContainer graphNodes) {
         if (startNode!=null && endNode!=null) {
+            movesSinceLastPathChange++;
             currentMovement = new CitizenMovement(startNode, endNode, time, duration);
 
             originSegment.totalStepsTravellingTook = (int) ((time + duration - (startGeneration * step)) / step);
@@ -44,5 +50,10 @@ public class MovingCitizen {
             currentMovement = new CitizenMovement(originSegment.getRouteToIndustryNotReversed().get(0), originSegment.getRouteToIndustryNotReversed().get(1), time, graphNodes.getTimeBetweenNodes(originSegment.getRouteToIndustryNotReversed().get(0),originSegment.getRouteToIndustryNotReversed().get(1)));
         }
 
+    }
+
+    public boolean willingToChangeRoutes() {
+        //return true;
+        return (movesSinceLastPathChange - stubbornnessFactor > 0);
     }
 }

@@ -13,7 +13,6 @@ public class CitizenMovementsContainer {
     GraphNodesContainer graphNodes;
 
 
-
     public CitizenMovementsContainer(GraphNodesContainer graphNodes) {
         movingCitizens = new ArrayList<>();
         //stuckCitizens = new ArrayList<>();
@@ -34,17 +33,17 @@ public class CitizenMovementsContainer {
         ArrayList<MovingCitizen> nullMovements = new ArrayList<>();
 
 
-        for (MovingCitizen mv: movingCitizens) {
-            if (mv.currentMovement!= null) {
+        for (MovingCitizen mv : movingCitizens) {
+            if (mv.currentMovement != null) {
                 if (mv.currentMovement.getMovementEndTime() <= time) {
                     sublist.add(mv);
                 }
-            } else if (mv.originSegment.outAlready){ //mv.currentMovement == null
+            } else if (mv.originSegment.outAlready) { //mv.currentMovement == null
                 System.out.println("Null movements of citizen starting from " + mv.originSegment.position + ", outAlready = " + mv.originSegment.outAlready);
                 //nullMovements.add(mv);
             }
         }
-        for (MovingCitizen mv:sublist) {
+        for (MovingCitizen mv : sublist) {
             if (movingCitizens.contains(mv)) {
                 movingCitizens.remove(mv);
             }
@@ -59,11 +58,11 @@ public class CitizenMovementsContainer {
 
     }
 
-    public void initMovementForNotMoving(double time) {
+    public void initMovementForNotMoving(double time, int generation) {
         System.out.println("Initting movement for not moving (currently moving: " + movingCitizens.size() + ")");
         int added = 0;
-        for (MovingCitizen mv:movingCitizens) {
-            if (mv.currentMovement == null && mv.originSegment.nodeRouteToIndustry!=null) {
+        for (MovingCitizen mv : movingCitizens) {
+            if (mv.currentMovement == null && mv.originSegment.nodeRouteToIndustry != null) {
                 if (mv.originSegment.getRouteToIndustryNotReversed().size() > 1) {
                     mv.setMovement(mv.originSegment.getRouteToIndustryNotReversed().get(0), mv.originSegment.getRouteToIndustryNotReversed().get(1), time, graphNodes.getTimeBetweenNodes(mv.originSegment.getRouteToIndustryNotReversed().get(0), mv.originSegment.getRouteToIndustryNotReversed().get(1)), graphNodes);
                     added++;
@@ -75,9 +74,9 @@ public class CitizenMovementsContainer {
         }
     }
 
-    public void getFinishedMovementsAndAddNextOnes(double time) {
+    public void getFinishedMovementsAndAddNextOnes(double time, int generation) {
         System.out.println(" ");
-        if (movingCitizens.size() > 0 )// || stuckCitizens.size()>0)
+        if (movingCitizens.size() > 0)// || stuckCitizens.size()>0)
         {
             MainWindow.noMovingCitizens = false;
             ArrayList<MovingCitizen> list = new ArrayList<>();
@@ -146,7 +145,6 @@ public class CitizenMovementsContainer {
                     Collections.reverse(updatedRemainingPath);
 
 
-
                     ArrayList<Position> updatedRemainingPositionPath = (ArrayList<Position>) graphNodePathAndPositionPath.get(1);
                     Collections.reverse(updatedRemainingPositionPath);
                     updatedRemainingPositionPath.remove(0);
@@ -164,11 +162,10 @@ public class CitizenMovementsContainer {
 //                    System.out.printf("\n");
 
 
-
                     ArrayList<GraphNode> newPath = new ArrayList<>();
                     ArrayList<Position> newPositionPath = new ArrayList<>();
 
-                    newPositionPath.add(mv.originSegment.pathToIndustry.get(mv.originSegment.pathToIndustry.size()-1));
+                    newPositionPath.add(mv.originSegment.pathToIndustry.get(mv.originSegment.pathToIndustry.size() - 1));
 
 
                     if (updatedRemainingPath != null) {
@@ -183,7 +180,7 @@ public class CitizenMovementsContainer {
                                 }
                                 boolean pathsAreNotEqual = false;
 
-                                if ( h>0 && updatedRemainingPath.size()>1 && mv.originSegment.getRouteToIndustryNotReversed().get(h-1).equals( updatedRemainingPath.get(1) ) ) {
+                                if (mv.willingToChangeRoutes() && h > 0 && updatedRemainingPath.size() > 1 && mv.originSegment.getRouteToIndustryNotReversed().get(h - 1).equals(updatedRemainingPath.get(1))) {
                                     System.out.printf("Citizen from " + mv.originSegment.position + " TURNED BACK!!!! ");
                                     SimulationApplication.statsContainer.turnsBackAround++;
                                 }
@@ -196,7 +193,7 @@ public class CitizenMovementsContainer {
                                 }
 
                                 for (int j = 1; j < mv.originSegment.getRouteToIndustryNotReversed().size() - h; j++) {
-                                    if (mv.originSegment.getRouteToIndustryNotReversed().get(h+j)!=null) {
+                                    if (mv.originSegment.getRouteToIndustryNotReversed().get(h + j) != null) {
                                         if (!mv.originSegment.getRouteToIndustryNotReversed().get(h + j).equals(updatedRemainingPath.get(j))) {
                                             pathsAreNotEqual = true;
                                             System.out.println("Old node route differs from the new path");
@@ -211,65 +208,69 @@ public class CitizenMovementsContainer {
                                 }
 
                                 //if (!isStuck) {
-                                    if (pathsAreNotEqual) {
-                                        System.out.println("Paths were not equal, combining them");
-                                        SimulationApplication.statsContainer.pathsChanges++;
 
-                                        //newPositionPath.add(updatedRemainingPositionPath.get(0));
-                                        for (int g = 1; g < updatedRemainingPath.size(); g++) {
-                                            newPath.add(updatedRemainingPath.get(g));
-                                        }
-                                        for (int g = 1; g < updatedRemainingPositionPath.size(); g++) {
-                                            newPositionPath.add(updatedRemainingPositionPath.get(g));
-                                        }
+                                if (pathsAreNotEqual && mv.willingToChangeRoutes()) {
+                                    System.out.println("Paths were not equal, combining them");
 
-                                        //reversing again and replacing back
-                                        if (SimulationApplication.IS_DEBUGGING) {
-                                            System.out.printf("New node path: ");
-                                            for (GraphNode gn : newPath)
-                                                System.out.printf(gn.position + " ");
-                                            System.out.printf("\n");
-                                        }
+                                    mv.movesSinceLastPathChange = 0;
 
-                                        Collections.reverse(newPath);
+                                    SimulationApplication.statsContainer.pathsChanges++;
 
-                                        mv.originSegment.nodeRouteToIndustry = newPath;
+                                    //newPositionPath.add(updatedRemainingPositionPath.get(0));
+                                    for (int g = 1; g < updatedRemainingPath.size(); g++) {
+                                        newPath.add(updatedRemainingPath.get(g));
+                                    }
+                                    for (int g = 1; g < updatedRemainingPositionPath.size(); g++) {
+                                        newPositionPath.add(updatedRemainingPositionPath.get(g));
+                                    }
 
-                                        if (SimulationApplication.IS_DEBUGGING) {
-                                            System.out.printf("New position path: ");
-                                            for (Position p : newPositionPath)
-                                                System.out.printf(p + " ");
-                                            System.out.printf("\n");
-                                        }
+                                    //reversing again and replacing back
+                                    if (SimulationApplication.IS_DEBUGGING) {
+                                        System.out.printf("New node path: ");
+                                        for (GraphNode gn : newPath)
+                                            System.out.printf(gn.position + " ");
+                                        System.out.printf("\n");
+                                    }
 
+                                    Collections.reverse(newPath);
 
-                                        Collections.reverse(newPositionPath);
-                                        mv.originSegment.pathToIndustry = newPositionPath;
+                                    mv.originSegment.nodeRouteToIndustry = newPath;
 
-                                        GraphNode nextNode = mv.originSegment.getRouteToIndustryNotReversed().get(h + 1);
-                                        System.out.printf("Citizen from " + mv.originSegment.position + " finished movement at node " + currentNode.position + "\t");
-                                        mv.setMovement(gnOriginal, nextNode, time, graphNodes.getTimeBetweenNodes(currentNode, nextNode), graphNodes);
-                                        movingCitizens.add(mv);
-                                        movedAway = true;
-
-                                    } else { //!pathsAreNotEqual
-                                        System.out.println("Paths were equal, not doing anything");
-
-                                        for (int i = 0; i < mv.originSegment.getRouteToIndustryNotReversed().size() - 1; i++) {
-                                            if (currentNode.equals(mv.originSegment.getRouteToIndustryNotReversed().get(i))) {
+                                    if (SimulationApplication.IS_DEBUGGING) {
+                                        System.out.printf("New position path: ");
+                                        for (Position p : newPositionPath)
+                                            System.out.printf(p + " ");
+                                        System.out.printf("\n");
+                                    }
 
 
-                                                GraphNode nextNode = mv.originSegment.getRouteToIndustryNotReversed().get(i + 1);
-                                                System.out.printf("Citizen from " + mv.originSegment.position + " finished movement at node " + currentNode.position + "\t");
-                                                mv.setMovement(currentNode, nextNode, time, graphNodes.getTimeBetweenNodes(currentNode, nextNode), graphNodes);
-                                                movingCitizens.add(mv);
-                                                movedAway = true;
-                                                break;
+                                    Collections.reverse(newPositionPath);
+                                    mv.originSegment.pathToIndustry = newPositionPath;
 
-                                            }
+                                    GraphNode nextNode = mv.originSegment.getRouteToIndustryNotReversed().get(h + 1);
+                                    System.out.printf("Citizen from " + mv.originSegment.position + " finished movement at node " + currentNode.position + "\t");
+                                    mv.setMovement(gnOriginal, nextNode, time, graphNodes.getTimeBetweenNodes(currentNode, nextNode), graphNodes);
+                                    movingCitizens.add(mv);
+                                    movedAway = true;
+
+                                } else { //!pathsAreNotEqual
+                                    System.out.println("Paths were equal or citizen unwilling to change, not doing anything");
+
+                                    for (int i = 0; i < mv.originSegment.getRouteToIndustryNotReversed().size() - 1; i++) {
+                                        if (currentNode.equals(mv.originSegment.getRouteToIndustryNotReversed().get(i))) {
+
+
+                                            GraphNode nextNode = mv.originSegment.getRouteToIndustryNotReversed().get(i + 1);
+                                            System.out.printf("Citizen from " + mv.originSegment.position + " finished movement at node " + currentNode.position + "\t");
+                                            mv.setMovement(currentNode, nextNode, time, graphNodes.getTimeBetweenNodes(currentNode, nextNode), graphNodes);
+                                            movingCitizens.add(mv);
+                                            movedAway = true;
+                                            break;
+
                                         }
                                     }
-                                    break;
+                                }
+                                break;
                                 //}
                             }
                         }
@@ -280,13 +281,11 @@ public class CitizenMovementsContainer {
                     }
                 }
             }
-        }
-        else {
+        } else {
             System.out.println("NO MOVING CITIZENS");
             MainWindow.noMovingCitizens = true;
         }
     }
-
 
 
 }

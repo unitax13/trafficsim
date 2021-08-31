@@ -73,8 +73,8 @@ public class CitizenTimer{
 
     public void applyStepTask() {
 
-        cmc.getFinishedMovementsAndAddNextOnes(time);
-        cmc.initMovementForNotMoving(time);
+        cmc.getFinishedMovementsAndAddNextOnes(time, generation);
+        cmc.initMovementForNotMoving(time, generation);
 
 
 

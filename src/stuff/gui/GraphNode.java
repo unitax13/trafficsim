@@ -29,15 +29,18 @@ public class GraphNode {
 
             double multiplier = ((float) passengers[i] / (float) capacity[i]);
 
-            if (multiplier > 1 && multiplier < 1.5) {//LINIOWE ZWIĘKSZENIE
-                return distances[i]*multiplier;
-
-            } else if (multiplier>1.5 && multiplier < 2) { //ZWIĘKSZENIE DO KWADRATU
-                multiplier =multiplier*multiplier;
-                return distances[i]*multiplier;
-
-            } else if (multiplier>=2) { //ZWIĘKSZENIE DO SZEŚCIANU
+            if (multiplier > 1) {
                 return distances[i]*multiplier*multiplier*multiplier;
+
+//            if (multiplier > 1 && multiplier < 1.5) {//LINIOWE ZWIĘKSZENIE
+//                return distances[i]*multiplier;
+//
+//            } else if (multiplier>1.5 && multiplier < 2) { //ZWIĘKSZENIE DO KWADRATU
+//                multiplier =multiplier*multiplier;
+//                return distances[i]*multiplier;
+//
+//            } else if (multiplier>=2) { //ZWIĘKSZENIE DO SZEŚCIANU
+//                return distances[i]*multiplier*multiplier*multiplier;
 
             } else {
                 return distances[i];
